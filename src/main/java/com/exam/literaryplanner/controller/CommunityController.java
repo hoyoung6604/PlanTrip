@@ -175,5 +175,13 @@ public class CommunityController {
 
         return "redirect:/community";
     }
+    
+    @GetMapping("/view")
+    public String view(@RequestParam Long rvIdx, Model model) {
+        Review review = reviewRepository.findById(rvIdx).orElseThrow();
+        model.addAttribute("review", review);
+        return "community/view";
+    }
+
 }
 
