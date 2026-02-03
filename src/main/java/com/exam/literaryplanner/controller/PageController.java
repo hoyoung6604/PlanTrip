@@ -21,4 +21,5 @@ public class PageController {
         // 추후 예약 페이지로 교체
         return "support";
     }
+    
 }

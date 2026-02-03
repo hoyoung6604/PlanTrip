@@ -98,5 +98,6 @@ public class BoardService {
         Board b = getFaqDetail(bIdx);
         boardRepository.delete(b);
     }
+    
 }
 

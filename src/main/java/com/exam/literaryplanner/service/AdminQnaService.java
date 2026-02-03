@@ -115,4 +115,5 @@ public class AdminQnaService {
 
         qnaRepository.save(q);
     }
+    
 }

@@ -14,5 +14,4 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
 	@Query("select count(q) from Qna q where q.qStatus = :status")
 	long countPendingByStatus(@Param("status") Integer status);
-
 }

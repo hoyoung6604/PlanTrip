@@ -198,6 +198,5 @@ public class SupportController {
         model.addAttribute("faq", boardService.getFaqDetail(bIdx));
         return "support/faqDetail";
     }
-
     
 }

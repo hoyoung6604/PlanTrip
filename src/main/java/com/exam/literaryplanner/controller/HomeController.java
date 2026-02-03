@@ -11,4 +11,5 @@ public class HomeController {
 // View Resolver가 /WEB-INF/views/index.jsp 로 변환하여 찾아줍니다.
 		return "index";
 	}
+	
 }

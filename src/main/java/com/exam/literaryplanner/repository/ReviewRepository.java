@@ -59,4 +59,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r ORDER BY r.rvStar DESC, r.rvIdx DESC")
     List<Review> findAllStar();
+    
 }

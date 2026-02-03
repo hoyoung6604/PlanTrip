@@ -11,4 +11,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("select b from Board b where b.bType = :type order by b.bIsTop desc, b.bRegDate desc")
     List<Board> findByTypeOrdered(@Param("type") String type);
+    
 }

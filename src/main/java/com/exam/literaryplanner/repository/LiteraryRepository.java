@@ -43,4 +43,5 @@ public interface LiteraryRepository extends JpaRepository<Member, Long> {
     // ✅ 회원 수 카운트
     @Query("select count(m) from Member m")
     long countMembers();
+    
 }

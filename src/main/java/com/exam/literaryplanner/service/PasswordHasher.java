@@ -40,4 +40,5 @@ public class PasswordHasher {
             throw new IllegalStateException("SHA-256 not available", e);
         }
     }
+    
 }
