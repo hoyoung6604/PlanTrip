@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface QnaRepository extends JpaRepository<Qna, Long> {
 
-    @Query("select q from Qna q where q.member.mIdx = :mIdx order by q.qIdx desc")
-    List<Qna> findMyQna(@Param("mIdx") Long mIdx);
+	@Query("select q from Qna q where q.member.id = :memberId order by q.qRegDate desc")
+	List<Qna> findQnaByMemberId(@Param("memberId") Long memberId);
+
+	@Query("select count(q) from Qna q where q.qStatus = :status")
+	long countPendingByStatus(@Param("status") Integer status);
+
 }

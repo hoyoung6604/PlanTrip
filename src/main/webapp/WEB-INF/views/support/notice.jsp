@@ -85,17 +85,18 @@
             <c:forEach var="n" items="${noticeList}">
               <tr style="border-top:1px solid #f1f5f9;">
                 <td style="padding:10px 6px;">
-                  <c:if test="${n.bIsTop == 1}">
+					<c:if test="${n.getBIsTop() == 1}">
                     <span style="display:inline-block; padding:4px 8px; border-radius:999px; border:1px solid #e5e7eb; font-size:12px;">TOP</span>
                   </c:if>
                 </td>
                 <td style="padding:10px 6px; max-width:0;">
                   <!-- 상세 페이지 만들면 링크로 교체 -->
-                  <span style="display:inline-block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                    ${n.bTitle}
-                  </span>
+				  <a href="${pageContext.request.contextPath}/support/notice/${n.getBIdx()}"
+				     style="display:inline-block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:inherit; text-decoration:none;">
+				    ${n.getBTitle()}
+				  </a>
                 </td>
-                <td style="padding:10px 6px; color:#6b7280;">${n.bRegDate}</td>
+                <td style="padding:10px 6px; color:#6b7280;">${n.getBRegDate()}</td>
               </tr>
             </c:forEach>
             </tbody>

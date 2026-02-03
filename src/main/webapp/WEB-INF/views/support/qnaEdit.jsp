@@ -11,78 +11,30 @@
 </head>
 <body>
 
-<div class="container" style="padding:24px 0;">
-  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px;">
+<div class="container" style="padding:24px 0; max-width:900px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;">
     <div>
-      <h1 style="margin:0; font-size:24px;">고객센터</h1>
-      <p style="margin:6px 0 0; color:#6b7280;">문의 수정</p>
+      <h1 style="margin:0; font-size:22px;">문의 수정</h1>
+      <p style="margin:6px 0 0; color:#6b7280;">내용을 수정할 수 있어요.</p>
     </div>
-    <a class="btn solid" href="/" style="white-space:nowrap;">홈으로</a>
+    <a class="btn" href="${pageContext.request.contextPath}/support/qna/${qna.getQIdx()}">취소</a>
   </div>
 
-  <c:if test="${not empty msg}">
-    <div style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; margin-bottom:14px;">
-      ${msg}
-    </div>
-  </c:if>
+  <div style="border:1px solid #e5e7eb; border-radius:14px; background:#fff; padding:16px;">
+    <form action="${pageContext.request.contextPath}/support/qna/${qna.getQIdx()}/edit" method="post">
+      <div style="font-weight:700; margin-bottom:6px;">제목</div>
+      <input name="qTitle" type="text" required maxlength="200"
+             value="${qna.getQTitle()}"
+             style="width:100%;padding:12px;border-radius:10px;border:1px solid #e5e7eb;">
 
-  <div style="display:flex; gap:18px;">
-    <!-- 좌측 메뉴 -->
-    <aside style="width:240px;">
-      <div style="border:1px solid #e5e7eb; border-radius:14px; background:#fff; padding:14px;">
-        <div style="font-weight:700; margin-bottom:10px;">라이브러리</div>
+      <div style="font-weight:700; margin:14px 0 6px;">내용</div>
+      <textarea name="qCont" required
+                style="width:100%;min-height:240px;padding:12px;border-radius:10px;border:1px solid #e5e7eb;resize:vertical;">${qna.getQCont()}</textarea>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <a class="btn" href="${pageContext.request.contextPath}/support/notice"
-             style="display:block; text-align:left; padding:10px 12px; border-radius:10px;">📢 공지사항</a>
-          <a class="btn" href="${pageContext.request.contextPath}/support/faq"
-             style="display:block; text-align:left; padding:10px 12px; border-radius:10px;">❓ 자주 묻는 질문</a>
-          <a class="btn solid" href="${pageContext.request.contextPath}/support/qna"
-             style="display:block; text-align:left; padding:10px 12px; border-radius:10px;">✍️ 문의하기</a>
-        </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+        <button class="btn solid" type="submit">저장</button>
       </div>
-    </aside>
-
-    <!-- 우측 -->
-    <main style="flex:1; min-width:0;">
-      <div style="border:1px solid #e5e7eb; border-radius:14px; background:#fff; padding:16px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <div>
-            <div style="font-weight:900; font-size:16px;">문의 수정</div>
-            <div style="margin-top:6px; color:#6b7280; font-size:13px;">
-              문의번호 #${qna['qIdx']} · 상태 ${qna['qStatusLabel']}
-            </div>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="btn" href="${pageContext.request.contextPath}/support/qna/${qna['qIdx']}">상세로</a>
-            <a class="btn" href="${pageContext.request.contextPath}/support/qna">목록</a>
-          </div>
-        </div>
-
-        <form action="${pageContext.request.contextPath}/support/qna/${qna['qIdx']}/edit"
-              method="post"
-              style="margin-top:14px; display:flex; flex-direction:column; gap:10px;">
-
-          <label style="font-weight:700; font-size:13px;">제목</label>
-          <input type="text" name="qTitle" maxlength="200" required
-                 value="${qna['qTitle']}"
-                 style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:12px; outline:none;" />
-
-          <label style="font-weight:700; font-size:13px; margin-top:6px;">내용</label>
-          <textarea name="qCont" rows="10" required
-                    style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:12px; outline:none; resize:vertical;">${qna['qCont']}</textarea>
-
-          <div style="display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;">
-            <button type="submit" class="btn solid" style="border:0; cursor:pointer;">수정 저장</button>
-            <a class="btn" href="${pageContext.request.contextPath}/support/qna/${qna['qIdx']}">취소</a>
-          </div>
-
-          <div style="margin-top:6px; color:#6b7280; font-size:12px;">
-            * 답변이 완료된 문의는 정책에 따라 수정이 제한될 수 있습니다.
-          </div>
-        </form>
-      </div>
-    </main>
+    </form>
   </div>
 </div>
 

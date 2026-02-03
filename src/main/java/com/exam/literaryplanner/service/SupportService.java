@@ -23,7 +23,7 @@ public class SupportService {
 
     @Transactional(readOnly = true)
     public List<Qna> myQnaList(Long mIdx) {
-        return qnaRepository.findMyQna(mIdx);
+        return qnaRepository.findQnaByMemberId(mIdx);
     }
 
     public Qna createQna(Member loginMember, String qTitle, String qCont) {
@@ -48,23 +48,29 @@ public class SupportService {
     
     @Transactional(readOnly = true)
     public List<Map<String, Object>> myQnaViewList(Long mIdx) {
-        List<Qna> list = qnaRepository.findMyQna(mIdx);
+
+        List<Qna> list =
+            qnaRepository.findQnaByMemberId(mIdx);
 
         List<Map<String, Object>> out = new ArrayList<>();
+
         for (Qna q : list) {
             Map<String, Object> row = new HashMap<>();
+
             row.put("qIdx", q.getQIdx());
             row.put("qTitle", q.getQTitle());
             row.put("qRegDate", q.getQRegDate());
 
-            Integer status = q.getQStatus(); // Java에서 뽑아버림 (JSP getter 호출 금지)
+            Integer status = q.getQStatus();
             row.put("qStatus", status);
             row.put("qStatusLabel", (status != null && status == 0) ? "대기" : "완료");
 
             out.add(row);
         }
+
         return out;
     }
+
     
     @Transactional(readOnly = true)
     public Map<String, Object> getMyQnaDetailView(Long qIdx, Long mIdx) {

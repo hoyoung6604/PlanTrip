@@ -71,11 +71,28 @@
 
           <c:forEach var="f" items="${faqList}" varStatus="st">
             <details style="border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px; background:#fff;">
-              <summary style="cursor:pointer; font-weight:700;">
-                Q${st.count}. ${f.bTitle}
+              <summary style="cursor:pointer; font-weight:700; list-style:none;">
+                <span style="display:flex; align-items:center; gap:8px;">
+                  <span style="flex:1; min-width:0;">
+                    Q${st.count}. ${f.getBTitle()}
+                  </span>
+
+                  <!-- TOP 표시 -->
+                  <c:if test="${f.getBIsTop() == 1}">
+                    <span style="display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #e5e7eb; font-size:12px; color:#111;">
+                      TOP
+                    </span>
+                  </c:if>
+                </span>
+
+                <!-- 등록일(작게) -->
+                <div style="margin-top:6px; font-weight:400; font-size:12px; color:#6b7280;">
+                  ${f.getBRegDate()}
+                </div>
               </summary>
+
               <div style="margin-top:10px; color:#374151; white-space:pre-wrap; line-height:1.6;">
-                ${f.bCont}
+                ${f.getBCont()}
               </div>
             </details>
           </c:forEach>
@@ -88,3 +105,4 @@
 
 </body>
 </html>
+

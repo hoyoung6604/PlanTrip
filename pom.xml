@@ -13,7 +13,7 @@
 	</parent>
 
 	<groupId>com.exam</groupId>
-	<artifactId>literaryplanner</artifactId>
+	<artifactId>literaryplanner1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
@@ -88,6 +88,19 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- BCrypt 등 암호화 유틸만 사용 -->
+		<dependency>
+ 			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
+		<!-- Mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

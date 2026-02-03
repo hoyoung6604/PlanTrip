@@ -26,6 +26,9 @@
     </div>
 
     <nav class="nav">
+		<j:if test="${not empty sessionScope.loginMember and sessionScope.loginMember.getMRole() eq 9}">
+		  <a href="/admin">관리자</a>
+		</j:if>
       <div class="nav-dropdown" id="catWrap">
         <button class="nav-drop-btn" type="button" id="catBtn" aria-haspopup="true" aria-expanded="false">
           카테고리 <span class="chev" aria-hidden="true">▾</span>
@@ -508,7 +511,7 @@
 </script>
 
   <!-- Floating 고객센터 -->
-  <a class="cs-fab" href="/support" aria-label="고객센터">
+  <a class="cs-fab" href="${pageContext.request.contextPath}/support" aria-label="고객센터">
     <span class="cs-fab__icon" aria-hidden="true">?</span>
     <span class="cs-fab__label">고객센터</span>
   </a>

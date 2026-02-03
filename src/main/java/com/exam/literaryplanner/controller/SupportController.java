@@ -2,6 +2,7 @@ package com.exam.literaryplanner.controller;
 
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Qna;
+import com.exam.literaryplanner.service.BoardService;
 import com.exam.literaryplanner.service.SupportService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,11 @@ import java.util.List;
 public class SupportController {
 
     private final SupportService supportService;
+    private final BoardService boardService;
 
-    public SupportController(SupportService supportService) {
+    public SupportController(SupportService supportService, BoardService boardService) {
         this.supportService = supportService;
+        this.boardService = boardService;
     }
 
     // ✅ 기존에 쓰던 고객센터 메인 (support/support.jsp)
@@ -36,15 +39,15 @@ public class SupportController {
     // ✅ 공지사항(원하면 support.jsp에서 include로 처리해도 됨)
     // URL: /support/notice
     @GetMapping("/notice")
-    public String notice() {
-        return "support/notice";
+    public String noticeList(Model model) {
+        model.addAttribute("noticeList", boardService.listNotices());
+        return "support/notice"; // /WEB-INF/views/support/notice.jsp
     }
-
-    // ✅ FAQ
-    // URL: /support/faq
-    @GetMapping("/faq")
-    public String faq() {
-        return "support/faq";
+    
+    @GetMapping("/notice/{bIdx}")
+    public String noticeDetail(@PathVariable Long bIdx, Model model) {
+        model.addAttribute("notice", boardService.getNoticeDetail(bIdx));
+        return "support/noticeDetail"; // /WEB-INF/views/support/noticeDetail.jsp
     }
 
     // ✅ 내 문의 목록 (로그인 필수)
@@ -183,6 +186,18 @@ public class SupportController {
         }
     }
 
+    @GetMapping("/faq")
+    public String faq(Model model) {
+        model.addAttribute("faqList", boardService.listFaqs());
+        return "support/faq";
+    }
+
+    // ✅ 사용자 FAQ 상세
+    @GetMapping("/faq/{bIdx}")
+    public String faqDetail(@PathVariable Long bIdx, Model model) {
+        model.addAttribute("faq", boardService.getFaqDetail(bIdx));
+        return "support/faqDetail";
+    }
 
     
 }
