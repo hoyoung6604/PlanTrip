@@ -135,6 +135,15 @@
 		  <div class="mp-actions">
 		    <button class="mp-submit" type="submit">저장</button>
 		    <button class="mp-cancel" type="button" onclick="history.back()">취소</button>
+
+		    <!-- ✅ 폼 중첩 없이, 이 버튼만 withdraw로 POST -->
+		    <button class="mp-withdraw"
+		            type="submit"
+		            formaction="${pageContext.request.contextPath}/members/mypage/withdraw"
+		            formmethod="post"
+		            onclick="return confirm('탈퇴 시 모든 사용자 정보가 삭제됩니다. 탈퇴하시겠습니까?');">
+		      회원탈퇴
+		    </button>
 		  </div>
 		</form>
 

@@ -48,5 +48,4 @@ public class Review {
 
     public String getRvTitle() { return rvTitle; }
     public void setRvTitle(String rvTitle) { this.rvTitle = rvTitle; }
-    
 }

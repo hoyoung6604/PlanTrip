@@ -57,5 +57,4 @@ public class Qna {
 
     public LocalDateTime getQRegDate() { return qRegDate; }
     public void setQRegDate(LocalDateTime qRegDate) { this.qRegDate = qRegDate; }
-    
 }

@@ -10,5 +10,4 @@ public class MapController {
     public String maps() {
         return "maps";
     }
-    
 }

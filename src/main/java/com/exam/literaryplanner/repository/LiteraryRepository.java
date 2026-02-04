@@ -2,9 +2,11 @@ package com.exam.literaryplanner.repository;
 
 import com.exam.literaryplanner.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,4 +46,10 @@ public interface LiteraryRepository extends JpaRepository<Member, Long> {
     @Query("select count(m) from Member m")
     long countMembers();
     
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM memberT WHERE m_idx = ?1", nativeQuery = true)
+    int deleteMemberNative(Long mIdx);
+    
+    Optional<Member> findBySnsId(String snsId);
 }

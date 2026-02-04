@@ -49,5 +49,4 @@ public class Board {
 
     public LocalDateTime getBRegDate() { return bRegDate; }
     public void setBRegDate(LocalDateTime bRegDate) { this.bRegDate = bRegDate; }
-    
 }

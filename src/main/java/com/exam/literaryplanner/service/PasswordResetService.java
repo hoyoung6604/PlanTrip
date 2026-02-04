@@ -106,5 +106,4 @@ public class PasswordResetService {
 
         prt.setUsedAt(LocalDateTime.now());
     }
-    
 }

@@ -80,7 +80,6 @@ public class LiteraryService {
 
         literaryRepository.save(member);
     }
-    
 }
 
 

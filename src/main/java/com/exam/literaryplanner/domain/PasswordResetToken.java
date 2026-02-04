@@ -50,5 +50,4 @@ public class PasswordResetToken {
 
     public LocalDateTime getUsedAt() { return usedAt; }
     public void setUsedAt(LocalDateTime usedAt) { this.usedAt = usedAt; }
-    
 }

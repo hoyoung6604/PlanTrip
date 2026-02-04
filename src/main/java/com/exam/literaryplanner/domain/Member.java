@@ -60,5 +60,4 @@ public class Member {
 
     public LocalDateTime getMRegDate() { return mRegDate; }
     public void setMRegDate(LocalDateTime mRegDate) { this.mRegDate = mRegDate; }
-    
 }
