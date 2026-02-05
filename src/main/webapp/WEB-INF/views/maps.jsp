@@ -13,7 +13,7 @@
 
     <!-- ✅ 카카오 지도 API (autoload=false로 바꿔서, load() 안에서 초기화) -->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24&libraries=services&autoload=false"></script>
-
+<!--
     <style>
         #map {
             width: 100%;
@@ -50,7 +50,7 @@
         .info-window b {
             font-size: 14px;
         }
-    </style>
+    </style>-->
 </head>
 
 <!-- ✅ 지도 페이지 전용 클래스 -->

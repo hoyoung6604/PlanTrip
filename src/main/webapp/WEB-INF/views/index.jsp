@@ -1,18 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
-<%@ include file="/WEB-INF/views/common/theme.jspf" %>
+  <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
+  
 
+  <!--welcome to the PlanTrip 폰트임-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
+
   <link rel="stylesheet" href="/css/home.css" />
+ <!--<link rel="stylesheet" href="/css/login.css" />
+  <link rel="stylesheet" href="/css/signup.css" />
+ --> <link rel="stylesheet" href="/css/auth-modal.css" />
+
+
 </head>
 
 <body>
@@ -26,9 +34,6 @@
     </div>
 
     <nav class="nav">
-		<j:if test="${not empty sessionScope.loginMember and sessionScope.loginMember.getMRole() eq 9}">
-		  <a href="/admin">관리자</a>
-		</j:if>
       <div class="nav-dropdown" id="catWrap">
         <button class="nav-drop-btn" type="button" id="catBtn" aria-haspopup="true" aria-expanded="false">
           카테고리 <span class="chev" aria-hidden="true">▾</span>
@@ -51,12 +56,12 @@
     </nav>
 
     <div class="header-right">
-      <!-- 비로그인: 글자 링크만 -->
-      <j:if test="${empty sessionScope.loginMember}">
-        <a class="header-auth" href="/members/login">로그인</a>
-        <a class="header-auth" href="/members/register">회원가입</a>
 		
-      </j:if>
+      <!-- 비로그인: 글자 링크만 -->
+	  <j:if test="${empty sessionScope.loginMember}">
+	    <a class="header-auth" href="/members/login" data-auth-open="login">로그인</a>
+	    <a class="header-auth" href="/members/register" data-auth-open="signup">회원가입</a>
+	  </j:if>
 
        <!--로그인: 내 예약 + 햄버거--> 
       <j:if test="${not empty sessionScope.loginMember}">
@@ -93,7 +98,7 @@
 <main>
   <section class="hero">
     <div class="hero-copy hero-copy--top">
-      <div class="hero-pill hero-title">Wellcome to PlanTrip</div>
+      <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
 
     <!-- ✅ searchbar 내부에 다른 div 넣지 말기(레이아웃 밀림 방지) -->
@@ -511,10 +516,14 @@
 </script>
 
   <!-- Floating 고객센터 -->
-  <a class="cs-fab" href="${pageContext.request.contextPath}/support" aria-label="고객센터">
+  <a class="cs-fab" href="/support" aria-label="고객센터">
     <span class="cs-fab__icon" aria-hidden="true">?</span>
     <span class="cs-fab__label">고객센터</span>
   </a>
+
+  <%@ include file="/WEB-INF/views/common/loginModal.jspf" %>
+  <%@ include file="/WEB-INF/views/common/signupModal.jspf" %>
+  <script src="/js/auth-modal.js"></script>
 
 </body>
 </html>
