@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -226,6 +227,16 @@ public class AdminController {
         model.addAttribute("members", members);
         model.addAttribute("kw", kw);
         return "admin/admin_members";
+    }
+    
+    @GetMapping("/blacklist")
+    public String blacklistPage(Model model) {
+
+        // 아직 기능 없으니까 더미 리스트 (안 넣어도 됨)
+        model.addAttribute("blacklist", new ArrayList<>());
+
+        return "admin/blacklist";  
+        // → /WEB-INF/views/admin/blacklist.jsp
     }
 
 
