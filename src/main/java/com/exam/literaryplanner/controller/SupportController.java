@@ -1,0 +1,188 @@
+package com.exam.literaryplanner.controller;
+
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.domain.Qna;
+import com.exam.literaryplanner.service.SupportService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/support")
+public class SupportController {
+
+    private final SupportService supportService;
+
+    public SupportController(SupportService supportService) {
+        this.supportService = supportService;
+    }
+
+    // ✅ 기존에 쓰던 고객센터 메인 (support/support.jsp)
+    // URL: /support
+    @GetMapping("")
+    public String supportRoot(HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+
+        if (loginMember != null) {
+            model.addAttribute("qnaPreview", supportService.myQnaViewList(loginMember.getMIdx()));
+        }
+        return "support/support";
+    }
+
+    // ✅ 공지사항(원하면 support.jsp에서 include로 처리해도 됨)
+    // URL: /support/notice
+    @GetMapping("/notice")
+    public String notice() {
+        return "support/notice";
+    }
+
+    // ✅ FAQ
+    // URL: /support/faq
+    @GetMapping("/faq")
+    public String faq() {
+        return "support/faq";
+    }
+
+    // ✅ 내 문의 목록 (로그인 필수)
+    // URL: /support/qna
+    @GetMapping("/qna")
+    public String myQna(HttpSession session, Model model, RedirectAttributes ra) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        model.addAttribute("qnaList", supportService.myQnaViewList(loginMember.getMIdx()));
+        return "support/qna";
+    }
+
+
+    // ✅ 문의 작성 폼 (로그인 필수)
+    // URL: /support/qna/new
+    @GetMapping("/qna/new")
+    public String qnaForm(HttpSession session, RedirectAttributes ra) {
+        if (session.getAttribute("loginMember") == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+        return "support/qnaForm";
+    }
+
+    // ✅ 문의 등록 (로그인 필수)
+    // URL: POST /support/qna
+    @PostMapping("/qna")
+    public String qnaSubmit(
+            @RequestParam String qTitle,
+            @RequestParam String qCont,
+            HttpSession session,
+            RedirectAttributes ra
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        supportService.createQna(loginMember, qTitle, qCont);
+        ra.addFlashAttribute("msg", "문의가 등록되었습니다.");
+        return "redirect:/support/qna";
+    }
+
+    // ✅ 내 문의 상세 (로그인 + 내 글만)
+    // URL: /support/qna/{qIdx}
+    @GetMapping("/qna/{qIdx}")
+    public String qnaDetail(
+            @PathVariable Long qIdx,
+            HttpSession session,
+            Model model,
+            RedirectAttributes ra
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        model.addAttribute("qna", supportService.getMyQnaDetailView(qIdx, loginMember.getMIdx()));
+
+        return "support/qnaDetail";
+    }
+    
+    @PostMapping("/qna/{qIdx}/delete")
+    public String qnaDelete(
+            @PathVariable Long qIdx,
+            HttpSession session,
+            RedirectAttributes ra
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        try {
+            supportService.deleteMyQna(qIdx, loginMember.getMIdx());
+            ra.addFlashAttribute("msg", "문의가 삭제되었습니다.");
+            return "redirect:/support/qna";
+        } catch (Exception e) {
+            ra.addFlashAttribute("msg", "삭제에 실패했습니다: " + e.getMessage());
+            return "redirect:/support/qna/" + qIdx;
+        }
+    }
+    
+ // ✅ 문의 수정 폼 (로그인 + 내 글만)
+    @GetMapping("/qna/{qIdx}/edit")
+    public String qnaEditForm(
+            @PathVariable Long qIdx,
+            HttpSession session,
+            Model model,
+            RedirectAttributes ra
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        try {
+            model.addAttribute("qna", supportService.getMyQnaEditView(qIdx, loginMember.getMIdx()));
+            return "support/qnaEdit";
+        } catch (Exception e) {
+            ra.addFlashAttribute("msg", e.getMessage());
+            return "redirect:/support/qna/" + qIdx;
+        }
+    }
+
+    // ✅ 문의 수정 처리 (POST)
+    @PostMapping("/qna/{qIdx}/edit")
+    public String qnaEditSubmit(
+            @PathVariable Long qIdx,
+            @RequestParam String qTitle,
+            @RequestParam String qCont,
+            HttpSession session,
+            RedirectAttributes ra
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+            return "redirect:/members/login";
+        }
+
+        try {
+            supportService.updateMyQna(qIdx, loginMember.getMIdx(), qTitle, qCont);
+            ra.addFlashAttribute("msg", "문의가 수정되었습니다.");
+            return "redirect:/support/qna/" + qIdx;
+        } catch (Exception e) {
+            ra.addFlashAttribute("msg", "수정에 실패했습니다: " + e.getMessage());
+            return "redirect:/support/qna/" + qIdx + "/edit";
+        }
+    }
+
+
+    
+}
