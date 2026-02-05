@@ -29,15 +29,16 @@
         </div>
 
         <div style="text-align:right; margin-top: -6px;">
-          <a class="underline small" href="#">비밀번호를 잊으셨나요?</a>
+			<a class="underline small" href="/members/find-password">비밀번호를 잊으셨나요?</a>
         </div>
 
         <button class="primary-btn" type="submit">로그인</button>
 
         <div class="social-row">
-          <button class="social-btn" type="button">
-            <span class="social-dot"></span> 구글
-          </button>
+			<button class="social-btn" type="button"
+			        onclick="location.href='${pageContext.request.contextPath}/oauth2/authorization/google'">
+			  <span class="social-dot"></span> 구글
+			</button>
           <button class="social-btn" type="button">
             <span class="social-dot"></span> 페이스북
           </button>
