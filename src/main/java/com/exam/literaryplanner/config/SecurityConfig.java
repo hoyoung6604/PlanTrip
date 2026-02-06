@@ -13,22 +13,21 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http,
-    		OAuth2LoginSuccessHandler successHandler) throws Exception {
+                                    OAuth2LoginSuccessHandler successHandler) throws Exception {
         http
-            // 너는 기존 세션 로그인/컨트롤러를 쓰고 있으니 일단 전부 열어둠
+            .csrf(csrf -> csrf.disable()) // ✅ 개발 중 403(POST) 방지
+
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/", "/css/**", "/js/**", "/images/**",
+                    "/", "/css/**", "/js/**", "/images/**", "/img/**", "/favicon.ico",
                     "/members/**",
+                    "/plan/**",
                     "/oauth2/**", "/login/oauth2/**"
                 ).permitAll()
                 .anyRequest().permitAll()
             )
 
-            // ✅ 이게 있어야 /oauth2/authorization/google 이 살아남
             .oauth2Login(o -> o.successHandler(successHandler))
-
-            // (선택) 기본 로그인폼/Basic 끄기
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable());
 
