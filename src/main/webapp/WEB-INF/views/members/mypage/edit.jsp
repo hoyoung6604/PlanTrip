@@ -64,7 +64,7 @@
     <div class="sec sec-bottom">
       <div class="sec-title">SETTINGS</div>
       <nav class="mp-nav">
-        <button class="menu-btn" type="button" onclick="history.back()">
+        <button class="menu-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/'">
           <span class="mp-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           </span>메인으로
@@ -135,15 +135,6 @@
 		  <div class="mp-actions">
 		    <button class="mp-submit" type="submit">저장</button>
 		    <button class="mp-cancel" type="button" onclick="history.back()">취소</button>
-
-		    <!-- ✅ 폼 중첩 없이, 이 버튼만 withdraw로 POST -->
-		    <button class="mp-withdraw"
-		            type="submit"
-		            formaction="${pageContext.request.contextPath}/members/mypage/withdraw"
-		            formmethod="post"
-		            onclick="return confirm('탈퇴 시 모든 사용자 정보가 삭제됩니다. 탈퇴하시겠습니까?');">
-		      회원탈퇴
-		    </button>
 		  </div>
 		</form>
 

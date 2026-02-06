@@ -152,6 +152,12 @@
   font-size: 14px;
   outline:none;
 }
+/* 드롭다운 옵션 가독성(브라우저 기본 흰색/흰색 충돌 방지) */
+.cm-field select option{
+  background: #0b1220;
+  color: rgba(255,255,255,.92);
+}
+
 .cm-field textarea{
   min-height: 220px;
   resize: vertical;
@@ -261,3 +267,8 @@
   color:#111;
 }
 
+
+:root[data-theme="light"] .cm-field select option{
+  background: #ffffff;
+  color: #111;
+}

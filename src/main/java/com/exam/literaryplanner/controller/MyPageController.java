@@ -4,13 +4,13 @@ import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Review;
 import com.exam.literaryplanner.repository.LiteraryRepository;
 import com.exam.literaryplanner.repository.ReviewRepository;
-import com.exam.literaryplanner.service.MemberDeleteService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.exam.literaryplanner.service.PasswordHasher;
+import org.springframework.dao.DataIntegrityViolationException;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,20 +20,18 @@ import java.util.Map;
 @RequestMapping("/members/mypage")
 public class MyPageController {
 
-    private final PasswordEncoder passwordEncoder;
     private final LiteraryRepository literaryRepository;
     private final ReviewRepository reviewRepository;
-    private final MemberDeleteService memberDeleteService;
+    private final PasswordHasher passwordHasher;
+
 
     public MyPageController(LiteraryRepository literaryRepository,
-                            ReviewRepository reviewRepository,
-                            PasswordEncoder passwordEncoder,
-                            MemberDeleteService memberDeleteService) {
-        this.literaryRepository = literaryRepository;
-        this.reviewRepository = reviewRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.memberDeleteService = memberDeleteService;
-    }
+            ReviewRepository reviewRepository,
+            PasswordHasher passwordHasher) {
+this.literaryRepository = literaryRepository;
+this.reviewRepository = reviewRepository;
+this.passwordHasher = passwordHasher;
+}
 
     /* ================= 마이페이지 메인 ================= */
     @GetMapping
@@ -62,12 +60,14 @@ public class MyPageController {
                                 Model model) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
+        if (loginMember == null) {
+            return "redirect:/members/login";
+        }
 
-        Member member = literaryRepository.findById(loginMember.getMIdx()).orElseThrow();
+        Member member = literaryRepository.findById(loginMember.getMIdx())
+                .orElseThrow();
 
-        // ✅ BCrypt 비교는 matches()
-        if (!passwordEncoder.matches(password, member.getMPw())) {
+        if (!passwordHasher.matches(password, member.getMPw())) {
             model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "members/mypage/check";
         }
@@ -121,8 +121,8 @@ public class MyPageController {
                 model.addAttribute("error", "새 비밀번호가 일치하지 않습니다.");
                 return "members/mypage/edit";
             }
-            // ✅ 저장은 encode()
-            member.setMPw(passwordEncoder.encode(mPw));
+            member.setMPw(passwordHasher.bcrypt(mPw));
+
         }
 
         literaryRepository.save(member);
@@ -175,19 +175,6 @@ public class MyPageController {
         return "members/mypage/reviews";
     }
     
-    @PostMapping("/withdraw")
-    public String withdraw(HttpSession session) {
-        Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
-
-        Long mIdx = loginMember.getMIdx();
-
-        // ✅ DB에 바로 DELETE (강제)
-        literaryRepository.deleteMemberNative(mIdx);
-
-        session.invalidate();
-        return "redirect:/";
-    }
-
+    
 }
 

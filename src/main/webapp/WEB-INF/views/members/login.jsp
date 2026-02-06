@@ -1,13 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
+
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>로그인 | 여행 플래너</title>
   <link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/auth-modal.css">
   <script src="/js/alert.js"></script>
 </head>
 <body>
@@ -35,10 +37,9 @@
         <button class="primary-btn" type="submit">로그인</button>
 
         <div class="social-row">
-			<button class="social-btn" type="button"
-			        onclick="location.href='${pageContext.request.contextPath}/oauth2/authorization/google'">
-			  <span class="social-dot"></span> 구글
-			</button>
+          <button class="social-btn" type="button">
+            <span class="social-dot"></span> 구글
+          </button>
           <button class="social-btn" type="button">
             <span class="social-dot"></span> 페이스북
           </button>

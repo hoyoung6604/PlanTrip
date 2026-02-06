@@ -478,7 +478,7 @@ body{
   border-radius: 14px;
   background: rgba(255, 107, 107, .12);
   border: 1px solid rgba(255, 107, 107, .22);
-  color: rgba(255,255,255,.92);
+  color: var(--text);
   font-weight: 800;
   font-size: 13px;
 }
@@ -507,6 +507,27 @@ body{
   color: rgba(255,255,255,.90);
   font-size: 14px;
 }
+.mp-field select{
+  width:100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  outline: none;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  font-size: 14px;
+  appearance: none;
+}
+.mp-field select:focus{
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.10);
+}
+/* 드롭다운 옵션 가독성(브라우저 기본 흰색/흰색 충돌 방지) */
+.mp-field select option{
+  background: #0b1220;
+  color: rgba(255,255,255,.92);
+}
+
 .mp-field input::placeholder{ color: rgba(255,255,255,.55); }
 .mp-field input:focus{
   border-color: rgba(255,255,255,.28);
@@ -693,6 +714,20 @@ body{
   background: rgba(255,255,255,.92);
   color: var(--text);
 }
+:root[data-theme="light"] .mp-field select{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-field select:focus{
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 0 0 4px rgba(0,0,0,.06);
+}
+:root[data-theme="light"] .mp-field select option{
+  background: #ffffff;
+  color: #111;
+}
+
 :root[data-theme="light"] .mp-field input::placeholder{
   color: rgba(0,0,0,.45);
 }

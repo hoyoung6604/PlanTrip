@@ -39,6 +39,13 @@
     --pill-text: #111;
   }
 
+  /*
+    ✅ 네이티브 폼 UI 컬러 스킴
+    - 다크모드에서 select/option 배경이 강제로 흰색이 되는 현상을 줄임
+  */
+  :root{ color-scheme: dark; }
+  :root[data-theme="light"]{ color-scheme: light; }
+
 
 *{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -126,14 +133,10 @@ input,button,select,textarea{ font-family:inherit; }
   background:rgba(255,255,255,.14);
 }
 
-/* [추가] 투명 헤더일 때 햄버거 버튼도 “유리”처럼 */
-.header:not(.is-solid) .hamburger-btn{
+.hamburger-btn{
   width:42px;
   height:42px;
   border-radius:12px;
-  border:1px solid rgba(255,255,255,.28);
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(8px);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -142,8 +145,20 @@ input,button,select,textarea{ font-family:inherit; }
   cursor:pointer;
   padding:0;
   overflow:hidden;
+
+  /* 기본(흰 헤더) 톤 */
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(0,0,0,.04);
 }
-  .hamburger-btn span{
+
+/* 투명 헤더일 때는 “유리 버튼” 톤으로 덮어쓰기 */
+.header:not(.is-solid) .hamburger-btn{
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+}
+
+.hamburger-btn span{
   width:18px;
   height:2px;
   background:currentColor;
@@ -151,12 +166,45 @@ input,button,select,textarea{ font-family:inherit; }
   display:block;
 }
 
-/* 투명 헤더(메인 배경)에서는 햄버거 선을 흰색으로 고정 */
+/* 투명 헤더(메인 배경)에서는 햄버거 선을 흰색으로 */
 .header:not(.is-solid) .hamburger-btn{ color:#fff; }
 
 /* solid(흰 헤더)에서는 햄버거 선을 진한색으로 */
 .header.is-solid .hamburger-btn{ color:#111; }
+/*
+  ✅ 다크/라이트 토글 버튼 UI 통일
+  - 햄버거 버튼과 같은 “유리 버튼” 톤
+  - 위치는 JSP 그대로 유지 (디자인만 변경)
+*/
+.theme-toggle{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+  color:#fff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+  font-size:16px;
+  line-height:1;
+}
+.theme-toggle:hover{ background:rgba(255,255,255,.16); }
+.theme-toggle:active{ transform:translateY(0.5px); }
+.theme-toggle:focus{ outline:none; box-shadow:0 0 0 4px rgba(255,255,255,.18); }
 
+/* 흰 헤더(is-solid)에서는 버튼도 밝은 톤으로 */
+.header.is-solid .theme-toggle{
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(0,0,0,.04);
+  color:#111;
+  backdrop-filter:blur(10px);
+}
+.header.is-solid .theme-toggle:hover{ background:rgba(0,0,0,.06); }
+.header.is-solid .theme-toggle:focus{ box-shadow:0 0 0 4px rgba(0,0,0,.10); }
 
 .header:not(.is-solid) .header:not(.is-solid) .nav-drop-menu a{
   color:rgba(255,255,255,.92);
@@ -217,14 +265,19 @@ input,button,select,textarea{ font-family:inherit; }
   align-items:center;
 }
 .nav-drop-btn{
-  /* [수정] a -> button 으로 바뀌어서 기본 버튼 스타일 제거 */
-  border:0;
-  background:transparent;
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:900;
-}
+	  border:0;
+	  background:transparent;
+
+	  color:inherit;            /* ✅ 다크모드 ButtonText(흰색) 강제 적용 방지 */
+	  -webkit-appearance:none;  /* ✅ 기본 버튼 스타일 제거 */
+	  appearance:none;
+
+	  padding:8px 10px;
+	  border-radius:10px;
+	  cursor:pointer;
+	  font-weight:900;
+	}
+
 
 /* [추가] 드롭다운 화살표 회전(열림/닫힘 상태 시각화) */
 .nav-drop-btn .chev{ display:inline-block; transition:transform .18s ease; }
@@ -928,6 +981,12 @@ input,button,select,textarea{ font-family:inherit; }
   padding:0;
   cursor:pointer;
   z-index:30;
+  
+  background:#fff;
+
+  color:#111;               /* ✅ SVG가 currentColor라서 이것이 없으면 흰색으로 사라짐 */
+  -webkit-appearance:none;
+  appearance:none;
 }
 .arrow-btn svg{ display:block; margin:0; }
 .arrow-left svg{ transform:translateX(-2.5px); }
