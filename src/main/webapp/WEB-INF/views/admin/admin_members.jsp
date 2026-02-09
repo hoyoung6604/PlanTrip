@@ -77,6 +77,19 @@
       <input type="text" name="kw" value="${kw}" placeholder="아이디/이름/이메일로 검색" />
       <button type="submit">검색</button>
     </form>
+	
+	<div style="display:flex; gap:8px; margin:0 0 14px; align-items:center;">
+	  <a href="/admin/blacklist"
+	     style="display:inline-flex; align-items:center; gap:6px;
+	            padding:10px 14px; border:1px solid #ef4444; border-radius:10px;
+	            background:#fff; color:#ef4444; text-decoration:none; font-weight:600;">
+	    ⛔ 블랙리스트 지정
+	  </a>
+
+	  <span style="color:var(--admin-muted); font-size:13px;">
+	    (블랙리스트 등록/해제는 여기서만 합니다)
+	  </span>
+	</div>
 
     <div style="margin:0 0 10px;color:var(--admin-muted);">
       <span class="badge">총 ${members.size()}명</span>

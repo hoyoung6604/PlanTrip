@@ -15,15 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 // ✅ 루트 패키지 전체 스캔 (controller/service/config 등 전부 포함)
 @ComponentScan(basePackages = "com.exam.literaryplanner")
+
 public class LiteraryplannerApplication {
 
-<<<<<<< HEAD
-	public static void main(String[] args) {
-		SpringApplication.run(LiteraryplannerApplication.class, args);
-	}
-//	21131212
-	//aaaaaaaaaaaa
-=======
     // ✅ BCrypt PasswordEncoder Bean 등록 (starter-security 없이 crypto만 써도 OK)
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,5 +27,5 @@ public class LiteraryplannerApplication {
     public static void main(String[] args) {
         SpringApplication.run(LiteraryplannerApplication.class, args);
     }
->>>>>>> origin/frontend
+
 }
