@@ -61,7 +61,7 @@ public class CommunityController {
      * 후기 작성 처리
      * ========================= */
     @PostMapping("/write")
-    public String writeReview(@RequestParam Long sIdx,
+    public String writeReview(@RequestParam Integer sIdx,
                               @RequestParam int rvStar,
                               @RequestParam String rvCont,
                               @RequestParam String rvTitle,
@@ -100,7 +100,7 @@ public class CommunityController {
      * 후기 삭제
      * ========================= */
     @PostMapping("/delete")
-    public String deleteReview(@RequestParam Long rvIdx,
+    public String deleteReview(@RequestParam Integer rvIdx,
                                @RequestParam(required = false) String from,
                                HttpSession session) {
 
@@ -130,7 +130,7 @@ public class CommunityController {
      * 후기 수정 폼
      * ========================= */
     @GetMapping("/edit")
-    public String editForm(@RequestParam Long rvIdx, Model model, HttpSession session) {
+    public String editForm(@RequestParam Integer rvIdx, Model model, HttpSession session) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) return "redirect:/members/login";
@@ -146,7 +146,7 @@ public class CommunityController {
      * 후기 수정 처리
      * ========================= */
     @PostMapping("/edit")
-    public String editReview(@RequestParam Long rvIdx,
+    public String editReview(@RequestParam Integer rvIdx,
                              @RequestParam String rvTitle,
                              @RequestParam String rvCont,
                              @RequestParam int rvStar,

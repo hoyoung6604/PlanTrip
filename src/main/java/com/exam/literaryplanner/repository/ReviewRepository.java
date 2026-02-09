@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     // ===== 내 후기 =====
     @Query("SELECT r FROM Review r WHERE r.mIdx = :mIdx ORDER BY r.rvIdx DESC")
-    List<Review> findByMIdxOrderByRvIdxDesc(@Param("mIdx") Long mIdx);
+    List<Review> findByMIdxOrderByRvIdxDesc(@Param("mIdx") Integer mIdx);
 
     @Query("""
         SELECT r
@@ -23,7 +23,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         ORDER BY r.rvIdx DESC
     """)
     List<Review> findByMIdxAndRvTitleContainingOrderByRvIdxDesc(
-            @Param("mIdx") Long mIdx,
+            @Param("mIdx") Integer mIdx,
             @Param("rvTitle") String rvTitle
     );
 

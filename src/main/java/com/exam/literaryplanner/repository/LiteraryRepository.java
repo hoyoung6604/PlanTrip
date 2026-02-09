@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LiteraryRepository extends JpaRepository<Member, Long> {
+public interface LiteraryRepository extends JpaRepository<Member, Integer> {
 
     // 로그인 ID로 찾기 (m_id)
     @Query("SELECT m FROM Member m WHERE m.mId = :mId")
