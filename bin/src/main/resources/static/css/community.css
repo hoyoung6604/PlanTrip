@@ -1,0 +1,263 @@
+@import url("/css/mypage.css");
+
+/* 커뮤니티는 우측 패널 없이 2열 구성으로 고정 */
+.cm-shell{
+  width: 100%;
+  min-height: 100vh;
+  padding: 22px 26px 26px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 18px;
+  align-items: stretch;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cm-main{
+  display:flex;
+  flex-direction:column;
+  gap: 16px;
+}
+
+/* 커뮤니티 상단 필터 영역 */
+.cm-filters{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items:center;
+}
+.cm-select{
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  padding: 0 10px;
+  font-weight: 800;
+  outline: none;
+}
+.cm-select option{
+  color: #111;
+}
+
+/* mp-search 안의 아이콘이 커져서 높이 밀리는 문제 방지 */
+/*.mp-search .sico{
+  width:16px;
+  height:16px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  line-height:1;
+  flex:0 0 16px;
+}*/
+.mp-search input{
+  height:40px;
+  line-height:1.2;
+}
+
+/* 커뮤니티 테이블을 마이페이지 무드로 */
+.cm-table-wrap{
+  overflow-x:auto;
+  border-radius: 16px;
+}
+.cm-table{
+  width:100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.cm-table th,
+.cm-table td{
+  padding: 12px 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,.86);
+  white-space: nowrap;
+}
+.cm-table th{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.10);
+  border-bottom: 1px solid rgba(255,255,255,.14);
+  text-align: left;
+}
+.cm-table tr + tr td{
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+/* 별점 표시 */
+.cm-stars{
+  display:inline-flex;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* 본인 글 관리 버튼을 링크처럼 */
+.cm-linkbtn{
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: rgba(255,255,255,.90);
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+  font-weight: 800;
+}
+.cm-linkbtn:hover{
+  color: rgba(255,255,255,.98);
+}
+
+/* 빈 목록 안내 */
+.cm-empty{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 14px 14px;
+  color: rgba(255,255,255,.86);
+}
+.cm-empty .sub{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+}
+
+/* 글쓰기/수정 폼 */
+.cm-form{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+  max-width: 720px;
+}
+.cm-field label{
+  display:block;
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.cm-field input,
+.cm-field textarea,
+.cm-field select{
+  width:100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  padding: 12px 12px;
+  font-size: 14px;
+  outline:none;
+}
+.cm-field textarea{
+  min-height: 220px;
+  resize: vertical;
+}
+.cm-field input::placeholder,
+.cm-field textarea::placeholder{
+  color: rgba(255,255,255,.55);
+}
+.cm-field input:focus,
+.cm-field textarea:focus,
+.cm-field select:focus{
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.10);
+}
+.cm-actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  margin-top: 6px;
+}
+.cm-primary{
+  border: 0;
+  background: rgba(31,111,235,.95);
+  color:#fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 900;
+  cursor:pointer;
+}
+.cm-primary:hover{
+  filter: brightness(.98);
+}
+.cm-ghost{
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 900;
+  cursor:pointer;
+}
+.cm-ghost:hover{
+  background: rgba(255,255,255,.12);
+}
+
+/* 반응형 */
+@media (max-width: 860px){
+  .cm-shell{
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+}
+
+/* ===== Light theme override (community) ===== */
+:root[data-theme="light"] .cm-select{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  color: #111;
+}
+
+:root[data-theme="light"] .cm-field input::placeholder,
+:root[data-theme="light"] .cm-field textarea::placeholder{
+  color: rgba(0,0,0,.45);
+}
+
+
+:root[data-theme="light"] .cm-field label{
+  color: rgba(0,0,0,.55);
+}
+
+:root[data-theme="light"] .cm-table{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(0,0,0,.12);
+}
+:root[data-theme="light"] .cm-table th,
+:root[data-theme="light"] .cm-table td{
+  color: #111;
+}
+:root[data-theme="light"] .cm-table th{
+  background: rgba(0,0,0,.03);
+  border-bottom: 1px solid rgba(0,0,0,.10);
+}
+:root[data-theme="light"] .cm-table tr + tr td{
+  border-top: 1px solid rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .cm-linkbtn{
+  color:#111;
+}
+:root[data-theme="light"] .cm-empty{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  color:#111;
+}
+:root[data-theme="light"] .cm-empty .sub{
+  color: rgba(0,0,0,.55);
+}
+:root[data-theme="light"] .cm-field input,
+:root[data-theme="light"] .cm-field textarea,
+:root[data-theme="light"] .cm-field select{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  color:#111;
+}
+:root[data-theme="light"] .cm-ghost{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(0,0,0,.03);
+  color:#111;
+}
+

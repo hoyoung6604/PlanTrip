@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Builder
 public class Spot {
 
+
     @Id
     @Column(name = "s_idx")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -148,4 +149,5 @@ public class Spot {
 	public void setStats(SpotStats stats) {
 		this.stats = stats;
 	}
+
 }
