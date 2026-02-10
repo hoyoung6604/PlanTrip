@@ -15,7 +15,7 @@ public class City {
     @Id
     @Column(name = "c_idx")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "c_area_code", nullable = false, unique = true, length = 40)
     private String areaCode;

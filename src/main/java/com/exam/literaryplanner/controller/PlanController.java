@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/plan")
+@RequestMapping("/plan/main")
 public class PlanController {
 
 	 @GetMapping("")
