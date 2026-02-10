@@ -27,7 +27,7 @@ public class CommunityController {
     public String communityMain(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer minStar,
-            @RequestParam(required = false) Long sIdx,
+            @RequestParam(required = false) Integer sIdx,
             @RequestParam(required = false, defaultValue = "latest") String sort,
             Model model) {
 
@@ -175,5 +175,13 @@ public class CommunityController {
 
         return "redirect:/community";
     }
+    
+    @GetMapping("/view")
+    public String view(@RequestParam Integer rvIdx, Model model) {
+        Review review = reviewRepository.findById(rvIdx).orElseThrow();
+        model.addAttribute("review", review);
+        return "community/view";
+    }
+
 }
 

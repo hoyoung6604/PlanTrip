@@ -171,7 +171,11 @@
                           <c:forEach begin="1" end="${r.rvStar}">⭐</c:forEach>
                         </span>
                       </td>
-                      <td style="white-space:normal;">${r.rvTitle}</td>
+					  <td style="white-space:normal;">
+					    <a href="${pageContext.request.contextPath}/community/view?rvIdx=${r.rvIdx}">
+					      <c:out value="${r.rvTitle}"/>
+					    </a>
+					  </td>
 
                       <!-- 본인 글일 때만 수정/삭제 노출 -->
                       <td>

@@ -11,11 +11,6 @@ public class PageController {
         return "plan";
     }
 
-    @GetMapping("/support")
-    public String support() {
-        return "support";
-    }
-
     @GetMapping("/profile")
     public String profile() {
         return "profile";

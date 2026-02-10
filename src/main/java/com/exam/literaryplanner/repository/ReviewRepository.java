@@ -38,7 +38,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     """)
     List<Review> searchOrderByLatestDesc(@Param("kw") String keyword,
                                         @Param("minStar") Integer minStar,
-                                        @Param("sIdx") Long sIdx);
+                                        @Param("sIdx") Integer sIdx);
 
     // ===== 커뮤니티 검색 별점순 =====
     @Query("""
@@ -51,7 +51,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     """)
     List<Review> searchOrderByStarDesc(@Param("kw") String keyword,
                                       @Param("minStar") Integer minStar,
-                                      @Param("sIdx") Long sIdx);
+                                      @Param("sIdx") Integer sIdx);
 
     // 전체
     @Query("SELECT r FROM Review r ORDER BY r.rvIdx DESC")
@@ -60,3 +60,4 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT r FROM Review r ORDER BY r.rvStar DESC, r.rvIdx DESC")
     List<Review> findAllStar();
 }
+
