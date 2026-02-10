@@ -8,7 +8,17 @@
   <!-- [추가] 모바일 화면 비율/스케일 최적화 (없으면 폰에서 레이아웃이 깨져 보일 수 있어요) -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>마이페이지</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 
@@ -218,6 +228,9 @@
   </aside>
 
 </div>
+
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

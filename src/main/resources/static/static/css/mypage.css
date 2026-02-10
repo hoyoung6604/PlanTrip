@@ -1,0 +1,836 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
+
+/* MyPage Dashboard */
+
+:root{
+  /* Dark base */
+  --bg-dark:#0b1220;
+  --bg-dark-2:#0a1020;
+
+
+  /* Glass */
+  --glass: rgba(255,255,255,.10);
+  --glass-2: rgba(255,255,255,.14);
+  --glass-line: rgba(255,255,255,.16);
+  --glass-line-2: rgba(255,255,255,.22);
+  --blur: 18px;
+
+  /* Text */
+  --text-on-dark: rgba(255,255,255,.92);
+  --muted-on-dark: rgba(255,255,255,.72);
+
+  /* Accent */
+  --primary: #1f6feb;
+  --primary2: #18a7a7;
+  --danger: #ff6b6b;
+
+  /* Shadows */
+  --shadow-dark: 0 18px 50px rgba(0,0,0,.35);
+
+  /* Radius */
+  --r14: 14px;
+  --r18: 18px;
+  --r22: 22px;
+
+  /* Existing tokens remap */
+  --bg: var(--bg-dark);
+  --panel: var(--glass);
+  --text: var(--text-on-dark);
+  --muted: var(--muted-on-dark);
+  --line: var(--glass-line);
+  --line-soft: var(--glass-line);
+
+  --shadow1: var(--shadow-dark);
+  --shadow2: var(--shadow-dark);
+  --shadow3: var(--shadow-dark);
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
+/* ===== Light theme tokens (mypage) ===== */
+ :root[data-theme="light"]{
+   --bg: #f6f7fb;
+   --bg-dark-2:#ffffff;
+
+   --panel: rgba(255,255,255,.88);
+   --text: #111;
+   --muted: #6b7280;
+
+   --line: rgba(0,0,0,.10);
+   --line-soft: rgba(0,0,0,.08);
+
+   --shadow1: 0 18px 50px rgba(0,0,0,.10);
+   --shadow2: 0 18px 50px rgba(0,0,0,.10);
+   --shadow3: 0 18px 50px rgba(0,0,0,.10);
+ }
+
+/* 라이트 모드에서 전체가 '하얗게만' 보이지 않도록 블루 톤 포인트를 강화 */
+:root[data-theme="light"] .mp-side{
+  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(240,248,255,.78));
+  border-color: rgba(47,111,237,.18);
+}
+:root[data-theme="light"] .mp-topbar,
+:root[data-theme="light"] .mp-card,
+:root[data-theme="light"] .mp-profile,
+:root[data-theme="light"] .mp-panel,
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .panel{
+  border-color: rgba(47,111,237,.18);
+}
+
+/* C: 사이드바 활성 메뉴를 더 확실히 구분 */
+:root[data-theme="light"] .mp-nav a.active{
+  background: rgba(47,111,237,.12);
+  border: 1px solid rgba(47,111,237,.22);
+}
+:root[data-theme="light"] .mp-nav a:hover{
+  background: rgba(47,111,237,.08);
+}
+:root[data-theme="light"] .mp-nav a.active::before{
+  background: rgba(47,111,237,.80);
+}
+
+/* A: 메인 카드 헤더에도 톤을 넣어 상단 영역이 비어 보이지 않게 */
+:root[data-theme="light"] .mp-card-head{
+  background: linear-gradient(90deg, rgba(47,111,237,.10), rgba(24,167,167,.08));
+}
+
+/* B/F/D/E: 주요 액션 버튼은 라이트에서 '파란 포인트' 버튼으로 */
+:root[data-theme="light"] .mp-card-head .mp-btn,
+:root[data-theme="light"] .mp-search .mp-btn,
+:root[data-theme="light"] .cm-filters .mp-btn{
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(31,111,235,.96), rgba(24,167,167,.92));
+  box-shadow: 0 14px 30px rgba(31,111,235,.20);
+}
+:root[data-theme="light"] .mp-card-head .mp-btn:hover,
+:root[data-theme="light"] .mp-search .mp-btn:hover,
+:root[data-theme="light"] .cm-filters .mp-btn:hover{
+  filter: brightness(.98);
+  transform: translateY(-1px);
+}
+
+body{
+  margin:0;
+  color: var(--text);
+  background: transparent;
+}
+
+/* Layout shell */
+.mp-shell{
+  width: 100%;
+  min-height: 100vh;
+  padding: 22px 26px 26px;
+  display: grid;
+  grid-template-columns: 260px 1fr 340px;
+  gap: 18px;
+  align-items: stretch;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+/* Common glass panels */
+.mp-side,
+.mp-topbar,
+.mp-card,
+.mp-profile,
+.mp-panel,
+.card,
+.panel{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  box-shadow: var(--shadow2);
+  border-radius: var(--r22);
+}
+
+/* Left Sidebar */
+.mp-side{
+  display:flex;
+  flex-direction:column;
+  padding: 14px 12px;
+}
+
+.mp-brand{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 6px 6px 14px;
+}
+.mp-logo{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(31,111,235,.18), rgba(24,167,167,.12));
+  border: 1px solid var(--line);
+}
+.mp-brand-name{
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  font-size: 16px;
+}
+
+.sec{
+  padding: 10px 6px 6px;
+}
+.sec-title{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin: 10px 0 10px;
+}
+.sec + .sec{
+  border-top: 1px dashed rgba(255,255,255,.14);
+}
+
+/* SETTINGS to bottom */
+.mp-side .sec.sec-bottom{
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255,255,255,.14);
+}
+
+/* nav */
+.mp-nav{
+  display:flex;
+  flex-direction:column;
+  gap: 4px;
+}
+.mp-nav a,
+.mp-nav .menu-btn{
+  width:100%;
+  border: 0;
+  background: transparent;
+  text-align:left;
+  padding: 10px 10px;
+  border-radius: 12px;
+  font-weight: 800;
+  color: rgba(255,255,255,.86);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  transition: background .16s ease, color .16s ease;
+  text-decoration:none;
+}
+.mp-nav a:hover,
+.mp-nav .menu-btn:hover{
+  background: rgba(255,255,255,.08);
+}
+.mp-nav a.active{
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  position: relative;
+}
+.mp-nav a.active::before{
+  content:"";
+  position:absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.70);
+}
+.mp-nav .menu-btn.danger{
+  color: rgba(255,107,107,.95);
+}
+.mp-ico{
+  width: 16px;
+  height: 16px;
+  display:inline-flex;
+  color: rgba(255,255,255,.60);
+}
+.mp-nav a.active .mp-ico{
+  color: rgba(255,255,255,.92);
+}
+.mp-nav .menu-btn.danger .mp-ico{
+  color: rgba(255,107,107,.95);
+}
+.mp-ico svg{ width:16px; height:16px; display:block; }
+
+/* Center */
+.mp-main{
+  display:flex;
+  flex-direction:column;
+  gap: 16px;
+}
+
+/* Topbar search */
+.mp-topbar{
+  padding: 14px 16px;
+}
+
+/* 검색바 통일 */
+.mp-search{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+/* 돋보기 아이콘 박스: 대시보드/후기 동일 크기 */
+.mp-search .sico{
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.82);
+}
+
+/* 아이콘이 svg/img/i 어떤 형태든 크기 고정 */
+.mp-search .sico svg,
+.mp-search .sico img{
+  width: 18px;
+  height: 18px;
+  display:block;
+}
+.mp-search .sico i{
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* input도 글라스 톤으로 통일 */
+.mp-search input{
+  flex:1;
+  height: 40px;
+  width:100%;
+  padding: 0 14px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  outline:none;
+
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.92);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mp-search input::placeholder{
+  color: rgba(255,255,255,.55);
+}
+
+.mp-search input:focus{
+  border-color: rgba(255,255,255,.26);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.10);
+}
+
+.link-btn{
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font: inherit;
+}
+
+
+/* Placeholder banner */
+.mp-placeholder{
+  height: 128px;
+  border-radius: var(--r22);
+  border: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(31,111,235,.14), rgba(24,167,167,.12), rgba(255,107,107,.10));
+  box-shadow: var(--shadow2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Card */
+.mp-card{
+  overflow:hidden;
+}
+.mp-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.mp-card-title{
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.mp-card-sub{
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.mp-card-body{
+  padding: 16px;
+}
+.mp-grow{ flex: 1; }
+
+/* Deck */
+.mp-deck{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 20px;
+}
+.mp-deck .item{
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  overflow:hidden;
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 14px 34px rgba(0,0,0,.28);
+}
+.mp-deck .thumb{
+  height: clamp(110px, 12vw, 150px);
+  background: linear-gradient(135deg, rgba(31,111,235,.16), rgba(24,167,167,.12));
+}
+.mp-deck .meta{
+  padding: 12px 12px 14px;
+}
+.mp-deck .tag{
+  display:inline-flex;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.90);
+  border: 1px solid rgba(255,255,255,.16);
+  margin-bottom: 8px;
+}
+.mp-deck .ttl{
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+}
+.mp-deck .sub{
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+  margin-top: 4px;
+}
+
+/* List rows */
+.mp-list{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+.mp-row{
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  padding: 12px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background: rgba(255,255,255,.08);
+}
+.mp-row .ttl{
+  font-weight: 900;
+  font-size: 13px;
+  color: rgba(255,255,255,.92);
+}
+.mp-row .sub{
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+  margin-top: 2px;
+}
+.mp-pill{
+  display:inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,107,107,.95);
+  border: 1px solid rgba(255,107,107,.25);
+  background: rgba(255,107,107,.10);
+  cursor:pointer;
+}
+
+/* Buttons */
+.mp-btn{
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-weight: 900;
+  cursor:pointer;
+  transition: background .16s ease, transform .16s ease;
+}
+.mp-btn:hover{
+  background: rgba(255,255,255,.12);
+  transform: translateY(-1px);
+}
+
+/* Right Panel */
+.mp-right{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+.mp-profile{
+  padding: 16px;
+}
+.mp-profile-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 10px;
+}
+.mp-profile .ttl{
+  font-weight: 900;
+}
+.mp-mini{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(31,111,235,.18), rgba(24,167,167,.12));
+  border: 1px solid rgba(255,255,255,.16);
+}
+.mp-profile .name{
+  font-weight: 900;
+  font-size: 16px;
+}
+.mp-profile .desc{
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.mp-profile .mp-row{
+  margin-top: 12px;
+}
+
+/* Center area should fill */
+.mp-main .mp-card-body{
+  width: 100%;
+}
+
+/* Error message */
+.mp-error{
+  margin: 0 0 12px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  background: rgba(255, 107, 107, .12);
+  border: 1px solid rgba(255, 107, 107, .22);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* Forms */
+.mp-form{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+  max-width: 520px;
+}
+.mp-field label{
+  display:block;
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.mp-field input{
+  width:100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  outline: none;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  font-size: 14px;
+}
+.mp-field select{
+  width:100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  outline: none;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  font-size: 14px;
+  appearance: none;
+}
+.mp-field select:focus{
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.10);
+}
+/* 드롭다운 옵션 가독성(브라우저 기본 흰색/흰색 충돌 방지) */
+.mp-field select option{
+  background: #0b1220;
+  color: rgba(255,255,255,.92);
+}
+
+.mp-field input::placeholder{ color: rgba(255,255,255,.55); }
+.mp-field input:focus{
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.10);
+}
+.mp-actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.mp-submit{
+  border: 0;
+  background: rgba(31,111,235,.95);
+  color:#fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 900;
+  cursor:pointer;
+}
+.mp-submit:hover{ filter: brightness(.98); }
+.mp-cancel{
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.90);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 900;
+  cursor:pointer;
+}
+.mp-cancel:hover{ background: rgba(255,255,255,.12); }
+
+/* 후기/계획 목록 테이블을 다크 글라스 무드로 보이게 */
+.mp-card table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mp-card th,
+.mp-card td{
+  padding: 12px 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,.86);
+}
+
+.mp-card th{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.14);
+  text-align: left;
+}
+
+.mp-card tr + tr td{
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+/* 표 안 링크/버튼 */
+.mp-card table a{
+  color: rgba(255,255,255,.90);
+  text-decoration: none;
+  font-weight: 800;
+}
+.mp-card table a:hover{
+  text-decoration: underline;
+}
+
+/* “등록된 후기 없음” 같은 안내 문구 */
+.mp-card table .empty,
+.mp-card table td.empty,
+.mp-card table td[colspan]{
+  color: rgba(255,255,255,.62);
+}
+
+/* 모바일에서 표가 잘리는 경우 대비 */
+.mp-card .table-wrap{
+  overflow-x: auto;
+  border-radius: 16px;
+}
+.mp-card .table-wrap table{
+  min-width: 520px;
+}
+
+
+/* =========================
+   [추가] Light theme override (mypage / community sidebar 공통)
+   - 라이트 모드에서 메뉴/검색/표/카드 가독성 보정 -글씨가 안 보이는 현상 해결 위한 코드 수정
+   ========================= */
+:root[data-theme="light"] .sec + .sec{
+  border-top: 1px dashed var(--line-soft);
+}
+:root[data-theme="light"] .mp-side .sec.sec-bottom{
+  border-top: 1px dashed var(--line-soft);
+}
+
+/* Left nav text */
+:root[data-theme="light"] .mp-nav a,
+:root[data-theme="light"] .mp-nav .menu-btn{
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-nav a:hover,
+:root[data-theme="light"] .mp-nav .menu-btn:hover{
+  background: rgba(0,0,0,.04);
+}
+:root[data-theme="light"] .mp-nav a.active{
+  background: rgba(0,0,0,.06);
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-nav a.active::before{
+  background: rgba(0,0,0,.45);
+}
+:root[data-theme="light"] .mp-ico{
+  color: rgba(0,0,0,.55);
+}
+:root[data-theme="light"] .mp-nav a.active .mp-ico{
+  color: rgba(0,0,0,.85);
+}
+
+/* Search bar */
+:root[data-theme="light"] .mp-search .sico{
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,.03);
+  color: rgba(0,0,0,.65);
+}
+:root[data-theme="light"] .mp-search input{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-search input::placeholder{
+  color: rgba(0,0,0,.45);
+}
+:root[data-theme="light"] .mp-search input:focus{
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 0 0 4px rgba(0,0,0,.06);
+}
+
+/* Card head line */
+:root[data-theme="light"] .mp-card-head{
+  border-bottom: 1px solid var(--line-soft);
+}
+
+/* Deck / rows / buttons (라이트 가독성) */
+:root[data-theme="light"] .mp-deck .item,
+:root[data-theme="light"] .mp-row{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.92);
+  box-shadow: var(--shadow2);
+}
+:root[data-theme="light"] .mp-deck .tag{
+  background: rgba(0,0,0,.03);
+  color: rgba(0,0,0,.80);
+  border: 1px solid var(--line);
+}
+:root[data-theme="light"] .mp-deck .ttl,
+:root[data-theme="light"] .mp-row .ttl{
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-deck .sub,
+:root[data-theme="light"] .mp-row .sub{
+  color: var(--muted);
+}
+
+:root[data-theme="light"] .mp-btn{
+  border: 1px solid rgba(47,111,237,.22);
+  background: rgba(255,255,255,.86);
+  color: var(--text);
+  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .mp-btn:hover{
+  background: rgba(47,111,237,.10);
+  border-color: rgba(47,111,237,.38);
+}
+
+/* Forms */
+:root[data-theme="light"] .mp-field label{
+  color: rgba(0,0,0,.55);
+}
+:root[data-theme="light"] .mp-field input{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-field select{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-field select:focus{
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 0 0 4px rgba(0,0,0,.06);
+}
+:root[data-theme="light"] .mp-field select option{
+  background: #ffffff;
+  color: #111;
+}
+
+:root[data-theme="light"] .mp-field input::placeholder{
+  color: rgba(0,0,0,.45);
+}
+:root[data-theme="light"] .mp-field input:focus{
+  border-color: rgba(0,0,0,.22);
+  box-shadow: 0 0 0 4px rgba(0,0,0,.06);
+}
+
+/* Tables (plans/reviews/community에서 같이 사용) */
+:root[data-theme="light"] .mp-card table{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(47,111,237,.18);
+  box-shadow: 0 18px 40px rgba(0,0,0,.10);
+}
+:root[data-theme="light"] .mp-card th,
+:root[data-theme="light"] .mp-card td{
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-card th{
+  background: rgba(47,111,237,.10);
+  border-bottom: 1px solid rgba(47,111,237,.18);
+  color: rgba(15,23,42,.88);
+}
+:root[data-theme="light"] .mp-card tr + tr td{
+  border-top: 1px solid rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .mp-card table a{
+  color: var(--text);
+}
+:root[data-theme="light"] .mp-card table .empty,
+:root[data-theme="light"] .mp-card table td.empty,
+:root[data-theme="light"] .mp-card table td[colspan]{
+  color: rgba(0,0,0,.55);
+}
+
+
+/* Responsive */
+@media (max-width: 1200px){
+  .mp-shell{
+    grid-template-columns: 240px 1fr;
+  }
+  .mp-right{
+    display:none;
+  }
+}
+@media (max-width: 860px){
+  .mp-shell{
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+  .mp-deck{
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px){
+  .mp-shell{ padding: 14px; gap: 14px; }
+  .mp-side{ border-radius: 18px; }
+  .mp-topbar{ border-radius: 18px; }
+  .mp-card{ border-radius: 18px; }
+}

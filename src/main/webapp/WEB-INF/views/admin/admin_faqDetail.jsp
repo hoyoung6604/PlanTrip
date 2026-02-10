@@ -1,68 +1,77 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
+
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>FAQ 상세 | 관리자</title>
-  <link rel="stylesheet" href="/css/home.css"/>
-  <style>
-    .wrap{max-width:900px;margin:0 auto;padding:24px;}
-    .card{background:#fff;color:#111;border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:18px;}
-    .meta{color:#6b7280;font-size:13px;margin-top:8px;margin-bottom:14px;}
-    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;margin-left:8px;}
-    .btn{padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#fff;cursor:pointer;text-decoration:none;color:#111;}
-  </style>
+  <title>FAQ 상세 | PlanTrip</title>
+
+  <link rel="stylesheet" href="/css/admin-console.css" />
+  <link rel="stylesheet" href="/css/admin-components.css" />
+
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
 </head>
-<body>
 
-<header class="header is-solid">
-  <div class="container header-inner">
-    <a href="/admin" class="brand-top"><img class="brand-logo-img" src="/img/PlanTriplog.png" alt="PlanTrip"></a>
-    <nav class="nav">
-      <a href="/admin/faqs" style="font-weight:700;">FAQ</a>
-    </nav>
-    <div class="header-right">
-      <div>${sessionScope.loginMember.MName} (ADMIN)</div>
-      <form action="/members/logout" method="post" style="margin:0;">
-        <button class="header-auth" type="submit">로그아웃</button>
-      </form>
-    </div>
-  </div>
-</header>
+<body class="admin-page">
 
-<main class="wrap">
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-      <h2 style="margin:0;">FAQ 상세</h2>
-      <div style="display:flex;gap:8px;">
-        <a class="btn" href="${pageContext.request.contextPath}/admin/faqs">목록</a>
-        <a class="btn" href="${pageContext.request.contextPath}/admin/faqs/${faq.getBIdx()}/edit">수정</a>
-        <form action="${pageContext.request.contextPath}/admin/faqs/${faq.getBIdx()}/delete"
-              method="post" style="margin:0;" onsubmit="return confirm('정말 삭제할까요?');">
-          <button class="btn" type="submit">삭제</button>
-        </form>
+<div class="admin-shell">
+  <%@ include file="/WEB-INF/views/admin/admin_sidebar.jspf" %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <h1 class="admin-title">FAQ 상세</h1>
+        <p class="admin-subtitle">질문/답변을 확인하고 수정/삭제할 수 있어요.</p>
+      </div>
+      <div class="admin-actions">
+        <span class="admin-userchip">
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginMember}">
+              ${sessionScope.loginMember.MName}님 (ADMIN)
+            </c:when>
+            <c:otherwise>ADMIN</c:otherwise>
+          </c:choose>
+        </span>
+        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+          <span class="tt-icon" aria-hidden="true">☀️</span>
+          <span class="tt-icon" aria-hidden="true">🌙</span>
+          <span class="tt-indicator" aria-hidden="true"></span>
+        </button>
+        <a class="admin-btn" href="${pageContext.request.contextPath}/admin/faqs">목록</a>
+        <a class="admin-btn is-primary" href="${pageContext.request.contextPath}/admin/faqs/${faq.BIdx}/edit">수정</a>
       </div>
     </div>
 
-    <div style="font-weight:800;font-size:18px;margin-top:12px;">
-      Q. ${faq.getBTitle()}
-    </div>
+    <div class="admin-pagewrap">
+      <section class="admin-card padded">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h2 style="margin:0;font-size:18px;font-weight:1000;">${faq.BTitle}</h2>
+          <div class="admin-right"></div>
+          <div class="admin-userchip">
+            <c:choose>
+              <c:when test="${empty faq.BRegDate}">-</c:when>
+              <c:otherwise>${fn:substring(faq.BRegDate,0,10)}</c:otherwise>
+            </c:choose>
+          </div>
+        </div>
 
-    <div class="meta">
-      등록일: ${faq.getBRegDate()}
-      <c:if test="${faq.getBIsTop() == 1}">
-        <span class="pill">TOP</span>
-      </c:if>
-    </div>
+        <div style="margin-top:14px;white-space:pre-wrap;line-height:1.7;">${faq.BCont}</div>
 
-    <div style="white-space:pre-wrap;line-height:1.7;">
-      A. ${faq.getBCont()}
+        <div class="admin-row" style="margin-top:16px;">
+          <div class="admin-right"></div>
+          <form action="${pageContext.request.contextPath}/admin/faqs/${faq.BIdx}/delete" method="post" style="margin:0;">
+            <button class="admin-btn is-danger" type="submit" onclick="return confirm('삭제할까요?');">삭제</button>
+          </form>
+        </div>
+      </section>
     </div>
-  </div>
-</main>
+  </main>
+</div>
 
 </body>
 </html>

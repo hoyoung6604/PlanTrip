@@ -7,7 +7,17 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>커뮤니티</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 
@@ -93,10 +103,7 @@
           <div class="mp-card-title">여행 후기 목록</div>
           <div class="mp-card-sub">모든 사용자의 후기를 확인할 수 있어요</div>
         </div>
-        <button class="mp-btn" type="button"
-                onclick="location.href='${pageContext.request.contextPath}/community/write'">
-          새 후기
-        </button>
+        <a class="mp-btn" href="${pageContext.request.contextPath}/community/write">새 후기</a>
       </div>
 
       <div class="mp-card-body">
@@ -209,6 +216,9 @@
   </main>
 
 </div>
+
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

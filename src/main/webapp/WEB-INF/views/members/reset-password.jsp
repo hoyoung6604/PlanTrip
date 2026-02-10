@@ -7,8 +7,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>비밀번호 재설정 | 여행 플래너</title>
-  <link rel="stylesheet" href="/css/login.css">
-  <script src="/js/alert.js"></script>
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 
@@ -61,19 +70,10 @@
   </div>
 
   <!-- eye(비밀번호 보기) 토글: login.css와 동일 UX 원하면 아래 JS로 동작 -->
-  <script>
-    // 간단 토글 (각 input-row의 eye가 해당 input을 토글)
-    document.querySelectorAll('.input-row').forEach(row => {
-      const input = row.querySelector('input');
-      const eye = row.querySelector('.eye');
-      if (!input || !eye) return;
+  
 
-      eye.style.cursor = 'pointer';
-      eye.addEventListener('click', () => {
-        input.type = (input.type === 'password') ? 'text' : 'password';
-      });
-    });
-  </script>
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

@@ -1,75 +1,136 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"/>
-<title>문의 관리 | 관리자</title>
-<link rel="stylesheet" href="/css/home.css"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>문의 관리 | PlanTrip</title>
+
+  <link rel="stylesheet" href="/css/admin-console.css" />
+  <link rel="stylesheet" href="/css/admin-components.css" />
+
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
 </head>
-<body>
+<body class="admin-page">
 
-<div class="container" style="padding:24px 0;">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;">
-    <div>
-      <h1 style="margin:0;font-size:22px;">문의 관리</h1>
-      <p style="margin:6px 0 0;color:#6b7280;">대기 먼저, 최신순 정렬</p>
+<div class="admin-shell">
+  <%@ include file="/WEB-INF/views/admin/admin_sidebar.jspf" %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <h1 class="admin-title">문의 관리</h1>
+        <p class="admin-subtitle">
+          대기 먼저, 최신순 기준으로 보여줘요.
+          <c:if test="${not empty qnaTotal}">
+            <span class="admin-muted">(총 ${qnaTotal}건 · 완료 ${qnaDoneCount}건 · ${qnaDonePct}%)</span>
+          </c:if>
+        </p>
+      </div>
+      <div class="admin-actions">
+        <span class="admin-userchip">
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginMember}">
+              ${sessionScope.loginMember.MName}님 (ADMIN)
+            </c:when>
+            <c:otherwise>ADMIN</c:otherwise>
+          </c:choose>
+        </span>
+        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+          <span class="tt-icon" aria-hidden="true">☀️</span>
+          <span class="tt-icon" aria-hidden="true">🌙</span>
+          <span class="tt-indicator" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
-    <a class="btn" href="/admin">관리자 홈</a>
-  </div>
 
-  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;">
-    <table style="width:100%;border-collapse:collapse;">
-      <thead>
-      <tr style="text-align:left;color:#6b7280;font-size:12px;">
-        <th style="padding:10px 6px;width:120px;">상태</th>
-        <th style="padding:10px 6px;">제목</th>
-        <th style="padding:10px 6px;width:160px;">작성자</th>
-        <th style="padding:10px 6px;width:200px;">등록일</th>
-      </tr>
-      </thead>
-      <tbody>
-      <c:if test="${empty qnaList}">
-        <tr>
-          <td colspan="4" style="padding:14px 6px;color:#6b7280;border-top:1px solid #f1f5f9;">
-            문의가 없습니다.
-          </td>
-        </tr>
-      </c:if>
+    
+<div class="admin-pagewrap">
+  <!-- 미처리 -->
+  <section class="admin-card padded">
+    <div class="admin-section-head">
+      <h2 class="admin-h2">미처리 문의 <span class="admin-muted" style="font-weight:700;">(${qnaPendingCount}건)</span></h2>
+    </div>
 
-      <c:forEach var="q" items="${qnaList}">
-        <tr style="border-top:1px solid #f1f5f9;">
-          <td style="padding:10px 6px;">
-            <c:choose>
-              <c:when test="${q['qStatus'] == 0}">
-                <span style="display:inline-block;padding:4px 10px;border-radius:999px;border:1px dashed #e5e7eb;font-size:12px;color:#6b7280;">대기</span>
-              </c:when>
-              <c:otherwise>
-                <span style="display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #e5e7eb;font-size:12px;">완료</span>
-              </c:otherwise>
-            </c:choose>
-          </td>
+    <div class="admin-tablewrap">
+      <table class="admin-table" aria-label="미처리 문의 목록">
+        <thead>
+          <tr>
+            <th style="width:140px;">상태</th>
+            <th>제목</th>
+            <th style="width:200px;">작성자</th>
+            <th style="width:200px;">등록일</th>
+            <th style="width:140px;">관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:if test="${empty qnaPendingList}">
+            <tr><td colspan="5" class="admin-empty">미처리 문의가 없습니다.</td></tr>
+          </c:if>
 
-          <td style="padding:10px 6px;max-width:0;">
-            <a href="${pageContext.request.contextPath}/admin/inquiries/${q['qIdx']}"
-               style="display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;text-decoration:none;">
-              ${q['qTitle']}
-            </a>
-          </td>
+          <c:forEach var="q" items="${qnaPendingList}">
+            <tr>
+              <td><span class="admin-status is-pending">미처리</span></td>
+              <td class="admin-ellipsis">
+                <a class="admin-link" href="${pageContext.request.contextPath}/admin/inquiries/${q['qIdx']}">${q['qTitle']}</a>
+              </td>
+              <td>${q['mName']}</td>
+              <td>${fn:substring(q['qRegDate'],0,10)}</td>
+              <td>
+                <a class="admin-btn is-primary" href="${pageContext.request.contextPath}/admin/inquiries/${q['qIdx']}">답변하기</a>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-          <td style="padding:10px 6px;">
-            ${q['mName']}
-          </td>
+  <!-- 완료 -->
+  <section class="admin-card padded" style="margin-top:16px;">
+    <div class="admin-section-head">
+      <h2 class="admin-h2">완료 문의 <span class="admin-muted" style="font-weight:700;">(${qnaDoneCount}건)</span></h2>
+    </div>
 
-          <td style="padding:10px 6px;color:#6b7280;">
-            ${q['qRegDate']}
-          </td>
-        </tr>
-      </c:forEach>
-      </tbody>
-    </table>
-  </div>
+    <div class="admin-tablewrap">
+      <table class="admin-table" aria-label="완료 문의 목록">
+        <thead>
+          <tr>
+            <th style="width:140px;">상태</th>
+            <th>제목</th>
+            <th style="width:200px;">작성자</th>
+            <th style="width:200px;">등록일</th>
+            <th style="width:140px;">관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:if test="${empty qnaDoneList}">
+            <tr><td colspan="5" class="admin-empty">완료된 문의가 없습니다.</td></tr>
+          </c:if>
+
+          <c:forEach var="q" items="${qnaDoneList}">
+            <tr>
+              <td><span class="admin-status is-done">완료</span></td>
+              <td class="admin-ellipsis">
+                <a class="admin-link" href="${pageContext.request.contextPath}/admin/inquiries/${q['qIdx']}">${q['qTitle']}</a>
+              </td>
+              <td>${q['mName']}</td>
+              <td>${fn:substring(q['qRegDate'],0,10)}</td>
+              <td>
+                <span class="admin-btn is-ghost" aria-disabled="true">완료</span>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</main>
 </div>
 
 </body>

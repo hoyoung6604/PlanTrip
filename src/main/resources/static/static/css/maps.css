@@ -1,0 +1,92 @@
+/* 지도 페이지 전용 스타일 */
+
+/* 메인 배경 이미지가 지도 위로 비치는 현상 방지 */
+body.maps-page::before{ background:none !important; }
+body.maps-page::after{ background:none !important; }
+
+/* 지도 높이 확보 */
+#map{
+  width:100%;
+  height: calc(100vh - 140px);
+}
+
+/* 검색 영역 */
+.map-search{
+  display:flex;
+  gap:10px;
+  padding:12px 16px;
+  margin:16px auto 12px;
+  width:min(860px, calc(100% - 48px));
+  background: rgba(255,255,255,.92);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:14px;
+  box-shadow: 0 10px 26px rgba(0,0,0,.10);
+  backdrop-filter: blur(10px);
+}
+
+.map-search input{
+  flex:1;
+  padding:12px 14px;
+  font-size:14px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  outline:none;
+  background:#fff;
+}
+
+.map-search button{
+  padding:12px 18px;
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  background: var(--primary);
+  color:#fff;
+  font-weight:700;
+}
+
+/* 다크 모드에서 검색 영역 톤 */
+:root:not([data-theme="light"]) .map-search{
+  background: rgba(17,24,39,.78);
+  border:1px solid rgba(255,255,255,.10);
+}
+:root:not([data-theme="light"]) .map-search input{
+  background: rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.92);
+}
+:root:not([data-theme="light"]) .map-search input::placeholder{ color: rgba(255,255,255,.60); }
+
+/* 인포윈도우 */
+.info-window{ padding:8px; font-size:13px; line-height:1.4; }
+.info-window b{ font-size:14px; }
+
+@media (max-width: 560px){
+  #map{ height: calc(100vh - 170px); }
+  .map-search{ flex-direction:column; }
+  .map-search button{ width:100%; }
+}
+
+/* 지도 페이지 select 옵션 가독성 */
+:root[data-theme="light"] body.maps-page .map-search select{
+  background:#ffffff;
+  color:#0f172a;
+  border:1px solid rgba(0,0,0,.10);
+}
+:root[data-theme="dark"] body.maps-page .map-search{
+  background: rgba(15,23,42,.60);
+  border: 1px solid rgba(255,255,255,.12);
+}
+:root[data-theme="dark"] body.maps-page .map-search input{
+  background: rgba(2,6,23,.55);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.92);
+}
+:root[data-theme="dark"] body.maps-page .map-search select{
+  background: rgba(2,6,23,.55);
+  color: rgba(255,255,255,.92);
+  border: 1px solid rgba(255,255,255,.14);
+}
+:root[data-theme="dark"] body.maps-page .map-search option{
+  background: #0b1220;
+  color: rgba(255,255,255,.92);
+}

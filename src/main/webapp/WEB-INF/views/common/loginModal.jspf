@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!-- 로그인 모달 -->
 <div class="auth-modal" id="authModal-login" aria-hidden="true">
@@ -11,7 +10,7 @@
     <!-- ✅ dialog 전체에 깔리는 물결 배경 -->
     <div class="auth-modal__wave-bg" aria-hidden="true"></div>
 
-    <div class="auth-wrap">
+    <div class="auth-wrap auth-wrap--split">
       <div class="auth-left">
         <div class="brand">
           <div class="logo">TP</div>
@@ -29,8 +28,10 @@
           </div>
 
           <div style="text-align:right; margin-top:-6px;">
-            <a class="underline small" href="/members/find-password">비밀번호를 잊으셨나요?</a>
+            <a class="underline small" href="/members/find-password" data-auth-switch="find">비밀번호를 잊으셨나요?</a>
           </div>
+
+          <div class="form-error" data-auth-error style="display:none;"></div>
 
           <button class="primary-btn" type="submit">로그인</button>
 
@@ -46,8 +47,8 @@
         </form>
       </div>
 
-      <!-- ✅ 오른쪽은 “자리”만. 배경/패널은 쓰지 않음 -->
-      <div class="auth-right" aria-hidden="true"></div>
+      <div class="auth-right" aria-hidden="true">
+      </div>
     </div>
   </div>
 </div>

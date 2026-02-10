@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 
 <!doctype html>
@@ -8,198 +9,154 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>관리자 메인 | PlanTrip</title>
-<link rel="stylesheet" href="/css/home.css">
 
-<style>
-/* ===== 관리자 페이지: 흰 배경 고정(테마 상관없이 항상 잘 보이게) ===== */
-:root{
-  --admin-bg: #ffffff;
-  --admin-text: #111111;
-  --admin-muted: rgba(17,17,17,.70);
-  --admin-border: rgba(0,0,0,.12);
-  --admin-hover: rgba(0,0,0,.04);
-}
+  <!-- admin 전용 UI (사용자 페이지 CSS와 분리) -->
+  <link rel="stylesheet" href="/css/admin-console.css" />
+  <link rel="stylesheet" href="/css/admin-components.css" />
 
-.admin-wrap{
-  max-width:1200px;
-  margin:0 auto;
-  padding:30px;
-  display:grid;
-  grid-template-columns:240px 1fr;
-  gap:20px;
-}
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
 
-/* 카드 영역(좌측/메인/통계)은 흰색 */
-.admin-side,
-.admin-main,
-.stat{
-  background: var(--admin-bg) !important;
-  color: var(--admin-text) !important;
-  border: 1px solid var(--admin-border) !important;
-  border-radius:14px;
-}
-
-.admin-side{ padding:18px; }
-.admin-main{ padding:22px; }
-
-.admin-side h3,
-.admin-main h2,
-.admin-main h4{
-  margin: 0 0 10px;
-  color: var(--admin-text) !important;
-}
-
-.admin-main p{
-  margin: 0 0 14px;
-  color: var(--admin-muted) !important;
-}
-
-.admin-link{
-  display:block;
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
-  text-decoration:none;
-  background: #fff !important;
-  color: var(--admin-text) !important;
-  border: 1px solid var(--admin-border) !important;
-}
-
-.admin-link:hover{
-  background: var(--admin-hover) !important;
-}
-
-.hr-admin{
-  border:0;
-  border-top:1px solid var(--admin-border);
-  margin:14px 0;
-}
-
-/* 통계 */
-.stat-box{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-top:16px;
-}
-
-.stat{
-  padding:16px;
-  border-radius:12px;
-}
-
-.stat-title{ color: var(--admin-muted) !important; font-size:13px; }
-.stat-value{ color: var(--admin-text) !important; font-size:22px; font-weight:800; margin-top:6px; }
-
-/* 반응형 */
-@media (max-width: 960px){
-  .admin-wrap{ grid-template-columns: 1fr; }
-}
-
-/* ===== 헤더도 흰색으로 보이게(선택: home.css가 다크에서 글씨 안 보이면 필요) ===== */
-.header.is-solid{
-  background:#fff !important;
-  border-bottom: 1px solid rgba(0,0,0,.10);
-}
-.header.is-solid .nav a,
-.header.is-solid .header-right,
-.header.is-solid .header-auth{
-  color:#111 !important;
-}
-</style>
 </head>
 
-<body>
+<body class="admin-page">
 
-<header class="header is-solid">
-  <div class="container header-inner">
-    <a href="/" class="brand-top" title="메인으로">
-      <img class="brand-logo-img" src="/img/PlanTriplog.png" alt="PlanTrip">
-    </a>
+<div class="admin-shell">
+  <%@ include file="/WEB-INF/views/admin/admin_sidebar.jspf" %>
 
-    <nav class="nav">
-      <a href="/">메인</a>
-      <a href="/admin" style="font-weight:700;">관리자</a>
-	  <a href="/admin/members">회원관리</a>
-    </nav>
-
-    <div class="header-right">
-      <!-- 너가 말한대로 MName 유지 -->
-	  <div>${sessionScope.loginMember.getMName()} (ADMIN)</div>
-
-      <form action="/members/logout" method="post" style="margin:0;">
-        <button class="header-auth" type="submit">로그아웃</button>
-      </form>
-
-      <button type="button" class="theme-toggle" id="themeToggle">🌙</button>
-    </div>
-  </div>
-</header>
-
-<main class="admin-wrap">
-
-  <!-- 좌측 메뉴 -->
-  <aside class="admin-side">
-    <h3>관리자 메뉴</h3>
-
-    <a class="admin-link" href="/admin">🏠 대시보드</a>
-    <a class="admin-link" href="/admin/notices">📢 공지사항</a>
-    <a class="admin-link" href="/admin/faqs">❓ FAQ</a>
-    <a class="admin-link" href="/admin/inquiries">✉ 문의 관리</a>
-	<a class="admin-link" href="/admin/members">👥 회원 관리</a>
-
-    <hr class="hr-admin">
-
-    <a class="admin-link" href="/">← 사용자 페이지</a>
-  </aside>
-
-  <!-- 메인 -->
-  <section class="admin-main">
-    <h2>관리자 대시보드</h2>
-    <p>PlanTrip 관리자 메인 페이지</p>
-	<c:if test="${not empty msg}">
-	  <div style="margin:12px 0; padding:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff;">
-	    ${msg}
-	  </div>
-	</c:if>
-
-    <div class="stat-box">
-      <div class="stat">
-        <div class="stat-title">미처리 문의</div>
-        <div class="stat-value">${pendingQnaCount}</div>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <h1 class="admin-title">대시보드</h1>
+        <p class="admin-subtitle">관리자 통계와 최근 현황을 확인할 수 있어요.</p>
       </div>
-	</div>
-
-    <div style="margin-top:26px;">
-      <h4>빠른 이동</h4>
-      <a class="admin-link" href="/admin/notices">공지 작성</a>
-      <a class="admin-link" href="/admin/faqs">FAQ 작성</a>
-      <a class="admin-link" href="/admin/inquiries">문의 답변</a>
+      <div class="admin-actions">
+        <span class="admin-userchip">
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginMember}">
+              ${sessionScope.loginMember.MName}님 (ADMIN)
+            </c:when>
+            <c:otherwise>
+              ADMIN
+            </c:otherwise>
+          </c:choose>
+        </span>
+        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+          <span class="tt-icon" aria-hidden="true">☀️</span>
+          <span class="tt-icon" aria-hidden="true">🌙</span>
+          <span class="tt-indicator" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
-  </section>
 
-</main>
+    <c:if test="${not empty msg}">
+      <div class="admin-alert admin-card padded">${msg}</div>
+    </c:if>
 
-<script>
-(function(){
-  const root = document.documentElement;
-  const key = "plantrip-theme";
+    <section class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat__label">미처리 문의</div>
+        <div class="admin-stat__value is-red">${pendingQnaCount}건</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__label">오늘 가입 회원</div>
+        <div class="admin-stat__value is-blue">0명</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__label">활성 블랙리스트</div>
+        <div class="admin-stat__value is-gray">0명</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__label">최근 공지 조회수</div>
+        <div class="admin-stat__value is-green">0회</div>
+      </div>
+    </section>
 
-  function apply(t){
-    root.dataset.theme = t;
-    const btn = document.getElementById("themeToggle");
-    if(btn) btn.textContent = (t === "light") ? "☀️" : "🌙";
-  }
+    <section class="admin-card padded">
+      <div class="admin-section-head">
+        <h2 class="admin-h2">최근 들어온 문의</h2>
+        <a class="admin-btn" href="${pageContext.request.contextPath}/admin/inquiries">전체 보기</a>
+      </div>
 
-  apply(localStorage.getItem(key) || "dark");
+      <div class="admin-tablewrap">
+        <table class="admin-table" aria-label="최근 미처리 문의">
+          <thead>
+            <tr>
+              <th style="width:90px;">순서</th>
+              <th style="width:140px;">상태</th>
+              <th>제목</th>
+              <th style="width:160px;">작성자</th>
+              <th style="width:140px;">작성일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:set var="pendingShown" value="0" />
+            <c:forEach var="q" items="${recentQnaList}" varStatus="st">
+              <c:if test="${q['qStatus'] == 0}">
+                <tr>
+                  <td>${pendingShown + 1}</td>
+                  <td><span class="admin-status is-pending">미처리</span></td>
+                  <td class="admin-ellipsis">
+                    <a class="admin-link" href="${pageContext.request.contextPath}/admin/inquiries/${q['qIdx']}">${q['qTitle']}</a>
+                  </td>
+                  <td>${q['mName']}</td>
+                  <td>${q['qRegDateText']}</td>
+                </tr>
+                <c:set var="pendingShown" value="${pendingShown + 1}" />
+              </c:if>
+            </c:forEach>
 
-  document.getElementById("themeToggle")?.addEventListener("click", function(){
-    const next = (root.dataset.theme === "light") ? "dark" : "light";
-    localStorage.setItem(key, next);
-    apply(next);
-  });
-})();
-</script>
+            <c:if test="${pendingShown == 0}">
+              <tr>
+                <td colspan="5" class="admin-empty">
+                  최근 미처리 문의가 없습니다. (전체 목록은 <a class="admin-linktext" href="${pageContext.request.contextPath}/admin/inquiries">문의 관리</a>에서 확인)
+                </td>
+              </tr>
+            </c:if>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="admin-card padded" style="margin-top:16px;">
+      <div class="admin-section-head">
+        <h2 class="admin-h2">최근 들어온 FAQ</h2>
+        <a class="admin-btn" href="${pageContext.request.contextPath}/admin/faqs">전체 보기</a>
+      </div>
+
+      <div class="admin-tablewrap">
+        <table class="admin-table" aria-label="최근 FAQ">
+          <thead>
+            <tr>
+              <th style="width:90px;">순서</th>
+              <th>제목</th>
+              <th style="width:140px;">등록일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:if test="${empty recentFaqList}">
+              <tr><td colspan="3" class="admin-empty">최근 FAQ가 없습니다.</td></tr>
+            </c:if>
+            <c:forEach var="f" items="${recentFaqList}" varStatus="st">
+              <tr>
+                <td>${st.index + 1}</td>
+                <td class="admin-ellipsis">
+                  <a class="admin-link" href="${pageContext.request.contextPath}/admin/faqs/${f.BIdx}">${f.BTitle}</a>
+                </td>
+                <td>
+                  <c:choose>
+                    <c:when test="${empty f.BRegDate}">-</c:when>
+                    <c:otherwise>${fn:substring(f.BRegDate,0,10)}</c:otherwise>
+                  </c:choose>
+                </td>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
 
 </body>
 </html>

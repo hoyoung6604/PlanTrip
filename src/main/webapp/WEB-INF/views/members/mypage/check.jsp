@@ -7,7 +7,17 @@
 <head>
   <meta charset="UTF-8">
   <title>비밀번호 확인</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 	
@@ -153,6 +163,9 @@
   </aside>
 
 </div>
+
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

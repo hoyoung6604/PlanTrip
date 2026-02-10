@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!-- 회원가입 모달 -->
 <div class="auth-modal" id="authModal-signup" aria-hidden="true">
@@ -8,19 +7,16 @@
   <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="authSignupTitle" tabindex="-1">
     <button class="auth-modal__close" type="button" data-auth-close aria-label="닫기">✕</button>
 
-    <!-- ✅ dialog 전체에 깔리는 물결 배경 (회원가입은 CSS에서 “왼쪽”으로 나오게 처리) -->
+    <!-- dialog 전체에 깔리는 물결/물방울 배경 (회원가입은 CSS에서 “왼쪽” 앵커 처리됨) -->
     <div class="auth-modal__wave-bg" aria-hidden="true"></div>
 
+    <!-- [수정] 회원가입은 폼이 오른쪽으로 가야 하므로 auth-wrap--swap 사용 -->
     <div class="auth-wrap auth-wrap--swap">
       <div class="auth-left">
         <div class="brand">
           <div class="logo">TP</div>
           <div class="title" id="authSignupTitle">회원가입</div>
         </div>
-
-        <c:if test="${not empty error}">
-          <div class="form-error"><c:out value="${error}" /></div>
-        </c:if>
 
         <form class="form" action="/members/register" method="post">
           <div class="form-error" data-auth-error style="display:none;"></div>
@@ -49,7 +45,7 @@
         </form>
       </div>
 
-      <!-- ✅ 왼쪽 자리는 swap 상태에서 반대로 배치됨. 배경은 wave-bg가 담당 -->
+      <!-- [수정] 오른쪽(또는 왼쪽) 빈 자리용: 배경은 wave-bg가 담당 -->
       <div class="auth-right" aria-hidden="true"></div>
     </div>
   </div>

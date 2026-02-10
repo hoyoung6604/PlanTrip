@@ -7,7 +7,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>재설정 링크 오류 | 여행 플래너</title>
-  <link rel="stylesheet" href="/css/login.css">
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 
@@ -52,6 +62,9 @@
 
     <div class="auth-right bg-mountain"></div>
   </div>
+
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

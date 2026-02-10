@@ -2,41 +2,70 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-page="support">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>공지 상세 | 고객센터</title>
-  <link rel="stylesheet" href="/css/home.css"/>
+
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+  <link rel="stylesheet" href="/css/support-console.css" />
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
 </head>
 <body>
 
-<div class="container" style="padding:24px 0; max-width:900px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px;">
-    <div>
-      <h1 style="margin:0; font-size:22px;">공지사항</h1>
-      <p style="margin:6px 0 0; color:#6b7280;">공지 상세</p>
-    </div>
-    <a class="btn" href="${pageContext.request.contextPath}/support/notice">목록으로</a>
-  </div>
+<c:set var="supportActive" value="notice" />
 
-  <div style="border:1px solid #e5e7eb; border-radius:14px; background:#fff; padding:18px;">
-    <div style="font-weight:800; font-size:18px; margin-bottom:8px;">
-      ${notice.getBTitle()}
+<div class="support-shell">
+
+  <%@ include file="/WEB-INF/views/support/_sidebar.jspf" %>
+
+  <main class="support-main" aria-label="고객센터 내용">
+
+    <div class="support-top">
+      <div class="support-tabs" role="tablist" aria-label="고객센터 탭">
+        <a class="support-tab" role="tab" aria-selected="false" href="${pageContext.request.contextPath}/support">나의 문의 내역</a>
+        <a class="support-tab is-active" role="tab" aria-selected="true" href="${pageContext.request.contextPath}/support/notice">공지사항</a>
+        <a class="support-tab" role="tab" aria-selected="false" href="${pageContext.request.contextPath}/support/faq">자주 묻는 질문</a>
+      </div>
+
+      <div class="support-actions">
+        <a class="btn" href="${pageContext.request.contextPath}/support/notice">목록으로</a>
+      </div>
     </div>
 
-    <div style="color:#6b7280; font-size:13px; margin-bottom:14px;">
-      등록일: ${notice.getBRegDate()}
-      <c:if test="${notice.getBIsTop() == 1}">
-        <span style="margin-left:8px; display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #e5e7eb;">TOP</span>
-      </c:if>
-    </div>
+    <section class="support-card" aria-label="공지 상세">
+      <div class="support-card__head">
+        <div>
+          <div class="support-card__title">공지사항</div>
+          <div class="support-card__sub">공지 상세</div>
+        </div>
+      </div>
 
-    <div style="white-space:pre-wrap; line-height:1.7;">
-      ${notice.getBCont()}
-    </div>
-  </div>
+      <div class="support-article">
+        <div class="support-article__title">${notice.getBTitle()}</div>
+        <div class="support-article__meta">
+          등록일: <span>${notice.getBRegDate()}</span>
+          <c:if test="${notice.getBIsTop() == 1}">
+            <span class="support-badge">TOP</span>
+          </c:if>
+        </div>
+        <div class="support-article__body">${notice.getBCont()}</div>
+      </div>
+    </section>
+
+  </main>
+
 </div>
+
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

@@ -7,8 +7,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>비밀번호 재설정 | 여행 플래너</title>
-  <link rel="stylesheet" href="/css/login.css">
-  <script src="/js/alert.js"></script>
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
 
@@ -59,11 +68,11 @@
 
   <!-- alert.js로 띄우고 싶으면 아래처럼 param으로 트리거 가능 -->
   <c:if test="${param.sent eq 'true'}">
-    <script>
-      // 예: alert.js에 showResetLinkSent() 같은 함수가 있으면 호출
-      // showResetLinkSent();
-    </script>
+    
   </c:if>
+
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>
