@@ -48,7 +48,38 @@
 
 
 *{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+html{
+  scroll-behavior:smooth;
+  scrollbar-gutter: stable;
+}
+
+/*
+  스크롤바는 기본 숨김, 스크롤 중에만 잠깐 표시
+  - JS: /js/scrollbar-auto.js 에서 html.show-scrollbar 토글
+  - 레이아웃 흔들림(스크롤바 너비로 인한 좌우 이동) 최소화
+*/
+html:not(.show-scrollbar){
+  scrollbar-width: none;
+}
+html.show-scrollbar{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,.38) transparent;
+}
+html::-webkit-scrollbar{
+  width:0;
+  height:0;
+}
+html.show-scrollbar::-webkit-scrollbar{
+  width:10px;
+}
+html::-webkit-scrollbar-track{ background: transparent; }
+html::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.28);
+  border-radius: 999px;
+}
+html.show-scrollbar::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.38);
+}
 
 body{
   margin:0;
@@ -360,11 +391,34 @@ input,button,select,textarea{ font-family:inherit; }
   font-weight:900;
   border:1px solid transparent;
   cursor:pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
 }
 .btn.ghost{ background:#fff; border-color:var(--line); }
 .btn.ghost:hover{ background:#f3f4f6; }
 .btn.solid{ background:var(--primary); color:#fff; }
 .btn.solid:hover{ filter:brightness(.95); }
+
+/* 라이트 모드에서 '완전 흰색' 느낌을 줄이고 버튼을 구분감 있게 */
+:root[data-theme="light"] .btn:not(.solid){
+  background: rgba(255,255,255,.88);
+  color: #0f172a;
+  border-color: rgba(47,111,237,.26);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .btn:not(.solid):hover{
+  background: rgba(47,111,237,.10);
+  border-color: rgba(47,111,237,.40);
+  transform: translateY(-1px);
+}
+
+/* 고객센터(라이트) 카드/박스 톤을 살짝 올려서 눈부심 줄이기 */
+html[data-page="support"][data-theme="light"] body [style*="background:#fff"],
+html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
+  background: rgba(255,255,255,.82) !important;
+  border-color: rgba(47,111,237,.20) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
 
 /* 헤더 로그인/회원가입: '글자만' 보이게 */
 .header-auth{
@@ -375,6 +429,7 @@ input,button,select,textarea{ font-family:inherit; }
   border-radius:8px;
   font-weight:900;
   font-size:14px;
+  transition: transform .18s ease, background .18s ease;
 }
 
 /* 투명 헤더(메인 히어로) 위에서는 흰 글자 */
@@ -383,6 +438,7 @@ input,button,select,textarea{ font-family:inherit; }
 }
 .header:not(.is-solid) .header-auth:hover{
   background:rgba(255,255,255,.14) !important;
+  transform: translateY(-1px) scale(1.05);
 }
 
 /* 스크롤 내려서 헤더가 solid 됐을 때는 진한 글자 */
@@ -391,6 +447,7 @@ input,button,select,textarea{ font-family:inherit; }
 }
 .header.is-solid .header-auth:hover{
   background:rgba(255,255,255,.10) !important;
+  transform: translateY(-1px) scale(1.05);
 }
 
 .hamburger{ position:relative; }
@@ -453,6 +510,15 @@ input,button,select,textarea{ font-family:inherit; }
 .menu-btn{
   color:rgba(255,255,255,.92);
 }
+
+/* ✅ 헤더가 is-solid(라이트 헤더)여도, 햄버거 메뉴 안 글씨는 항상 밝게 유지 */
+.header.is-solid .hamburger-menu .hm-title,
+.header.is-solid .hamburger-menu .hm-subtitle,
+.header.is-solid .hamburger-menu .hm-role,
+.header.is-solid .hamburger-menu .menu-item,
+.header.is-solid .hamburger-menu .menu-btn{
+  color:rgba(255,255,255,.92) !important;
+}
 .menu-item:hover,
 .menu-btn:hover{
   background:rgba(255,255,255,.10);
@@ -482,6 +548,13 @@ input,button,select,textarea{ font-family:inherit; }
   font-size:16px;
   letter-spacing:-.2px;
   margin:4px 4px 10px;
+}
+
+.hm-role{
+  margin-left:6px;
+  font-size:12px;
+  font-weight:900;
+  color:rgba(255,255,255,.65);
 }
 .hm-actions{
   display:flex;
@@ -1101,4 +1174,7 @@ input,button,select,textarea{ font-family:inherit; }
   #recommendCards .post-card{ flex:0 0 100%; }
   .block-title{ font-size:22px; }
 }
+
+
+
 

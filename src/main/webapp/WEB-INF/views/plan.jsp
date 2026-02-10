@@ -6,7 +6,17 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>여행 계획</title>
-  <link rel="stylesheet" href="/css/home.css"/>
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<link rel="stylesheet" href="/css/home.css"/>
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 <body>
   <div class="container" style="padding:24px 0;">
@@ -14,5 +24,8 @@
     <p style="margin:0 0 16px; color:#6b7280;">여행 계획 페이지는 추후 기능을 연결하면 완성됩니다.</p>
     <a class="btn solid" href="/">홈으로</a>
   </div>
+
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
+
 </body>
 </html>

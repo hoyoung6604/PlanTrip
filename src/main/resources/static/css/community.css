@@ -212,10 +212,35 @@
 }
 
 /* ===== Light theme override (community) ===== */
+/* 라이트 모드에서는 텍스트/테이블/박스가 하얗게만 보이지 않도록 블루 톤으로 정리 */
 :root[data-theme="light"] .cm-select{
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(255,255,255,.92);
-  color: #111;
+  border: 1px solid rgba(47,111,237,.22);
+  background: rgba(255,255,255,.90);
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-table{
+  background: rgba(255,255,255,.90);
+  border: 1px solid rgba(47,111,237,.18);
+}
+:root[data-theme="light"] .cm-table th,
+:root[data-theme="light"] .cm-table td{
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-table th{
+  background: rgba(47,111,237,.10);
+  border-bottom: 1px solid rgba(47,111,237,.18);
+  color: rgba(15,23,42,.88);
+}
+:root[data-theme="light"] .cm-table tr + tr td{
+  border-top: 1px solid rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .cm-empty{
+  border: 1px solid rgba(47,111,237,.18);
+  background: rgba(255,255,255,.86);
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-empty .sub{
+  color: rgba(15,23,42,.62);
 }
 
 :root[data-theme="light"] .cm-field input::placeholder,
@@ -228,47 +253,39 @@
   color: rgba(0,0,0,.55);
 }
 
-:root[data-theme="light"] .cm-table{
-  background: rgba(255,255,255,.92);
-  border: 1px solid rgba(0,0,0,.12);
-}
-:root[data-theme="light"] .cm-table th,
-:root[data-theme="light"] .cm-table td{
-  color: #111;
-}
-:root[data-theme="light"] .cm-table th{
-  background: rgba(0,0,0,.03);
-  border-bottom: 1px solid rgba(0,0,0,.10);
-}
-:root[data-theme="light"] .cm-table tr + tr td{
-  border-top: 1px solid rgba(0,0,0,.08);
-}
-:root[data-theme="light"] .cm-linkbtn{
-  color:#111;
-}
-:root[data-theme="light"] .cm-empty{
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(255,255,255,.92);
-  color:#111;
-}
-:root[data-theme="light"] .cm-empty .sub{
-  color: rgba(0,0,0,.55);
-}
 :root[data-theme="light"] .cm-field input,
 :root[data-theme="light"] .cm-field textarea,
 :root[data-theme="light"] .cm-field select{
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(255,255,255,.92);
-  color:#111;
+  border: 1px solid rgba(47,111,237,.18);
+  background: rgba(255,255,255,.90);
+  color: #0f172a;
 }
-:root[data-theme="light"] .cm-ghost{
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(0,0,0,.03);
-  color:#111;
-}
-
-
 :root[data-theme="light"] .cm-field select option{
   background: #ffffff;
-  color: #111;
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-ghost{
+  border: 1px solid rgba(47,111,237,.18);
+  background: rgba(47,111,237,.06);
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-linkbtn{ color: #0f172a; }
+
+/* (중복 라이트 규칙 제거: 위 블루 톤 규칙을 사용) */
+
+/* 라이트 모드 색감 포인트 */
+:root[data-theme="light"] .cm-table{
+  border: 1px solid rgba(47,111,237,.18);
+  box-shadow: 0 18px 40px rgba(0,0,0,.10);
+}
+:root[data-theme="light"] .cm-table th{
+  background: rgba(47,111,237,.10);
+  color: #0f172a;
+}
+:root[data-theme="light"] .cm-table tr:hover td{
+  background: rgba(47,111,237,.06);
+}
+:root[data-theme="light"] .cm-primary{
+  background: linear-gradient(135deg, rgba(47,111,237,1), rgba(64,165,255,1));
+  box-shadow: 0 10px 24px rgba(47,111,237,.28);
 }

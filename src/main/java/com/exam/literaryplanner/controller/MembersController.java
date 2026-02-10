@@ -218,14 +218,23 @@ public class MembersController {
 
     // 2) 링크 발송 요청
     @PostMapping("/find-password")
-    public String sendResetLink(@RequestParam String email,
+    public Object sendResetLink(@RequestParam String email,
                                 HttpServletRequest request,
                                 Model model) {
 
         String baseUrl = buildBaseUrl(request);
         passwordResetService.sendResetLink(email, baseUrl);
 
-        model.addAttribute("message", "입력하신 이메일로 재설정 링크를 발송했습니다. 메일함을 확인해주세요.");
+        String msg = "입력하신 이메일로 재설정 링크를 발송했습니다. 메일함을 확인해주세요.";
+        String xr = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equalsIgnoreCase(xr)) {
+            return ResponseEntity.ok(Map.of(
+                    "ok", true,
+                    "message", msg
+            ));
+        }
+
+        model.addAttribute("message", msg);
         return "members/find-password";
     }
 

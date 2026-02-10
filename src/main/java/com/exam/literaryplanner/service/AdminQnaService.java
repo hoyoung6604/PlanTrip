@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class AdminQnaService {
@@ -44,6 +45,7 @@ public class AdminQnaService {
         });
 
         List<Map<String, Object>> out = new ArrayList<>();
+        final DateTimeFormatter ymd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (Qna q : list) {
             Map<String, Object> v = new HashMap<>();
@@ -52,6 +54,7 @@ public class AdminQnaService {
             v.put("qCont", q.getQCont());
             v.put("qAnswer", q.getQAnswer());
             v.put("qRegDate", q.getQRegDate());
+            v.put("qRegDateText", (q.getQRegDate() == null) ? "-" : q.getQRegDate().format(ymd));
 
             Integer status = q.getQStatus();
             v.put("qStatus", status);
@@ -84,7 +87,9 @@ public class AdminQnaService {
         v.put("qTitle", q.getQTitle());
         v.put("qCont", q.getQCont());
         v.put("qAnswer", q.getQAnswer());
+        final DateTimeFormatter ymd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         v.put("qRegDate", q.getQRegDate());
+        v.put("qRegDateText", (q.getQRegDate() == null) ? "-" : q.getQRegDate().format(ymd));
 
         Integer status = q.getQStatus();
         v.put("qStatus", status);

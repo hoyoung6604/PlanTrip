@@ -9,17 +9,24 @@
   <title>PlanTrip</title>
   
 
-  <!--welcome to the PlanTrip 폰트임-->
+  
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<!--welcome to the PlanTrip 폰트임-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
 
   <link rel="stylesheet" href="/css/home.css" />
- <!--<link rel="stylesheet" href="/css/login.css" />
-  <link rel="stylesheet" href="/css/signup.css" />
- --> <link rel="stylesheet" href="/css/auth-modal.css" />
- <!--ddddddd-->
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+  <script defer src="/js/pages/index.js"></script>
+  <script defer src="/js/scrollbar-auto.js"></script>
 
 
 </head>
@@ -76,10 +83,21 @@
 
            <!--✅ hm은 딱 1개만 존재 -->
           <div class="hamburger-menu" id="hm" role="menu" aria-label="메뉴">
-            <div class="hm-title">${sessionScope.loginMember.MName}님</div>
+            <div class="hm-title">
+              ${sessionScope.loginMember.MName}님
+              <span class="hm-role">
+                <j:if test="${sessionScope.loginMember.MRole == 9}">(관리자)</j:if>
+                <j:if test="${sessionScope.loginMember.MRole != 9}">(회원)</j:if>
+              </span>
+            </div>
             <a class="menu-item" href="/profile">프로필</a>
             <a class="menu-item" href="/members/mypage">마이페이지</a>
             <a class="menu-item" href="/plan">내 여행 계획</a>
+
+            
+            <j:if test="${sessionScope.loginMember.MRole == 9}">
+              <a class="menu-item" href="/admin">관리자</a>
+            </j:if>
 
             <div class="hm-divider"></div>
 
@@ -230,291 +248,6 @@
 		    </div>
 		  </section>
 		</main>
-		
-		<script>
-		  (function () {
-		    var sheet = document.querySelector('.sheet');
-		    var hero = document.querySelector('.hero');
-		    if (!sheet || !hero) return;
-
-		    var MAX_LIFT = 260;
-		    var SMOOTH = 0.14;
-
-		    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-		    var target = 0;
-		    var current = 0;
-		    var rafId = null;
-
-		    function computeTarget() {
-		      var rect = hero.getBoundingClientRect();
-		      target = clamp(-rect.top, 0, MAX_LIFT);
-		      if (!rafId) rafId = requestAnimationFrame(tick);
-		    }
-
-		    function tick() {
-		      current += (target - current) * SMOOTH;
-		      if (Math.abs(target - current) < 0.1) current = target;
-		      sheet.style.setProperty('--sheetLift', current.toFixed(2));
-		      if (Math.abs(target - current) >= 0.1) rafId = requestAnimationFrame(tick);
-		      else rafId = null;
-		    }
-
-		    window.addEventListener('scroll', computeTarget, { passive: true });
-		    window.addEventListener('resize', computeTarget);
-		    computeTarget();
-		  })();
-		</script>
-
-		<script>
-		  (function () {
-		    var marquee = document.querySelector('[data-marquee]');
-		    var track = document.querySelector('[data-marquee-track]');
-		    if (!marquee || !track) return;
-
-		    var SPEED = 60;
-
-		    function fill() {
-		      var children = Array.prototype.slice.call(track.children);
-		      var originals = children.filter(function (el) { return !el.dataset || !el.dataset.clone; });
-
-		      var clones = track.querySelectorAll('[data-clone="1"]');
-		      Array.prototype.forEach.call(clones, function (el) { el.remove(); });
-
-		      var minWidth = marquee.clientWidth * 2.2;
-		      var totalWidth = track.scrollWidth;
-
-		      while (totalWidth < minWidth) {
-		        originals.forEach(function (node) {
-		          var clone = node.cloneNode(true);
-		          clone.dataset.clone = "1";
-		          track.appendChild(clone);
-		        });
-		        totalWidth = track.scrollWidth;
-		      }
-
-		      var oneSetWidth = 0;
-		      originals.forEach(function (el) { oneSetWidth += el.getBoundingClientRect().width; });
-
-		      var gap = parseFloat(getComputedStyle(track).gap || "0");
-		      oneSetWidth += gap * (originals.length);
-
-		      track.style.setProperty('--marquee-distance', oneSetWidth + "px");
-		      track.style.setProperty('--marquee-duration', (oneSetWidth / SPEED) + "s");
-		    }
-
-		    var ro = new ResizeObserver(fill);
-		    ro.observe(marquee);
-		    window.addEventListener('load', fill);
-		  })();
-		</script>
-
-		<script>
-		  (function () {
-		    var DOMESTIC = ["부산", "제주도", "수원", "경주"];
-
-		    var CITY_CARD = {
-		      "부산": { img: "/img/sea.jpg", tags: ["#바다", "#맛집"], meta: "국내 · 추천" },
-		      "제주도": { img: "/img/sea.jpg", tags: ["#자연", "#힐링"], meta: "국내 · 추천" },
-		      "수원": { img: "/img/hero.jpg", tags: ["#당일치기", "#성곽"], meta: "국내 · 추천" },
-		      "경주": { img: "/img/mountain.jpg", tags: ["#역사", "#감성"], meta: "국내 · 추천" }
-		    };
-
-		    function domesticBar() { return document.getElementById("domesticBar"); }
-		    function cardsWrap() { return document.getElementById("recommendCards"); }
-
-		    function makeCityBtn(city) {
-		      var btn = document.createElement("button");
-		      btn.className = "city-btn";
-		      btn.type = "button";
-		      btn.textContent = city;
-		      btn.addEventListener("click", function () { selectCity(city, btn); });
-		      return btn;
-		    }
-
-		    function selectCity(city, btn) {
-		      var all = document.querySelectorAll(".city-btn");
-		      Array.prototype.forEach.call(all, function (b) { b.classList.remove("active"); });
-		      if (btn) btn.classList.add("active");
-		      renderCards(city);
-		    }
-
-		    function renderCards(city) {
-		      var wrap = cardsWrap();
-		      wrap.innerHTML = "";
-
-		      var base = CITY_CARD[city] || { img: "/img/hero.jpg", tags: ["#추천", "#핵심"], meta: "국내 · 추천" };
-
-		      var samples = [
-		        { title: city + " 핵심 일정", meta: base.meta, img: base.img, tags: base.tags },
-		        { title: city + " 맛집/명소 코스", meta: base.meta, img: base.img, tags: base.tags },
-		        { title: city + " 초보자 동선", meta: base.meta, img: base.img, tags: base.tags }
-		      ];
-
-		      samples.forEach(function (item) {
-		        var a = document.createElement("a");
-		        a.className = "post-card";
-		        a.href = "/plan/" + encodeURIComponent(city);
-
-		        var tagsHtml = item.tags.map(function (t) {
-		          return '<span class="tag">' + t + '</span>';
-		        }).join('');
-
-		        a.innerHTML =
-		          '<div class="post-img" style="background-image:url(\'' + item.img + '\')"></div>' +
-		          '<div class="post-body">' +
-		          '<div class="post-title">' + item.title + '</div>' +
-		          '<div class="post-meta">' + item.meta + '</div>' +
-		          '<div class="post-tags">' + tagsHtml + '</div>' +
-		          '</div>';
-
-		        wrap.appendChild(a);
-		      });
-		    }
-
-		    function renderDomestic() {
-		      domesticBar().innerHTML = "";
-		      DOMESTIC.forEach(function (city, idx) {
-		        var btn = makeCityBtn(city);
-		        domesticBar().appendChild(btn);
-		        if (idx === 0) selectCity(city, btn);
-		      });
-		    }
-
-		    window.addEventListener("load", function () {
-		      renderDomestic();
-		    });
-		  })();
-		</script>
-
-		<script>
-		  window.scrollRecommend = function (dir) {
-		    var wrap = document.getElementById('recommendCards');
-		    if (!wrap) return;
-
-		    var card = wrap.querySelector('.post-card');
-		    var amount = card ? (card.getBoundingClientRect().width + 16) : 360;
-		    wrap.scrollBy({ left: dir * amount, behavior: 'smooth' });
-		  };
-		</script>
-
-		<script>
-		  /* [추가] sheet가 헤더 아래로 올라오면 헤더를 흰색으로 전환 */
-		  (function () {
-		    var header = document.querySelector('.header');
-		    var sheet = document.querySelector('#sheet');
-		    if (!header || !sheet) return;
-
-		    function update() {
-		      var sheetTop = sheet.getBoundingClientRect().top;
-		      var headerH = header.offsetHeight || 64;
-
-		      if (sheetTop <= headerH + 8) header.classList.add('is-solid');
-		      else header.classList.remove('is-solid');
-		    }
-
-		    window.addEventListener('scroll', update, { passive: true });
-		    window.addEventListener('resize', update);
-		    update();
-		  })();
-		</script>
-
-<script>
-  // 카테고리 드롭다운(클릭 토글 + 바깥 클릭 닫기)
-  (function(){
-    const wrap = document.getElementById('catWrap');
-    const btn  = document.getElementById('catBtn');
-
-    if(!wrap || !btn) return;
-
-    const close = () => {
-      wrap.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    };
-
-    // 햄버거 열려있으면 같이 닫기(겹침 방지)
-    const hmBtn  = document.getElementById('hmBtn');
-    const hmMenu = document.getElementById('hm');
-    const closeHamburger = () => {
-      if (!hmBtn || !hmMenu) return;
-      hmMenu.classList.remove('open');
-      hmBtn.setAttribute('aria-expanded', 'false');
-    };
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const willOpen = !wrap.classList.contains('open');
-      document.querySelectorAll('.nav-dropdown.open').forEach(el => el.classList.remove('open'));
-      if (willOpen) {
-        closeHamburger();
-        wrap.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      } else close();
-    });
-
-    document.addEventListener('click', close);
-  })();
-
-  // 햄버거 메뉴(클릭 토글 + 바깥 클릭 닫기)
-  (function(){
-    const btn  = document.getElementById('hmBtn');
-    const menu = document.getElementById('hm');
-    const wrap = document.getElementById('hmWrap');
-
-    if(!btn || !menu || !wrap) return;
-
-    const close = () => {
-      menu.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    };
-
-    // 카테고리 열려있으면 같이 닫기(겹침 방지)
-    const catWrap = document.getElementById('catWrap');
-    const catBtn  = document.getElementById('catBtn');
-    const closeCategory = () => {
-      if (!catWrap || !catBtn) return;
-      catWrap.classList.remove('open');
-      catBtn.setAttribute('aria-expanded', 'false');
-    };
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const willOpen = !menu.classList.contains('open');
-      close();
-      if (willOpen) {
-        closeCategory();
-        menu.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-
-    document.addEventListener('click', close);
-    wrap.addEventListener('click', (e) => e.stopPropagation());
-  })();
-</script>
-
-<script>
-(function(){
-  const root = document.documentElement;
-  const key = "plantrip-theme";
-
-  function apply(theme){
-    root.dataset.theme = theme;
-    const btn = document.getElementById("themeToggle");
-    if(btn) btn.textContent = (theme === "light") ? "☀️" : "🌙";
-  }
-
-  // 첫 로딩: 저장값 적용
-  apply(localStorage.getItem(key) || "dark");
-
-  // 클릭: 저장 + 적용
-  document.getElementById("themeToggle")?.addEventListener("click", function(){
-    const next = (root.dataset.theme === "light") ? "dark" : "light";
-    localStorage.setItem(key, next);
-    apply(next);
-  });
-})();
-</script>
 
   <!-- Floating 고객센터 -->
   <a class="cs-fab" href="/support" aria-label="고객센터">
@@ -522,9 +255,7 @@
     <span class="cs-fab__label">고객센터</span>
   </a>
 
-  <%@ include file="/WEB-INF/views/common/loginModal.jspf" %>
-  <%@ include file="/WEB-INF/views/common/signupModal.jspf" %>
-  <script src="/js/auth-modal.js"></script>
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

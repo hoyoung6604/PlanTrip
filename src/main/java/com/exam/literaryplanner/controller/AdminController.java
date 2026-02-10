@@ -34,14 +34,30 @@ public class AdminController {
         this.qnaRepository = qnaRepository;
         this.literaryRepository = literaryRepository;
     }
+
+    // ✅ 사이드바 공통(미처리 문의 뱃지) 표시용
+    @ModelAttribute
+    public void addAdminCommon(Model model) {
+        model.addAttribute("pendingQnaCount", qnaRepository.countPendingByStatus(0));
+    }
     
     @GetMapping({"", "/"})
     public String adminIndex(Model model) {
-
-        long pendingQnaCount = qnaRepository.countPendingByStatus(0);
+        // ✅ 최근 문의(대기 먼저 + 최신순) 5개
+        List<java.util.Map<String, Object>> recentQnaList = adminQnaService.listAllQna();
+        if (recentQnaList.size() > 5) {
+            recentQnaList = recentQnaList.subList(0, 5);
+        }
 
         // 공지/FAQ도 나중에 추가 가능
-        model.addAttribute("pendingQnaCount", pendingQnaCount);
+        model.addAttribute("recentQnaList", recentQnaList);
+
+        // ✅ 최근 FAQ 5개 (최신순)
+        List<Board> recentFaqList = boardService.listFaqs();
+        if (recentFaqList.size() > 5) {
+            recentFaqList = recentFaqList.subList(0, 5);
+        }
+        model.addAttribute("recentFaqList", recentFaqList);
 
         return "admin/admin_index";
     }
@@ -174,7 +190,30 @@ public class AdminController {
             return "redirect:/";
         }
 
-        model.addAttribute("qnaList", adminQnaService.listAllQna());
+        List<java.util.Map<String, Object>> all = adminQnaService.listAllQna();
+
+        // ✅ 상태별 분리 (대기 먼저, 완료는 아래)
+        java.util.List<java.util.Map<String, Object>> pending = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> done = new java.util.ArrayList<>();
+        for (java.util.Map<String, Object> q : all) {
+            Object st = q.get("qStatus");
+            int v = (st instanceof Number) ? ((Number) st).intValue() : 0;
+            if (v == 0) pending.add(q);
+            else done.add(q);
+        }
+
+        int total = all.size();
+        int doneCount = done.size();
+        int pendingCount = pending.size();
+        int donePct = (total == 0) ? 0 : (int) Math.round(doneCount * 100.0 / total);
+
+        model.addAttribute("qnaPendingList", pending);
+        model.addAttribute("qnaDoneList", done);
+        model.addAttribute("qnaTotal", total);
+        model.addAttribute("qnaDoneCount", doneCount);
+        model.addAttribute("qnaPendingCount", pendingCount);
+        model.addAttribute("qnaDonePct", donePct);
+
         return "admin/inquiries"; // /WEB-INF/views/admin/inquiries.jsp
     }
 

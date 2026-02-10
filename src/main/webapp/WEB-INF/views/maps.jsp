@@ -6,10 +6,13 @@
 <head>
     <meta charset="UTF-8">
     <title>여행 지도</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+  <link rel="stylesheet" href="/css/theme-sky.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- 공통 CSS -->
     <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/maps.css">
 
     <!-- ✅ 카카오 지도 API (autoload=false로 바꿔서, load() 안에서 초기화) -->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24&libraries=services&autoload=false"></script>
@@ -51,12 +54,20 @@
             font-size: 14px;
         }
     </style>-->
+  <link rel="stylesheet" href="/css/auth-modal.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
+
+  <script defer src="/js/ui-toast.js"></script>
+  <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
+
 </head>
 
 <!-- ✅ 지도 페이지 전용 클래스 -->
 <body class="maps-page">
 
-<header class="header">
+<header class="header is-solid">
   <div class="header-inner container">
     <a href="/" class="brand-top">
       <img src="/img/PlanTriplog.png" alt="여행 플래너" class="brand-logo-img">
@@ -73,7 +84,35 @@
         </button>
 
         <div class="hamburger-menu" id="hm">
-          <!-- 기존 c:if 그대로 유지 -->
+          <c:choose>
+            <c:when test="${empty sessionScope.loginMember}">
+              <a class="menu-item" href="/members/login" data-auth-open="login">로그인</a>
+              <a class="menu-item" href="/members/register" data-auth-open="signup">회원가입</a>
+            </c:when>
+            <c:otherwise>
+              <div class="hm-title">
+                ${sessionScope.loginMember.MName}님
+                <span class="hm-role">
+                  <c:if test="${sessionScope.loginMember.MRole == 9}">(관리자)</c:if>
+                  <c:if test="${sessionScope.loginMember.MRole != 9}">(회원)</c:if>
+                </span>
+              </div>
+
+              <a class="menu-item" href="/profile">프로필</a>
+              <a class="menu-item" href="/members/mypage">마이페이지</a>
+              <a class="menu-item" href="/plan">내 여행 계획</a>
+
+              <c:if test="${sessionScope.loginMember.MRole == 9}">
+                <a class="menu-item" href="/admin">관리자</a>
+              </c:if>
+
+              <div class="hm-divider"></div>
+
+              <form action="/members/logout" method="post" style="margin:0;">
+                <button class="menu-btn" type="submit">로그아웃</button>
+              </form>
+            </c:otherwise>
+          </c:choose>
         </div>
       </div>
     </nav>
@@ -87,94 +126,10 @@
 
 <div id="map"></div>
 
-<script>
-  // ✅ SDK가 준비된 다음에만 지도 초기화
-  kakao.maps.load(function () {
+<script defer src="/js/pages/maps.js"></script>
 
-    // 지도 생성
-    var mapEl = document.getElementById('map');
-    var map = new kakao.maps.Map(mapEl, {
-      center: new kakao.maps.LatLng(37.5665, 126.9780),
-      level: 5
-    });
 
-    // ✅ 레이아웃 계산 한번 갱신 (가끔 “빈 화면” 방지)
-    setTimeout(function () {
-      map.relayout();
-      map.setCenter(new kakao.maps.LatLng(37.5665, 126.9780));
-    }, 0);
-
-    // 장소 검색 서비스
-    var places = new kakao.maps.services.Places();
-
-    // 마커 + 인포윈도우
-    var markers = [];
-    var infoWindow = new kakao.maps.InfoWindow({ zIndex: 1 });
-
-    function searchPlace() {
-      const keyword = document.getElementById("keyword").value.trim();
-      if (!keyword) {
-        alert("검색어를 입력하세요");
-        return;
-      }
-      places.keywordSearch(keyword, placesSearchCB);
-    }
-
-    function placesSearchCB(data, status) {
-      if (status !== kakao.maps.services.Status.OK) {
-        alert("검색 결과가 없습니다");
-        return;
-      }
-
-      // 기존 마커 제거
-      markers.forEach(m => m.setMap(null));
-      markers = [];
-
-      var bounds = new kakao.maps.LatLngBounds();
-
-      data.forEach(place => {
-        var position = new kakao.maps.LatLng(place.y, place.x);
-
-        var marker = new kakao.maps.Marker({
-          map: map,
-          position: position
-        });
-
-        kakao.maps.event.addListener(marker, 'click', function () {
-          var content =
-            '<div class="info-window">' +
-              '<b>' + place.place_name + '</b><br>' +
-              (place.road_address_name || place.address_name) + '<br>' +
-              (place.phone ? '☎ ' + place.phone : '') +
-            '</div>';
-
-          infoWindow.setContent(content);
-          infoWindow.open(map, marker);
-        });
-
-        markers.push(marker);
-        bounds.extend(position);
-      });
-
-      map.setBounds(bounds);
-    }
-
-    document.getElementById("searchBtn").addEventListener("click", function (e) {
-      e.preventDefault();
-      searchPlace();
-    });
-
-    // 햄버거 외부 클릭 시 닫기
-    document.addEventListener("click", function(e) {
-      const hm = document.getElementById("hm");
-      const btn = document.querySelector(".hamburger-btn");
-      if (!hm.contains(e.target) && !btn.contains(e.target)) {
-        hm.classList.remove("open");
-      }
-    });
-
-  });
-</script>
+  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>
