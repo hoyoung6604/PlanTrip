@@ -99,20 +99,21 @@
             <c:otherwise>
               <c:forEach var="q" items="${qnaPreview}">
                 <tr>
-                  <td>
-                    <c:choose>
-                      <c:when test="${not empty q['qAnswer']}">
-                        <span class="support-pill is-done">처리완료</span>
-                      </c:when>
-                      <c:otherwise>
-                        <span class="support-pill is-wait">답변대기</span>
-                      </c:otherwise>
-                    </c:choose>
+                  <td>	
+					<c:choose>
+					  <c:when test="${q['qStatus'] == 1}">
+					    <span class="support-pill is-done">처리완료</span>
+					  </c:when>
+					  <c:otherwise>
+					    <span class="support-pill is-wait">답변대기</span>
+					  </c:otherwise>
+					</c:choose>
+
                   </td>
                   <td class="support-ellipsis">
                     <a class="support-link" href="${pageContext.request.contextPath}/support/qna/${q['qIdx']}">${q['qTitle']}</a>
                   </td>
-                  <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}}</td>
+                  <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}</td>
                 </tr>
               </c:forEach>
             </c:otherwise>

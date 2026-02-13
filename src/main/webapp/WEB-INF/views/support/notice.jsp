@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!doctype html>
 <html lang="ko" data-page="support">
 <head>
@@ -90,7 +92,10 @@
               <td class="support-ellipsis">
                 <a class="support-link" href="${pageContext.request.contextPath}/support/notice/${n.getBIdx()}">${n.getBTitle()}</a>
               </td>
-              <td class="support-muted">${n.getBRegDate()}</td>
+              <td class="support-muted">
+			    ${fn:replace(fn:substring(n.getBRegDate(), 0, 10), '-', '.')}
+			  </td>
+</td>
             </tr>
           </c:forEach>
 
