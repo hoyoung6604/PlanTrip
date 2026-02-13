@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>내 여행 후기</title>
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
-  <link rel="stylesheet" href="/css/auth-modal.css" />
-  <link rel="stylesheet" href="/css/ui-toast.css" />
+   <link rel="stylesheet" href="/css/theme-sky.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+    <link rel="stylesheet" href="/css/auth-modal.css" />
+    <link rel="stylesheet" href="/css/ui-toast.css" />
 
-  <script defer src="/js/ui-toast.js"></script>
-  <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
+    <script defer src="/js/ui-toast.js"></script>
+    <script defer src="/js/theme.js"></script>
+    <script defer src="/js/auth-modal.js"></script>
+    <script defer src="/js/auth-guard.js"></script>
 
 </head>
 <body>
@@ -100,7 +100,10 @@
           <div class="mp-card-title">내 여행 후기</div>
           <div class="mp-card-sub">내가 작성한 후기만 모아 볼 수 있어요</div>
         </div>
-        <a class="mp-btn" href="${pageContext.request.contextPath}/community/write">새 후기</a>
+        <button class="mp-btn" type="button"
+                onclick="location.href='${pageContext.request.contextPath}/community/write'">
+          새 후기
+        </button>
       </div>
 
       <div class="mp-card-body">
@@ -155,9 +158,6 @@
   </main>
 
 </div>
-
-
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
-
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 </html>

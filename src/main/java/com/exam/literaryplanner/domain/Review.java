@@ -1,6 +1,12 @@
 package com.exam.literaryplanner.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "reviewT")
@@ -9,13 +15,13 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rv_idx", nullable = false)
-    private Long rvIdx; // BIGINT AI
+    private Integer rvIdx; // BIGINT AI
 
     @Column(name = "s_idx", nullable = false)
-    private Long sIdx; // FK -> spotT(s_idx)
+    private Integer sIdx; // FK -> spotT(s_idx)
 
     @Column(name = "m_idx", nullable = false)
-    private Long mIdx; // FK -> memberT(m_idx)
+    private Integer mIdx; // FK -> memberT(m_idx)
 
     @Column(name = "rv_star", nullable = false)
     private Integer rvStar; // 1~5 (DB CHECK)
@@ -31,14 +37,14 @@ public class Review {
     public Review() {}
 
     // ===== getter / setter =====
-    public Long getRvIdx() { return rvIdx; }
-    public void setRvIdx(Long rvIdx) { this.rvIdx = rvIdx; }
+    public Integer getRvIdx() { return rvIdx; }
+    public void setRvIdx(Integer rvIdx) { this.rvIdx = rvIdx; }
 
-    public Long getSIdx() { return sIdx; }
-    public void setSIdx(Long sIdx) { this.sIdx = sIdx; }
+    public Integer getSIdx() { return sIdx; }
+    public void setSIdx(Integer sIdx) { this.sIdx = sIdx; }
 
-    public Long getMIdx() { return mIdx; }
-    public void setMIdx(Long mIdx) { this.mIdx = mIdx; }
+    public Integer getMIdx() { return mIdx; }
+    public void setMIdx(Integer mIdx) { this.mIdx = mIdx; }
 
     public Integer getRvStar() { return rvStar; }
     public void setRvStar(Integer rvStar) { this.rvStar = rvStar; }

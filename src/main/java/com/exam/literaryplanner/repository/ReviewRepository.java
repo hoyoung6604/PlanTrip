@@ -1,19 +1,20 @@
 package com.exam.literaryplanner.repository;
 
-import com.exam.literaryplanner.domain.Review;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.exam.literaryplanner.domain.Review;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     // ===== 내 후기 =====
     @Query("SELECT r FROM Review r WHERE r.mIdx = :mIdx ORDER BY r.rvIdx DESC")
-    List<Review> findByMIdxOrderByRvIdxDesc(@Param("mIdx") Long mIdx);
+    List<Review> findByMIdxOrderByRvIdxDesc(@Param("mIdx") Integer mIdx);
 
     @Query("""
         SELECT r
@@ -23,7 +24,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         ORDER BY r.rvIdx DESC
     """)
     List<Review> findByMIdxAndRvTitleContainingOrderByRvIdxDesc(
-            @Param("mIdx") Long mIdx,
+            @Param("mIdx") Integer mIdx,
             @Param("rvTitle") String rvTitle
     );
 
@@ -38,7 +39,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     List<Review> searchOrderByLatestDesc(@Param("kw") String keyword,
                                         @Param("minStar") Integer minStar,
-                                        @Param("sIdx") Long sIdx);
+                                        @Param("sIdx") Integer sIdx);
 
     // ===== 커뮤니티 검색 별점순 =====
     @Query("""
@@ -51,7 +52,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     """)
     List<Review> searchOrderByStarDesc(@Param("kw") String keyword,
                                       @Param("minStar") Integer minStar,
-                                      @Param("sIdx") Long sIdx);
+                                      @Param("sIdx") Integer sIdx);
 
     // 전체
     @Query("SELECT r FROM Review r ORDER BY r.rvIdx DESC")
@@ -60,3 +61,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r ORDER BY r.rvStar DESC, r.rvIdx DESC")
     List<Review> findAllStar();
 }
+

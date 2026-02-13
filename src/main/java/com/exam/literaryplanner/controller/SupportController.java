@@ -1,16 +1,19 @@
 package com.exam.literaryplanner.controller;
 
-import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Qna;
-import com.exam.literaryplanner.service.BoardService;
-import com.exam.literaryplanner.service.SupportService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.service.BoardService;
+import com.exam.literaryplanner.service.SupportService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/support")
@@ -43,9 +46,9 @@ public class SupportController {
         model.addAttribute("noticeList", boardService.listNotices());
         return "support/notice"; // /WEB-INF/views/support/notice.jsp
     }
-    
+
     @GetMapping("/notice/{bIdx}")
-    public String noticeDetail(@PathVariable Long bIdx, Model model) {
+    public String noticeDetail(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("notice", boardService.getNoticeDetail(bIdx));
         return "support/noticeDetail"; // /WEB-INF/views/support/noticeDetail.jsp
     }
@@ -100,7 +103,7 @@ public class SupportController {
     // URL: /support/qna/{qIdx}
     @GetMapping("/qna/{qIdx}")
     public String qnaDetail(
-            @PathVariable Long qIdx,
+            @PathVariable Integer qIdx,
             HttpSession session,
             Model model,
             RedirectAttributes ra
@@ -115,10 +118,10 @@ public class SupportController {
 
         return "support/qnaDetail";
     }
-    
+
     @PostMapping("/qna/{qIdx}/delete")
     public String qnaDelete(
-            @PathVariable Long qIdx,
+            @PathVariable Integer qIdx,
             HttpSession session,
             RedirectAttributes ra
     ) {
@@ -137,11 +140,11 @@ public class SupportController {
             return "redirect:/support/qna/" + qIdx;
         }
     }
-    
+
  // ✅ 문의 수정 폼 (로그인 + 내 글만)
     @GetMapping("/qna/{qIdx}/edit")
     public String qnaEditForm(
-            @PathVariable Long qIdx,
+            @PathVariable Integer qIdx,
             HttpSession session,
             Model model,
             RedirectAttributes ra
@@ -164,7 +167,7 @@ public class SupportController {
     // ✅ 문의 수정 처리 (POST)
     @PostMapping("/qna/{qIdx}/edit")
     public String qnaEditSubmit(
-            @PathVariable Long qIdx,
+            @PathVariable Integer qIdx,
             @RequestParam String qTitle,
             @RequestParam String qCont,
             HttpSession session,
@@ -194,10 +197,10 @@ public class SupportController {
 
     // ✅ 사용자 FAQ 상세
     @GetMapping("/faq/{bIdx}")
-    public String faqDetail(@PathVariable Long bIdx, Model model) {
+    public String faqDetail(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("faq", boardService.getFaqDetail(bIdx));
         return "support/faqDetail";
     }
 
-    
+
 }

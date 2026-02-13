@@ -1,7 +1,18 @@
 package com.exam.literaryplanner.domain;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "qnaT")
@@ -10,7 +21,7 @@ public class Qna {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "q_idx", nullable = false)
-    private Long qIdx;
+    private Integer qIdx;
 
     // FK: qnaT.m_idx -> memberT.m_idx
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,13 +43,20 @@ public class Qna {
     private Integer qStatus = 0; // 0:대기, 1:완료
 
     // DB DEFAULT CURRENT_TIMESTAMP 쓰려면 insertable/updatable false
-    @Column(name = "q_regDate", nullable = false, insertable = false, updatable = false)
+    @Column(name = "q_reg_date", nullable = false)
     private LocalDateTime qRegDate;
+
+    
+    @PrePersist
+    private void prePersist() {
+        if (this.qRegDate == null) this.qRegDate = LocalDateTime.now();
+        if (this.qStatus == null) this.qStatus = 0;
+    }
 
     public Qna() {}
 
-    public Long getQIdx() { return qIdx; }
-    public void setQIdx(Long qIdx) { this.qIdx = qIdx; }
+    public Integer getQIdx() { return qIdx; }
+    public void setQIdx(Integer qIdx) { this.qIdx = qIdx; }
 
     public Member getMember() { return member; }
     public void setMember(Member member) { this.member = member; }

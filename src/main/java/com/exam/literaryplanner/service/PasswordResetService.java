@@ -1,5 +1,9 @@
 package com.exam.literaryplanner.service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,20 +12,12 @@ import com.exam.literaryplanner.domain.PasswordResetToken;
 import com.exam.literaryplanner.repository.LiteraryRepository;
 import com.exam.literaryplanner.repository.PasswordResetTokenRepository;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.util.HexFormat;
-import java.util.Optional;
-import java.util.UUID;
-
 @Service
 public class PasswordResetService {
 
     private final LiteraryRepository literaryRepository;
     private final PasswordResetTokenRepository tokenRepository;
-    private final PasswordHasher passwordHasher; // ✅ 아래에 구현 제공
+    private final PasswordHasher passwordHasher;
     private final MailService mailService;
 
     public PasswordResetService(LiteraryRepository literaryRepository,
@@ -36,7 +32,9 @@ public class PasswordResetService {
 
     @Transactional
     public void sendResetLink(String email, String baseUrl) {
-        if (email == null || email.isBlank()) return;
+        if (email == null || email.isBlank()) {
+			return;
+		}
 
         Optional<Member> memberOpt = literaryRepository.findByMEmail(email);
         if (memberOpt.isEmpty()) {
@@ -78,8 +76,12 @@ public class PasswordResetService {
         PasswordResetToken prt = tokenRepository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new IllegalArgumentException("INVALID_TOKEN"));
 
-        if (prt.isUsed()) throw new IllegalArgumentException("TOKEN_USED");
-        if (prt.isExpired()) throw new IllegalArgumentException("TOKEN_EXPIRED");
+        if (prt.isUsed()) {
+			throw new IllegalArgumentException("TOKEN_USED");
+		}
+        if (prt.isExpired()) {
+			throw new IllegalArgumentException("TOKEN_EXPIRED");
+		}
 
         return prt;
     }
@@ -96,8 +98,12 @@ public class PasswordResetService {
         PasswordResetToken prt = tokenRepository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new IllegalArgumentException("INVALID_TOKEN"));
 
-        if (prt.isUsed()) throw new IllegalArgumentException("TOKEN_USED");
-        if (prt.isExpired()) throw new IllegalArgumentException("TOKEN_EXPIRED");
+        if (prt.isUsed()) {
+			throw new IllegalArgumentException("TOKEN_USED");
+		}
+        if (prt.isExpired()) {
+			throw new IllegalArgumentException("TOKEN_EXPIRED");
+		}
 
         Member member = prt.getMember();
         // ✅ 여기서 newPassword를 해시로 저장해야 함 (BCrypt든 뭐든)

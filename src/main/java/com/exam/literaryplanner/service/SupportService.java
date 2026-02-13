@@ -1,15 +1,16 @@
 package com.exam.literaryplanner.service;
 
-import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Qna;
-import com.exam.literaryplanner.repository.QnaRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.domain.Qna;
+import com.exam.literaryplanner.repository.QnaRepository;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class SupportService {
     }
 
     @Transactional(readOnly = true)
-    public List<Qna> myQnaList(Long mIdx) {
+    public List<Qna> myQnaList(Integer mIdx) {
         return qnaRepository.findQnaByMemberId(mIdx);
     }
 
@@ -36,7 +37,7 @@ public class SupportService {
     }
 
     @Transactional(readOnly = true)
-    public Qna getMyQnaDetail(Long qIdx, Long mIdx) {
+    public Qna getMyQnaDetail(Integer qIdx, Integer mIdx) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 
@@ -45,9 +46,9 @@ public class SupportService {
         }
         return q;
     }
-    
+
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> myQnaViewList(Long mIdx) {
+    public List<Map<String, Object>> myQnaViewList(Integer mIdx) {
 
         List<Qna> list =
             qnaRepository.findQnaByMemberId(mIdx);
@@ -71,9 +72,9 @@ public class SupportService {
         return out;
     }
 
-    
+
     @Transactional(readOnly = true)
-    public Map<String, Object> getMyQnaDetailView(Long qIdx, Long mIdx) {
+    public Map<String, Object> getMyQnaDetailView(Integer qIdx, Integer mIdx) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 
@@ -96,7 +97,7 @@ public class SupportService {
     }
 
     @Transactional
-    public void deleteMyQna(Long qIdx, Long mIdx) {
+    public void deleteMyQna(Integer qIdx, Integer mIdx) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
         if (!q.getMember().getMIdx().equals(mIdx)) {
@@ -106,7 +107,7 @@ public class SupportService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Object> getMyQnaEditView(Long qIdx, Long mIdx) {
+    public Map<String, Object> getMyQnaEditView(Integer qIdx, Integer mIdx) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 
@@ -131,7 +132,7 @@ public class SupportService {
     }
 
     @Transactional
-    public void updateMyQna(Long qIdx, Long mIdx, String qTitle, String qCont) {
+    public void updateMyQna(Integer qIdx, Integer mIdx, String qTitle, String qCont) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 

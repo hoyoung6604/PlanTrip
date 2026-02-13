@@ -1,11 +1,12 @@
 package com.exam.literaryplanner.service;
 
-import com.exam.literaryplanner.domain.Board;
-import com.exam.literaryplanner.repository.BoardRepository;
-import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
+
+import com.exam.literaryplanner.domain.Board;
+import com.exam.literaryplanner.repository.BoardRepository;
 
 @Service
 public class BoardService {
@@ -28,8 +29,8 @@ public class BoardService {
         b.setBIsTop(isTop ? 1 : 0);
         return boardRepository.save(b);
     }
-    
-    public Board getNoticeDetail(Long bIdx) {
+
+    public Board getNoticeDetail(Integer bIdx) {
         Board b = boardRepository.findById(bIdx)
                 .orElseThrow(() -> new NoSuchElementException("공지사항이 존재하지 않습니다."));
 
@@ -39,8 +40,8 @@ public class BoardService {
         }
         return b;
     }
-    
-    public Board updateNotice(Long bIdx, String title, String cont, boolean isTop) {
+
+    public Board updateNotice(Integer bIdx, String title, String cont, boolean isTop) {
         Board b = boardRepository.findById(bIdx)
                 .orElseThrow(() -> new NoSuchElementException("공지사항이 존재하지 않습니다."));
 
@@ -55,7 +56,7 @@ public class BoardService {
         return boardRepository.save(b);
     }
 
-    public void deleteNotice(Long bIdx) {
+    public void deleteNotice(Integer bIdx) {
         Board b = boardRepository.findById(bIdx)
                 .orElseThrow(() -> new NoSuchElementException("공지사항이 존재하지 않습니다."));
 
@@ -65,7 +66,7 @@ public class BoardService {
 
         boardRepository.delete(b);
     }
-    
+
     public List<Board> listFaqs() {
         return boardRepository.findByTypeOrdered("FAQ");
     }
@@ -79,14 +80,16 @@ public class BoardService {
         return boardRepository.save(b);
     }
 
-    public Board getFaqDetail(Long bIdx) {
+    public Board getFaqDetail(Integer bIdx) {
         Board b = boardRepository.findById(bIdx)
                 .orElseThrow(() -> new NoSuchElementException("FAQ가 존재하지 않습니다."));
-        if (!"FAQ".equals(b.getBType())) throw new NoSuchElementException("FAQ가 존재하지 않습니다.");
+        if (!"FAQ".equals(b.getBType())) {
+			throw new NoSuchElementException("FAQ가 존재하지 않습니다.");
+		}
         return b;
     }
 
-    public Board updateFaq(Long bIdx, String title, String cont, boolean isTop) {
+    public Board updateFaq(Integer bIdx, String title, String cont, boolean isTop) {
         Board b = getFaqDetail(bIdx);
         b.setBTitle(title);
         b.setBCont(cont);
@@ -94,7 +97,7 @@ public class BoardService {
         return boardRepository.save(b);
     }
 
-    public void deleteFaq(Long bIdx) {
+    public void deleteFaq(Integer bIdx) {
         Board b = getFaqDetail(bIdx);
         boardRepository.delete(b);
     }

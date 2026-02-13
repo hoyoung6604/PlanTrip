@@ -1,5 +1,14 @@
 package com.exam.literaryplanner.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.service.LiteraryService;
 import com.exam.literaryplanner.service.MailService;
@@ -8,22 +17,13 @@ import com.exam.literaryplanner.service.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.Optional;
-import java.util.Map;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.dao.DataIntegrityViolationException;
-
 @Controller
 @RequestMapping("/members")
 public class MembersController {
 
     private final LiteraryService literaryService;
     private final PasswordResetService passwordResetService;
-    private final MailService mailService; // 아이디 찾기를 이메일로 보내고 싶으면 사용
+    private final MailService mailService;
 
     public MembersController(LiteraryService literaryService,
                              PasswordResetService passwordResetService,
@@ -42,7 +42,7 @@ public class MembersController {
     }
 
     /* =====================
-       로그인 처리 (기존 페이지 방식)
+       로그인 처리 (페이지)
        ===================== */
     @PostMapping("/login")
     public String login(@RequestParam String id,
@@ -63,14 +63,11 @@ public class MembersController {
         if (member.getMRole() != null && member.getMRole() == 9) {
             return "redirect:/admin";
         }
-
         return "redirect:/";
     }
 
     /* =====================
-       [추가] 모달(AJAX) 로그인 처리
-       - auth-modal.js(fetch)가 보내는 X-Requested-With 헤더가 있을 때만 매핑됨
-       - 페이지 이동 없이 JSON 반환
+       로그인 처리 (AJAX)
        ===================== */
     @PostMapping(value = "/login", headers = "X-Requested-With=XMLHttpRequest")
     @ResponseBody
@@ -90,10 +87,7 @@ public class MembersController {
         Member member = loginMemberOpt.get();
         session.setAttribute("loginMember", member);
 
-        String redirectTo = "/";
-        if (member.getMRole() != null && member.getMRole() == 9) {
-            redirectTo = "/admin";
-        }
+        String redirectTo = (member.getMRole() != null && member.getMRole() == 9) ? "/admin" : "/";
 
         return ResponseEntity.ok(Map.of(
                 "ok", true,
@@ -101,9 +95,9 @@ public class MembersController {
         ));
     }
 
-    // -----------------------------
-    // 아이디 찾기 (이메일로)
-    // -----------------------------
+    /* =====================
+       아이디 찾기
+       ===================== */
     @GetMapping("/find-id")
     public String findIdForm() {
         return "members/find-id";
@@ -133,60 +127,39 @@ public class MembersController {
     }
 
     /* =====================
-       회원가입 처리 (기존 페이지 방식)
+       회원가입 처리 (페이지)
        ===================== */
     @PostMapping("/register")
     public String register(Member member, Model model) {
-
         try {
             literaryService.register(member);
         } catch (DataIntegrityViolationException e) {
-            String msg = "이미 사용 중인 정보가 있습니다. 다시 확인해 주세요.";
-            String m = (e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage());
-            if (m != null) {
-                String lower = m.toLowerCase();
-                if (lower.contains("m_email") || lower.contains("email")) msg = "이미 가입된 이메일입니다.";
-                else if (lower.contains("m_id") || lower.contains("id")) msg = "이미 사용 중인 아이디입니다.";
-            }
-            model.addAttribute("error", msg);
+            model.addAttribute("error", resolveDuplicateMessage(e));
             return "members/register";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "members/register";
         }
-
         return "redirect:/members/login";
     }
 
     /* =====================
-       [추가] 모달(AJAX) 회원가입 처리
-       - 페이지 이동 없이 JSON 반환
-       - 가입 성공 후 자동 로그인까지 시도해서 모달에서 “바로 로그인 상태”가 되도록 처리
+       회원가입 처리 (AJAX)
        ===================== */
     @PostMapping(value = "/register", headers = "X-Requested-With=XMLHttpRequest")
     @ResponseBody
     public ResponseEntity<?> registerAjax(Member member, HttpSession session) {
 
-        // 자동 로그인용(가입 전 비번 원문 보관)
-        String rawPw = member.getMPw();
         String rawId = member.getMId();
+        String rawPw = member.getMPw();
 
         try {
             literaryService.register(member);
-
         } catch (DataIntegrityViolationException e) {
-            String msg = "이미 사용 중인 정보가 있습니다. 다시 확인해 주세요.";
-            String m = (e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage());
-            if (m != null) {
-                String lower = m.toLowerCase();
-                if (lower.contains("m_email") || lower.contains("email")) msg = "이미 가입된 이메일입니다.";
-                else if (lower.contains("m_id") || lower.contains("id")) msg = "이미 사용 중인 아이디입니다.";
-            }
             return ResponseEntity.badRequest().body(Map.of(
                     "ok", false,
-                    "message", msg
+                    "message", resolveDuplicateMessage(e)
             ));
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "ok", false,
@@ -194,12 +167,11 @@ public class MembersController {
             ));
         }
 
-        // ✅ 가입 직후 자동 로그인
-        Optional<Member> loginOpt = Optional.empty();
+        // 가입 직후 자동 로그인
         if (rawId != null && rawPw != null) {
-            loginOpt = literaryService.login(rawId, rawPw);
+            literaryService.login(rawId, rawPw)
+                    .ifPresent(m -> session.setAttribute("loginMember", m));
         }
-        loginOpt.ifPresent(m -> session.setAttribute("loginMember", m));
 
         return ResponseEntity.ok(Map.of(
                 "ok", true,
@@ -207,38 +179,37 @@ public class MembersController {
         ));
     }
 
-    // -----------------------------
-    // 비밀번호 재설정(토큰 링크 방식)
-    // 1) 이메일 입력 페이지
-    // -----------------------------
+    private String resolveDuplicateMessage(DataIntegrityViolationException e) {
+        String msg = "이미 사용 중인 정보가 있습니다. 다시 확인해 주세요.";
+        String m = (e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage());
+        if (m != null) {
+            String lower = m.toLowerCase();
+            if (lower.contains("m_email") || lower.contains("email")) msg = "이미 가입된 이메일입니다.";
+            else if (lower.contains("m_id") || lower.contains("id")) msg = "이미 사용 중인 아이디입니다.";
+        }
+        return msg;
+    }
+
+    /* =====================
+       비밀번호 재설정
+       ===================== */
     @GetMapping("/find-password")
     public String findPasswordForm() {
         return "members/find-password";
     }
 
-    // 2) 링크 발송 요청
     @PostMapping("/find-password")
-    public Object sendResetLink(@RequestParam String email,
+    public String sendResetLink(@RequestParam String email,
                                 HttpServletRequest request,
                                 Model model) {
 
         String baseUrl = buildBaseUrl(request);
         passwordResetService.sendResetLink(email, baseUrl);
 
-        String msg = "입력하신 이메일로 재설정 링크를 발송했습니다. 메일함을 확인해주세요.";
-        String xr = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equalsIgnoreCase(xr)) {
-            return ResponseEntity.ok(Map.of(
-                    "ok", true,
-                    "message", msg
-            ));
-        }
-
-        model.addAttribute("message", msg);
+        model.addAttribute("message", "입력하신 이메일로 재설정 링크를 발송했습니다. 메일함을 확인해주세요.");
         return "members/find-password";
     }
 
-    // 3) 링크 클릭 -> 새 비번 입력 폼
     @GetMapping("/password/reset")
     public String resetPasswordForm(@RequestParam String token, Model model) {
         try {
@@ -251,7 +222,6 @@ public class MembersController {
         }
     }
 
-    // 4) 새 비번 제출
     @PostMapping("/password/reset")
     public String resetPassword(@RequestParam String token,
                                 @RequestParam String password,
@@ -279,9 +249,6 @@ public class MembersController {
         }
     }
 
-    // -----------------------------
-    // util
-    // -----------------------------
     private String buildBaseUrl(HttpServletRequest request) {
         String scheme = request.getScheme();
         String host = request.getServerName();

@@ -138,7 +138,8 @@ input,button,select,textarea{ font-family:inherit; }
   border-bottom:1px solid transparent; /* 변경 */
   position:sticky;
   top:0;
-  z-index:2000;
+  pointer-events:auto;
+  z-index: 99999;
   transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease;
 }
 

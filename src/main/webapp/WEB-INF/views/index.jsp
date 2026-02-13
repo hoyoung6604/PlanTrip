@@ -1,35 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
-  <%@ include file="/WEB-INF/views/common/theme.jspf" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
-  
 
-  
-  <link rel="stylesheet" href="/css/theme-sky.css" />
-<!--welcome to the PlanTrip 폰트임-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/css/theme-sky.css" />
+  <!--welcome to the PlanTrip 폰트임-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
 
-  <link rel="stylesheet" href="/css/home.css" />
-  <link rel="stylesheet" href="/css/auth-modal.css" />
-  <link rel="stylesheet" href="/css/ui-toast.css" />
+    <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/auth-modal.css" />
+    <link rel="stylesheet" href="/css/ui-toast.css" />
 
-  <script defer src="/js/ui-toast.js"></script>
-  <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
-  <script defer src="/js/pages/index.js"></script>
-  <script defer src="/js/scrollbar-auto.js"></script>
+    <script defer src="/js/ui-toast.js"></script>
+    <script defer src="/js/theme.js"></script>
+    <script defer src="/js/auth-modal.js"></script>
+    <script defer src="/js/auth-guard.js"></script>
+    <script defer src="/js/pages/index.js"></script>
+    <script defer src="/js/scrollbar-auto.js"></script>
 
-
-</head>
+	</head>
 
 <body>
 
@@ -42,21 +39,21 @@
     </div>
 
     <nav class="nav">
-      <div class="nav-dropdown" id="catWrap">
-        <button class="nav-drop-btn" type="button" id="catBtn" aria-haspopup="true" aria-expanded="false">
-          카테고리 <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="nav-drop-menu" id="catMenu" role="menu" aria-label="카테고리">
-          <a href="#">관광지</a>
-          <a href="#">숙소</a>
-          <a href="#">문화/액티비티</a>
-          <a href="#">맛집</a>
-        </div>
-      </div>
-
+<a href="${pageContext.request.contextPath}/spots/list" >추천 여행지 목록</a>
       <a href="/plan">여행 계획</a>
       <a href="/community">커뮤니티</a>
       <a href="/maps">지도</a>
+	  <div class="nav-dropdown" id="transportWrap">
+	      <button class="nav-drop-btn" type="button" id="transportBtn" aria-haspopup="true" aria-expanded="false">
+	        교통수단 <span class="chev" aria-hidden="true">▾</span>
+	      </button>
+
+	      <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
+	        <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
+	        <a href="${pageContext.request.contextPath}/transport/bus">버스</a>
+	        <a href="${pageContext.request.contextPath}/transport/train">기차</a>
+	      </div>
+	    </div>
 
       <j:if test="${not empty sessionScope.loginMember}">
         <a href="/members/mypage">마이페이지</a>
@@ -64,52 +61,50 @@
     </nav>
 
     <div class="header-right">
-		
-      <!-- 비로그인: 글자 링크만 -->
-	  <j:if test="${empty sessionScope.loginMember}">
-	    <a class="header-auth" href="/members/login" data-auth-open="login">로그인</a>
-	    <a class="header-auth" href="/members/register" data-auth-open="signup">회원가입</a>
-	  </j:if>
+		<!-- 비로그인: 글자 링크만 -->
+		 <j:if test="${empty sessionScope.loginMember}">
+		   <a class="header-auth" href="/members/login" data-auth-open="login">로그인</a>
+		   <a class="header-auth" href="/members/register" data-auth-open="signup">회원가입</a>
+		 </j:if>
 
-       <!--로그인: 내 예약 + 햄버거--> 
-      <j:if test="${not empty sessionScope.loginMember}">
-        <a class="header-link" href="/reservations">내 예약</a>
+		  <!--로그인: 내 예약 + 햄버거--> 
+		 <j:if test="${not empty sessionScope.loginMember}">
+		   <a class="header-link" href="/reservations">내 예약</a>
 
-        <div class="hamburger" id="hmWrap">
-          <button class="hamburger-btn" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
-            <span></span><span></span><span></span>
+		   <div class="hamburger" id="hmWrap">
+		     <button class="hamburger-btn" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
+		       <span></span><span></span><span></span>
 			
-          </button>
+		     </button>
+		  <!--✅ hm은 딱 1개만 존재 -->
+		            <div class="hamburger-menu" id="hm" role="menu" aria-label="메뉴">
+		              <div class="hm-title">
+		                ${sessionScope.loginMember.MName}님
+		                <span class="hm-role">
+		                  <j:if test="${sessionScope.loginMember.MRole == 9}">(관리자)</j:if>
+		                  <j:if test="${sessionScope.loginMember.MRole != 9}">(회원)</j:if>
+		                </span>
+		              </div>
+		              <a class="menu-item" href="/profile">프로필</a>
+		              <a class="menu-item" href="/members/mypage">마이페이지</a>
+		              <a class="menu-item" href="/plan">내 여행 계획</a>
 
-           <!--✅ hm은 딱 1개만 존재 -->
-          <div class="hamburger-menu" id="hm" role="menu" aria-label="메뉴">
-            <div class="hm-title">
-              ${sessionScope.loginMember.MName}님
-              <span class="hm-role">
-                <j:if test="${sessionScope.loginMember.MRole == 9}">(관리자)</j:if>
-                <j:if test="${sessionScope.loginMember.MRole != 9}">(회원)</j:if>
-              </span>
-            </div>
-            <a class="menu-item" href="/profile">프로필</a>
-            <a class="menu-item" href="/members/mypage">마이페이지</a>
-            <a class="menu-item" href="/plan">내 여행 계획</a>
+		              
+		              <j:if test="${sessionScope.loginMember.MRole == 9}">
+		                <a class="menu-item" href="/admin">관리자</a>
+		              </j:if>
 
-            
-            <j:if test="${sessionScope.loginMember.MRole == 9}">
-              <a class="menu-item" href="/admin">관리자</a>
-            </j:if>
+		              <div class="hm-divider"></div>
 
-            <div class="hm-divider"></div>
-
-            <form action="/members/logout" method="post" style="margin:0;">
-              <button class="menu-btn" type="submit">로그아웃</button>
-            </form>
-          </div>
-        </div>
-      </j:if>
-		  <button type="button" class="theme-toggle" id="themeToggle">🌙</button>
-    </div>
-  </div>
+		              <form action="/members/logout" method="post" style="margin:0;">
+		                <button class="menu-btn" type="submit">로그아웃</button>
+		              </form>
+		            </div>
+		          </div>
+		        </j:if>
+		  		  <button type="button" class="theme-toggle" id="themeToggle">🌙</button>
+		      </div>
+		    </div>
 </header>
 
 
@@ -117,7 +112,7 @@
 <main>
   <section class="hero">
     <div class="hero-copy hero-copy--top">
-      <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
+      <div class="hero-pill hero-title">Wellcome to PlanTrip</div>
     </div>
 
     <!-- ✅ searchbar 내부에 다른 div 넣지 말기(레이아웃 밀림 방지) -->
@@ -248,14 +243,14 @@
 		    </div>
 		  </section>
 		</main>
+		
+		<!-- Floating 고객센터 -->
+		<a class="cs-fab" href="/support" aria-label="고객센터">
+		  <span class="cs-fab__icon" aria-hidden="true">?</span>
+		  <span class="cs-fab__label">고객센터</span>
+		</a>
 
-  <!-- Floating 고객센터 -->
-  <a class="cs-fab" href="/support" aria-label="고객센터">
-    <span class="cs-fab__icon" aria-hidden="true">?</span>
-    <span class="cs-fab__label">고객센터</span>
-  </a>
-
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
+		<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

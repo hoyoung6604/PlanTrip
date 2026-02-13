@@ -204,7 +204,53 @@
       });
 
       document.addEventListener('click', close);
-    })();
+    })()
+
+
+    // 교통수단 드롭다운
+    (function(){
+      var wrap = document.getElementById('transportWrap');
+      var btn  = document.getElementById('transportBtn');
+      if(!wrap || !btn) return;
+
+      var hmBtn = document.getElementById('hmBtn');
+      var hmMenu = document.getElementById('hm');
+
+      var catWrap = document.getElementById('catWrap');
+      var catBtn  = document.getElementById('catBtn');
+
+      function close(){
+        wrap.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+
+      function closeHamburger(){
+        if(!hmBtn || !hmMenu) return;
+        hmMenu.classList.remove('open');
+        hmBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      function closeCategory(){
+        if(!catWrap || !catBtn) return;
+        catWrap.classList.remove('open');
+        catBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var willOpen = !wrap.classList.contains('open');
+        document.querySelectorAll('.nav-dropdown.open').forEach(function(el){ el.classList.remove('open'); });
+
+        if(willOpen){
+          closeHamburger();
+          closeCategory();
+          wrap.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }else close();
+      });
+
+      document.addEventListener('click', close);
+    })();;
 
     // 햄버거
     (function(){
@@ -243,11 +289,63 @@
     })();
   }
 
+
+  // FallbackToggleDelegation: 어떤 이유로 초기 바인딩이 누락/중단되어도
+  // 교통수단/햄버거 토글은 항상 동작하도록 이벤트 위임을 한 번 더 걸어둔다.
+  (function(){
+    document.addEventListener('click', function(e){
+      var tBtn = e.target && e.target.closest ? e.target.closest('#transportBtn') : null;
+      if(tBtn){
+        e.preventDefault();
+        e.stopPropagation();
+        var wrap = document.getElementById('transportWrap');
+        var btn  = document.getElementById('transportBtn');
+        if(!wrap || !btn) return;
+
+        // 다른 드롭다운 닫기
+        document.querySelectorAll('.nav-dropdown.open').forEach(function(el){
+          if(el !== wrap) el.classList.remove('open');
+        });
+
+        var willOpen = !wrap.classList.contains('open');
+        wrap.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+
+        // 햄버거 닫기
+        var hm = document.getElementById('hm');
+        var hmBtn = document.getElementById('hmBtn');
+        if(hm && hmBtn){
+          hm.classList.remove('open');
+          hmBtn.setAttribute('aria-expanded', 'false');
+        }
+        return;
+      }
+
+      var hBtn = e.target && e.target.closest ? e.target.closest('#hmBtn') : null;
+      if(hBtn){
+        e.preventDefault();
+        e.stopPropagation();
+        var menu = document.getElementById('hm');
+        var btn  = document.getElementById('hmBtn');
+        if(!menu || !btn) return;
+
+        var willOpen = !menu.classList.contains('open');
+        menu.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+
+        // 드롭다운 닫기
+        document.querySelectorAll('.nav-dropdown.open').forEach(function(el){ el.classList.remove('open'); });
+
+        return;
+      }
+    }, false);
+  })();
+
   document.addEventListener('DOMContentLoaded', function(){
-    initSheetLift();
-    initMarquee();
-    initDomestic();
-    initHeaderSolid();
-    initDropdowns();
+    try{ initSheetLift(); }catch(e){ console.error(e); }
+    try{ initMarquee(); }catch(e){ console.error(e); }
+    try{ initDomestic(); }catch(e){ console.error(e); }
+    try{ initHeaderSolid(); }catch(e){ console.error(e); }
+    try{ initDropdowns(); }catch(e){ console.error(e); }
   });
 })();

@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>후기 수정</title>
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
-  <link rel="stylesheet" href="/css/auth-modal.css" />
-  <link rel="stylesheet" href="/css/ui-toast.css" />
+   <link rel="stylesheet" href="/css/theme-sky.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+    <link rel="stylesheet" href="/css/auth-modal.css" />
+    <link rel="stylesheet" href="/css/ui-toast.css" />
 
-  <script defer src="/js/ui-toast.js"></script>
-  <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
+    <script defer src="/js/ui-toast.js"></script>
+    <script defer src="/js/theme.js"></script>
+    <script defer src="/js/auth-modal.js"></script>
+    <script defer src="/js/auth-guard.js"></script>
 
 </head>
 <body>
@@ -116,6 +116,51 @@
           <div class="cm-field">
             <label>후기 내용</label>
             <textarea name="rvCont" required>${review.rvCont}</textarea>
+
+  <!-- =========================
+       사진 첨부/관리 (수정 화면)
+       - 기존 사진: ${photos}
+       - 추가 업로드: /reviewphoto/upload (redirectBase 사용해서 다시 edit로 복귀)
+       - 삭제: /reviewphoto/delete
+  ========================= -->
+  <section class="cm-photo" style="margin-top:18px;">
+    <h3 style="margin:0 0 10px; font-size:16px;">사진</h3>
+
+    <c:if test="${not empty photos}">
+      <div class="cm-photo-grid" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+        <c:forEach var="p" items="${photos}">
+          <div class="cm-photo-item" style="position:relative; width:120px; height:90px; border-radius:12px; overflow:hidden; background:#f3f4f6;">
+            <img
+              src="${pageContext.request.contextPath}/reviewphoto/${p.rpIdx}"
+              alt="후기 사진"
+              style="width:100%; height:100%; object-fit:cover;"
+            />
+            <form method="post" action="${pageContext.request.contextPath}/reviewphoto/delete"
+                  style="position:absolute; top:6px; right:6px;">
+              <input type="hidden" name="rpIdx" value="${p.rpIdx}" />
+              <input type="hidden" name="rvIdx" value="${review.rvIdx}" />
+              <button type="submit"
+                      style="border:0; cursor:pointer; padding:4px 8px; border-radius:999px; background:rgba(0,0,0,.55); color:#fff; font-size:12px;">
+                삭제
+              </button>
+            </form>
+          </div>
+        </c:forEach>
+      </div>
+    </c:if>
+
+    <form method="post" action="${pageContext.request.contextPath}/reviewphoto/upload"
+          enctype="multipart/form-data" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <input type="hidden" name="rvIdx" value="${review.rvIdx}" />
+      <input type="hidden" name="redirectBase" value="/community/edit?rvIdx=" />
+      <input type="file" name="photos" accept="image/*" multiple
+             style="max-width:280px;" />
+      <button type="submit" class="cm-btn cm-btn-primary" style="padding:10px 14px;">
+        사진 추가
+      </button>
+      <p style="margin:0; font-size:12px; color:#6b7280;">여러 장 선택 가능</p>
+    </form>
+  </section>
           </div>
 
           <div class="cm-actions">
@@ -129,9 +174,6 @@
   </main>
 
 </div>
-
-
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
-
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 </html>

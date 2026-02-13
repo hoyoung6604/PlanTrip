@@ -1,12 +1,15 @@
 package com.exam.literaryplanner.service;
 
-import com.exam.literaryplanner.domain.Qna;
-import com.exam.literaryplanner.repository.QnaRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.time.format.DateTimeFormatter;
+import com.exam.literaryplanner.domain.Qna;
+import com.exam.literaryplanner.repository.QnaRepository;
 
 @Service
 public class AdminQnaService {
@@ -34,18 +37,25 @@ public class AdminQnaService {
 
             // 1) status 오름차순 (0 대기 -> 1 완료)
             int c1 = Integer.compare(va, vb);
-            if (c1 != 0) return c1;
+            if (c1 != 0) {
+				return c1;
+			}
 
             // 2) regDate 내림차순 (최신 먼저)
             // null 안전 처리
-            if (a.getQRegDate() == null && b.getQRegDate() == null) return 0;
-            if (a.getQRegDate() == null) return 1;
-            if (b.getQRegDate() == null) return -1;
+            if (a.getQRegDate() == null && b.getQRegDate() == null) {
+				return 0;
+			}
+            if (a.getQRegDate() == null) {
+				return 1;
+			}
+            if (b.getQRegDate() == null) {
+				return -1;
+			}
             return b.getQRegDate().compareTo(a.getQRegDate());
         });
 
         List<Map<String, Object>> out = new ArrayList<>();
-        final DateTimeFormatter ymd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (Qna q : list) {
             Map<String, Object> v = new HashMap<>();
@@ -54,7 +64,6 @@ public class AdminQnaService {
             v.put("qCont", q.getQCont());
             v.put("qAnswer", q.getQAnswer());
             v.put("qRegDate", q.getQRegDate());
-            v.put("qRegDateText", (q.getQRegDate() == null) ? "-" : q.getQRegDate().format(ymd));
 
             Integer status = q.getQStatus();
             v.put("qStatus", status);
@@ -78,7 +87,7 @@ public class AdminQnaService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Object> getQnaDetail(Long qIdx) {
+    public Map<String, Object> getQnaDetail(Integer qIdx) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 
@@ -87,9 +96,7 @@ public class AdminQnaService {
         v.put("qTitle", q.getQTitle());
         v.put("qCont", q.getQCont());
         v.put("qAnswer", q.getQAnswer());
-        final DateTimeFormatter ymd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         v.put("qRegDate", q.getQRegDate());
-        v.put("qRegDateText", (q.getQRegDate() == null) ? "-" : q.getQRegDate().format(ymd));
 
         Integer status = q.getQStatus();
         v.put("qStatus", status);
@@ -109,7 +116,7 @@ public class AdminQnaService {
     }
 
     @Transactional
-    public void saveAnswer(Long qIdx, String qAnswer) {
+    public void saveAnswer(Integer qIdx, String qAnswer) {
         Qna q = qnaRepository.findById(qIdx)
                 .orElseThrow(() -> new IllegalArgumentException("문의가 없습니다."));
 

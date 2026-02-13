@@ -1,11 +1,12 @@
 package com.exam.literaryplanner.service;
 
-import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.repository.LiteraryRepository;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.repository.LiteraryRepository;
 
 @Service
 @Transactional
@@ -20,11 +21,15 @@ public class LiteraryService {
     }
 
     public Optional<Member> login(String id, String password) {
-        if (id == null || id.isBlank() || password == null) return Optional.empty();
+        if (id == null || id.isBlank() || password == null) {
+			return Optional.empty();
+		}
 
         return literaryRepository.findByMId(id).filter(m -> {
             String saved = m.getMPw();
-            if (saved == null || saved.isBlank()) return false;
+            if (saved == null || saved.isBlank()) {
+				return false;
+			}
 
             boolean looksHashed = saved.startsWith("$2a$") || saved.startsWith("$2b$") || saved.startsWith("$2y$");
 
@@ -45,7 +50,9 @@ public class LiteraryService {
     }
 
     public void register(Member member) {
-        if (member == null) throw new IllegalArgumentException("회원 정보가 비어 있습니다.");
+        if (member == null) {
+			throw new IllegalArgumentException("회원 정보가 비어 있습니다.");
+		}
 
         if (member.getMId() == null || member.getMId().isBlank()) {
             throw new IllegalArgumentException("아이디를 입력해 주세요.");
@@ -60,17 +67,16 @@ public class LiteraryService {
             throw new IllegalArgumentException("이메일을 입력해 주세요.");
         }
 
-        // 공백 제거 + 소문자 통일(이메일은 대소문자 구분을 안 하는 경우가 대부분이라서)
-        member.setMEmail(member.getMEmail().trim().toLowerCase());
-
         if (literaryRepository.existsByMId(member.getMId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
 
-        // 이메일 중복 체크 (@Query로 만든 existsByEmail 사용)
-        if (literaryRepository.existsByEmail(member.getMEmail())) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
-        }
+        // 이메일 중복 체크는 너가 @Query로 고친 메서드명에 맞춰 사용
+        // 예: if (literaryRepository.existsByEmail(member.getMEmail())) ...
+        // (existsByMEmail이 파싱 이슈 있었으니 @Query로 만든 메서드를 쓰는 걸 추천)
+        // if (literaryRepository.existsByEmail(member.getMEmail())) {
+        //     throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        // }
 
         if (member.getMRole() == null) {
             member.setMRole(1);

@@ -1,37 +1,43 @@
 package com.exam.literaryplanner.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Review;
 import com.exam.literaryplanner.repository.LiteraryRepository;
 import com.exam.literaryplanner.repository.ReviewRepository;
+import com.exam.literaryplanner.service.MemberDeleteService;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import com.exam.literaryplanner.service.PasswordHasher;
-import org.springframework.dao.DataIntegrityViolationException;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/members/mypage")
 public class MyPageController {
 
+    private final PasswordEncoder passwordEncoder;
     private final LiteraryRepository literaryRepository;
     private final ReviewRepository reviewRepository;
-    private final PasswordHasher passwordHasher;
-
+    private final MemberDeleteService memberDeleteService;
 
     public MyPageController(LiteraryRepository literaryRepository,
-            ReviewRepository reviewRepository,
-            PasswordHasher passwordHasher) {
-this.literaryRepository = literaryRepository;
-this.reviewRepository = reviewRepository;
-this.passwordHasher = passwordHasher;
-}
+                            ReviewRepository reviewRepository,
+                            PasswordEncoder passwordEncoder,
+                            MemberDeleteService memberDeleteService) {
+        this.literaryRepository = literaryRepository;
+        this.reviewRepository = reviewRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.memberDeleteService = memberDeleteService;
+    }
 
     /* ================= 마이페이지 메인 ================= */
     @GetMapping
@@ -61,13 +67,13 @@ this.passwordHasher = passwordHasher;
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) {
-            return "redirect:/members/login";
-        }
+			return "redirect:/members/login";
+		}
 
-        Member member = literaryRepository.findById(loginMember.getMIdx())
-                .orElseThrow();
+        Member member = literaryRepository.findById(loginMember.getMIdx()).orElseThrow();
 
-        if (!passwordHasher.matches(password, member.getMPw())) {
+        // ✅ BCrypt 비교는 matches()
+        if (!passwordEncoder.matches(password, member.getMPw())) {
             model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "members/mypage/check";
         }
@@ -121,8 +127,8 @@ this.passwordHasher = passwordHasher;
                 model.addAttribute("error", "새 비밀번호가 일치하지 않습니다.");
                 return "members/mypage/edit";
             }
-            member.setMPw(passwordHasher.bcrypt(mPw));
-
+            // ✅ 저장은 encode()
+            member.setMPw(passwordEncoder.encode(mPw));
         }
 
         literaryRepository.save(member);
@@ -174,7 +180,22 @@ this.passwordHasher = passwordHasher;
 
         return "members/mypage/reviews";
     }
-    
-    
+
+    @PostMapping("/withdraw")
+    public String withdraw(HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+			return "redirect:/members/login";
+		}
+
+        Integer mIdx = loginMember.getMIdx();
+
+        // ✅ DB에 바로 DELETE (강제)
+        literaryRepository.deleteMemberNative(mIdx);
+
+        session.invalidate();
+        return "redirect:/";
+    }
+
 }
 

@@ -1,0 +1,387 @@
+/* =========================
+   Plan UI - Full Style
+   ========================= */
+:root{
+  --bg:#0b1220;
+  --panel:#0f1b2f;
+  --card:#0d1628;
+  --line:rgba(255,255,255,.10);
+  --line2:rgba(255,255,255,.14);
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+
+  --accent:#60a5fa;
+  --accent2:#34d399;
+  --danger:#f87171;
+  --warn:#fbbf24;
+
+  --shadow: 0 16px 48px rgba(0,0,0,.38);
+  --shadow2: 0 10px 28px rgba(0,0,0,.28);
+  --radius: 18px;
+  --radius2: 14px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo";
+  color:var(--text);
+  background:
+    radial-gradient(1200px 650px at 18% 0%, rgba(96,165,250,.18), transparent 60%),
+    radial-gradient(900px 600px at 80% 18%, rgba(52,211,153,.12), transparent 60%),
+    radial-gradient(900px 600px at 60% 95%, rgba(167,139,250,.10), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+    var(--bg);
+}
+
+a{ color:var(--accent); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+.container{
+  max-width: 1060px;
+  margin: 24px auto;
+  padding: 0 16px 40px;
+}
+
+/* Header */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom: 14px;
+}
+.title{
+  margin:0;
+  font-size: 22px;
+  letter-spacing:-.2px;
+}
+.sub{
+  margin:8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.top-actions{ display:flex; gap:10px; align-items:center; }
+
+.panel{
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* Sections */
+.section{
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  background: rgba(0,0,0,.14);
+  box-shadow: var(--shadow2);
+}
+
+.section + .section{ margin-top: 12px; }
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom: 10px;
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.step{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(96,165,250,.18);
+  border: 1px solid rgba(96,165,250,.35);
+}
+
+.section-desc{
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 6px 10px;
+  border:1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Layout */
+.row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.field{
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+  border-radius: var(--radius2);
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.field.small{ flex:0; min-width: 170px; }
+.field.wide{ flex:2; min-width: 260px; }
+
+label{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+input, textarea, select{
+  width:100%;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  outline:none;
+}
+
+input::placeholder, textarea::placeholder{ color: rgba(156,163,175,.75); }
+
+input:focus, textarea:focus, select:focus{
+  border-color: rgba(96,165,250,.55);
+  box-shadow: 0 0 0 4px rgba(96,165,250,.14);
+}
+
+textarea{ min-height: 46px; resize: vertical; }
+
+/* Pills */
+.pills{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 9px 12px;
+  border:1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.03);
+  font-size: 13px;
+  line-height: 1;
+  user-select:none;
+}
+
+.pill input{ accent-color: var(--accent); }
+
+/* Buttons */
+.btns{ display:flex; gap:10px; flex-wrap:wrap; }
+
+.btn{
+  cursor:pointer;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius2);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.btn:hover{ background: rgba(255,255,255,.07); }
+
+.btn.primary{
+  border-color: rgba(96,165,250,.45);
+  background: rgba(96,165,250,.18);
+}
+
+.btn.primary:hover{ background: rgba(96,165,250,.26); }
+
+.btn.success{
+  border-color: rgba(52,211,153,.45);
+  background: rgba(52,211,153,.16);
+}
+
+.btn.danger{
+  border-color: rgba(248,113,113,.45);
+  background: rgba(248,113,113,.12);
+}
+
+/* Hint / Note */
+.hint{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.note{
+  border-left: 3px solid rgba(96,165,250,.55);
+  padding: 10px 12px;
+  background: rgba(96,165,250,.08);
+  border-radius: 12px;
+  color: #dbeafe;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Day cards */
+.day-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.day-card{
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+  border-radius: var(--radius2);
+  padding: 12px;
+}
+
+.day-card h4{
+  margin:0 0 8px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.day-card .mini{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Table */
+.table{
+  width:100%;
+  border-collapse: collapse;
+  border-radius: var(--radius2);
+  overflow:hidden;
+  border:1px solid var(--line);
+}
+
+.table th, .table td{
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  vertical-align: top;
+}
+
+.table th{
+  text-align:left;
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(229,231,235,.85);
+  background: rgba(255,255,255,.03);
+}
+
+/* Small utilities */
+hr{
+  border:0;
+  border-top:1px solid var(--line);
+  margin: 14px 0;
+}
+
+
+
+
+.day-plan{
+  margin-top: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.day-plan-title{
+  font-size: 12px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.day-plan-help{
+  font-size: 12px;
+  color: rgba(156,163,175,.95);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.day-plan-text{
+  width: 100%;
+  resize: vertical;
+  min-height: 110px;
+}
+
+.step2-actions{
+  margin-top: 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* plan.css 하단에 추가 */
+.day-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.must-go-list .field {
+    border-left: 3px solid var(--accent); /* 왼쪽에 파란색 선으로 강조 */
+    background: rgba(96, 165, 250, 0.05);
+}
+
+.day-card {
+    transition: all 0.3s ease;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 가로 스크롤바 디자인 (선택사항) */
+#dayRegionWrap::-webkit-scrollbar {
+    height: 8px;
+}
+#dayRegionWrap::-webkit-scrollbar-thumb {
+    background: var(--line2);
+    border-radius: 4px;
+}
+
+.day-unit:last-child .add-next-day {
+    /* 마지막 유닛의 플러스 버튼만 강조하거나 유지 */
+    border-color: var(--accent);
+}
+
+.add-next-day:hover {
+    background: rgba(96, 165, 250, 0.15) !important;
+    border-style: solid !important;
+}

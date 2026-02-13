@@ -1,7 +1,13 @@
 package com.exam.literaryplanner.domain;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "memberT")
@@ -10,7 +16,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "m_idx", nullable = false)
-    private Long mIdx; // PK (BIGINT AI)
+    private Integer mIdx; // PK (BIGINT AI)
 
     @Column(name = "m_id", nullable = false, unique = true, length = 40)
     private String mId; // 로그인 ID
@@ -30,15 +36,16 @@ public class Member {
     @Column(name = "sns_id", length = 100)
     private String snsId; // 소셜 로그인 식별자(보류)
 
-    // DB 기본값 CURRENT_TIMESTAMP 사용하려면 insertable/updatable 막는 게 안전
-    @Column(name = "m_regDate", nullable = false, insertable = false, updatable = false)
+ // 2. DB 컬럼명 m_regDate(사용자님 설정)와 일치시키고, 이름 차이(m_reg_date) 에러 방지
+    @Column(name = "m_regDate", insertable = false, updatable = false)
     private LocalDateTime mRegDate;
+
 
     public Member() {}
 
     // --- getters/setters ---
-    public Long getMIdx() { return mIdx; }
-    public void setMIdx(Long mIdx) { this.mIdx = mIdx; }
+    public Integer getMIdx() { return mIdx; }
+    public void setMIdx(Integer mIdx) { this.mIdx = mIdx; }
 
     public String getMId() { return mId; }
     public void setMId(String mId) { this.mId = mId; }

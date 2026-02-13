@@ -1,20 +1,25 @@
 package com.exam.literaryplanner.controller;
 
-import com.exam.literaryplanner.domain.Board;
-import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.repository.QnaRepository;
-import com.exam.literaryplanner.repository.LiteraryRepository;
-import com.exam.literaryplanner.service.AdminQnaService;
-import com.exam.literaryplanner.service.BoardService;
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import com.exam.literaryplanner.domain.Board;
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.repository.LiteraryRepository;
+import com.exam.literaryplanner.repository.QnaRepository;
+import com.exam.literaryplanner.service.AdminQnaService;
+import com.exam.literaryplanner.service.BoardService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,8 +30,8 @@ public class AdminController {
     private final QnaRepository qnaRepository;
     private final LiteraryRepository literaryRepository;
 
-    public AdminController(BoardService boardService, 
-    		AdminQnaService adminQnaService, 
+    public AdminController(BoardService boardService,
+    		AdminQnaService adminQnaService,
     		QnaRepository qnaRepository,
     		LiteraryRepository literaryRepository) {
         this.boardService = boardService;
@@ -35,29 +40,13 @@ public class AdminController {
         this.literaryRepository = literaryRepository;
     }
 
-    // ✅ 사이드바 공통(미처리 문의 뱃지) 표시용
-    @ModelAttribute
-    public void addAdminCommon(Model model) {
-        model.addAttribute("pendingQnaCount", qnaRepository.countPendingByStatus(0));
-    }
-    
     @GetMapping({"", "/"})
     public String adminIndex(Model model) {
-        // ✅ 최근 문의(대기 먼저 + 최신순) 5개
-        List<java.util.Map<String, Object>> recentQnaList = adminQnaService.listAllQna();
-        if (recentQnaList.size() > 5) {
-            recentQnaList = recentQnaList.subList(0, 5);
-        }
+
+        long pendingQnaCount = qnaRepository.countPendingByStatus(0);
 
         // 공지/FAQ도 나중에 추가 가능
-        model.addAttribute("recentQnaList", recentQnaList);
-
-        // ✅ 최근 FAQ 5개 (최신순)
-        List<Board> recentFaqList = boardService.listFaqs();
-        if (recentFaqList.size() > 5) {
-            recentFaqList = recentFaqList.subList(0, 5);
-        }
-        model.addAttribute("recentFaqList", recentFaqList);
+        model.addAttribute("pendingQnaCount", pendingQnaCount);
 
         return "admin/admin_index";
     }
@@ -88,23 +77,23 @@ public class AdminController {
 
         return "redirect:/admin/notices";
     }
-    
+
     @GetMapping("/notices/{bIdx}")
-    public String adminNoticeDetail(@PathVariable Long bIdx, Model model) {
+    public String adminNoticeDetail(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("notice", boardService.getNoticeDetail(bIdx)); // 기존 메서드 재사용
         return "admin/admin_noticeDetail";
     }
 
  // ✅ 수정 폼
     @GetMapping("/notices/{bIdx}/edit")
-    public String adminNoticeEditForm(@PathVariable Long bIdx, Model model) {
+    public String adminNoticeEditForm(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("notice", boardService.getNoticeDetail(bIdx));
         return "admin/admin_noticeEdit";
     }
 
     // ✅ 수정 처리
     @PostMapping("/notices/{bIdx}/edit")
-    public String adminNoticeEditSubmit(@PathVariable Long bIdx,
+    public String adminNoticeEditSubmit(@PathVariable Integer bIdx,
                                         @RequestParam String title,
                                         @RequestParam String cont,
                                         @RequestParam(required = false) String isTop) {
@@ -117,11 +106,11 @@ public class AdminController {
 
     // ✅ 삭제 처리
     @PostMapping("/notices/{bIdx}/delete")
-    public String adminNoticeDelete(@PathVariable Long bIdx) {
+    public String adminNoticeDelete(@PathVariable Integer bIdx) {
         boardService.deleteNotice(bIdx);
         return "redirect:/admin/notices";
     }
-    
+
  // ✅ FAQ 목록
     @GetMapping("/faqs")
     public String adminFaqList(Model model) {
@@ -147,21 +136,21 @@ public class AdminController {
 
     // ✅ FAQ 상세
     @GetMapping("/faqs/{bIdx}")
-    public String adminFaqDetail(@PathVariable Long bIdx, Model model) {
+    public String adminFaqDetail(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("faq", boardService.getFaqDetail(bIdx));
         return "admin/admin_faqDetail";
     }
 
     // ✅ FAQ 수정 폼
     @GetMapping("/faqs/{bIdx}/edit")
-    public String adminFaqEditForm(@PathVariable Long bIdx, Model model) {
+    public String adminFaqEditForm(@PathVariable Integer bIdx, Model model) {
         model.addAttribute("faq", boardService.getFaqDetail(bIdx));
         return "admin/admin_faqEdit";
     }
 
     // ✅ FAQ 수정 처리
     @PostMapping("/faqs/{bIdx}/edit")
-    public String adminFaqEditSubmit(@PathVariable Long bIdx,
+    public String adminFaqEditSubmit(@PathVariable Integer bIdx,
                                      @RequestParam String title,
                                      @RequestParam String cont,
                                      @RequestParam(required = false) String isTop) {
@@ -172,7 +161,7 @@ public class AdminController {
 
     // ✅ FAQ 삭제 처리
     @PostMapping("/faqs/{bIdx}/delete")
-    public String adminFaqDelete(@PathVariable Long bIdx) {
+    public String adminFaqDelete(@PathVariable Integer bIdx) {
         boardService.deleteFaq(bIdx);
         return "redirect:/admin/faqs";
     }
@@ -190,35 +179,12 @@ public class AdminController {
             return "redirect:/";
         }
 
-        List<java.util.Map<String, Object>> all = adminQnaService.listAllQna();
-
-        // ✅ 상태별 분리 (대기 먼저, 완료는 아래)
-        java.util.List<java.util.Map<String, Object>> pending = new java.util.ArrayList<>();
-        java.util.List<java.util.Map<String, Object>> done = new java.util.ArrayList<>();
-        for (java.util.Map<String, Object> q : all) {
-            Object st = q.get("qStatus");
-            int v = (st instanceof Number) ? ((Number) st).intValue() : 0;
-            if (v == 0) pending.add(q);
-            else done.add(q);
-        }
-
-        int total = all.size();
-        int doneCount = done.size();
-        int pendingCount = pending.size();
-        int donePct = (total == 0) ? 0 : (int) Math.round(doneCount * 100.0 / total);
-
-        model.addAttribute("qnaPendingList", pending);
-        model.addAttribute("qnaDoneList", done);
-        model.addAttribute("qnaTotal", total);
-        model.addAttribute("qnaDoneCount", doneCount);
-        model.addAttribute("qnaPendingCount", pendingCount);
-        model.addAttribute("qnaDonePct", donePct);
-
+        model.addAttribute("qnaList", adminQnaService.listAllQna());
         return "admin/inquiries"; // /WEB-INF/views/admin/inquiries.jsp
     }
 
     @GetMapping("/inquiries/{qIdx}")
-    public String inquiryDetail(@PathVariable Long qIdx, HttpSession session, Model model, RedirectAttributes ra) {
+    public String inquiryDetail(@PathVariable Integer qIdx, HttpSession session, Model model, RedirectAttributes ra) {
         Member m = (Member) session.getAttribute("loginMember");
         if (m == null || m.getMRole() == null || m.getMRole() != 9) {
             ra.addFlashAttribute("msg", "관리자만 접근 가능합니다.");
@@ -230,7 +196,7 @@ public class AdminController {
     }
 
     @PostMapping("/inquiries/{qIdx}/answer")
-    public String inquiryAnswer(@PathVariable Long qIdx,
+    public String inquiryAnswer(@PathVariable Integer qIdx,
                                 @RequestParam String qAnswer,
                                 HttpSession session,
                                 RedirectAttributes ra) {
@@ -244,7 +210,7 @@ public class AdminController {
         ra.addFlashAttribute("msg", "답변이 저장되었습니다.");
         return "redirect:/admin";
     }
-    
+
     @GetMapping("/members")
     public String adminMembers(HttpSession session, Model model, RedirectAttributes ra,
                                @RequestParam(required = false) String kw) {
@@ -265,6 +231,16 @@ public class AdminController {
         model.addAttribute("members", members);
         model.addAttribute("kw", kw);
         return "admin/admin_members";
+    }
+
+    @GetMapping("/blacklist")
+    public String blacklistPage(Model model) {
+
+        // 아직 기능 없으니까 더미 리스트 (안 넣어도 됨)
+        model.addAttribute("blacklist", new ArrayList<>());
+
+        return "admin/blacklist";
+        // → /WEB-INF/views/admin/blacklist.jsp
     }
 
 

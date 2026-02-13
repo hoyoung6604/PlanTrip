@@ -1,13 +1,14 @@
 package com.exam.literaryplanner.repository;
 
-import com.exam.literaryplanner.domain.Board;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.exam.literaryplanner.domain.Board;
 
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     @Query("select b from Board b where b.bType = :type order by b.bIsTop desc, b.bRegDate desc")
     List<Board> findByTypeOrdered(@Param("type") String type);
