@@ -16,6 +16,11 @@ public class SpotService {
 
 	private final SpotRepository spotRepository;
 	private final SpotStatsRepository spotStatsRepository;
+	
+	public Spot findById(Integer id) {
+        return spotRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 장소가 존재하지 않습니다. id=" + id));
+    }
 
 	@Transactional(readOnly = true)
 	public Page<Spot> list(String keyword, String catCode, Integer cityId, int page, int size) {

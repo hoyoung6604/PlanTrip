@@ -1,40 +1,48 @@
 src/main/java/com/exam/literaryplanner
 │
-├──  📄 LiteraryplannerApplication.java   (스프링 부트 실행 파일)
+├── 📄 LiteraryplannerApplication.java   (스프링 부트 실행 파일)
 │
 ├── 📂 config (설정)
-│   ├── 📄 WebConfig.java             (인터셉터 등록 및 시스템 환경 설정)
-│	└── 📄 LoginInterceptor.java      (로그인 체크 및 보안 필터링 로직)
+│   ├── 📄 WebConfig.java               (인터셉터/정적리소스/뷰 매핑 등 WebMvc 설정)
+│   └── 📄 AdminInterceptor.java        (관리자(/admin) 접근 제어 + 세션 기반 권한 체크)
 │
-├── 📂 controller (창구/안내소)
-│   ├── 📄 MembersController.java     (로그인/회원가입 요청 처리)
-│   ├── 📄 MyPageController.java      (마이페이지 조회 및 정보 수정 제어)
-│   ├── 📄 MapController.java         (지도 API 연동 및 장소 데이터 매핑)
-│   ├── 📄 CommunityController.java   (여행 후기 목록, 작성, 수정, 삭제 처리)
-│   ├── 📄 HomeController.java        (메인 홈페이지(/) 진입 처리)
-│   └── 📄 PageController.java        (고객센터 등 정적 페이지 연결)
+├── 📂 controller (컨트롤러)
+│   ├── 📄 HomeController.java          (메인(/) 진입 및 홈 화면 라우팅)
+│   ├── 📄 PageController.java          (정적 페이지 라우팅: profile/support 등)
+│   ├── 📄 MapController.java           (지도 페이지 진입 및 지도 데이터 연결)
+│   ├── 📄 CommunityController.java     (후기/게시판 목록·작성·수정·상세 처리)
+│   ├── 📄 SupportController.java       (고객센터: 공지/FAQ/QnA 라우팅 및 처리)
+│   ├── 📄 MembersController.java       (로그인/회원가입/세션 처리)
+│   ├── 📄 MyPageController.java        (마이페이지 조회/수정/리스트)
+│   ├── 📄 AuthApiController.java       (모달/비동기 인증 관련 API 엔드포인트)
+│   └── 📄 AdminController.java         (관리자 대시보드 + 공지/FAQ/QnA/회원 관리)
 │
+├── 📂 service (서비스)
+│   ├── 📄 LiteraryService.java         (회원 인증/중복체크 등 회원 핵심 로직)
+│   ├── 📄 BoardService.java            (공지/FAQ 게시글(Board) CRUD 비즈니스 로직)
+│   ├── 📄 SupportService.java          (고객센터(QnA 포함) 처리 공통 서비스)
+│   ├── 📄 AdminQnaService.java         (관리자용 QnA 조회/상태 변경 등)
+│   ├── 📄 MailService.java             (이메일 발송: 비밀번호 재설정 등)
+│   ├── 📄 PasswordHasher.java          (비밀번호 해시/검증 유틸)
+│   └── 📄 PasswordResetService.java    (재설정 토큰 발급/검증/비밀번호 변경)
 │
-├── 📂 service (작업실)
-│   ├── 📄 LiteraryService.java       (회원 인증 및 중복 체크 비즈니스 로직)
-│   └── 📄 PlanService.java           (여행 일정 생성 및 저장 핵심 로직)
-│   
+├── 📂 repository (Repository)
+│   ├── 📄 LiteraryRepository.java          (회원(Member) DB 접근)
+│   ├── 📄 ReviewRepository.java            (후기(Review) DB 접근)
+│   ├── 📄 BoardRepository.java             (공지/FAQ(Board) DB 접근)
+│   ├── 📄 QnaRepository.java               (문의(Qna) DB 접근 + 미처리 카운트 등)
+│   └── 📄 PasswordResetTokenRepository.java(재설정 토큰 DB 접근)
 │
-├── 📂 repository (창고 관리자)
-│   ├── 📄 LiteraryRepository.java    (회원(Member) DB 접근 인터페이스)
-│   ├── 📄 SpotRepository.java        (장소 데이터(Spot) 조회 인터페이스)
-│   ├── 📄 ReviewRepository.java      (후기(Review) DB 접근 인터페이스)
-│   └── 📄 PlanRepository.java        (일정 저장/조회 인터페이스)
-│  
-│
-└── 📂 domain (설계도/데이터 바구니)
-    │    1. 회원 및 장소 정보 엔티티
-    ├── 📄 Member.java                   
-    ├── 📄 Spot.java 
-    │
-    │    2. 후기 및 일정 메인 엔티티
-    ├── 📄 Review.java              
-    ├── 📄 TravelPlan.java 
-    │
-    └── 📄 PlanDetail.java         (일정 내 일자별 상세 리스트 엔티티)
+└── 📂 domain (엔티티/도메인)
+├── 📄 Member.java                 (회원 엔티티)
+├── 📄 Review.java                 (여행 후기 엔티티)
+├── 📄 Board.java                  (공지/FAQ 게시글 엔티티)
+├── 📄 Qna.java                    (문의(QnA) 엔티티)
+└── 📄 PasswordResetToken.java     (비밀번호 재설정 토큰 엔티티)
+
+
+
+
+
+
 

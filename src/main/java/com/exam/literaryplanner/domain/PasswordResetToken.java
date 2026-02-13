@@ -9,7 +9,7 @@ public class PasswordResetToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     // memberT(m_idx) FK
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class PasswordResetToken {
     }
 
     // getters/setters
-    public Long getId() { return id; }
+    public Integer getId() { return id; }
 
     public Member getMember() { return member; }
     public void setMember(Member member) { this.member = member; }

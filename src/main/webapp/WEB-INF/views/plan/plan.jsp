@@ -38,17 +38,20 @@
 		<button type="button" onclick="loadCity(4, this)" class="city-btn ${selectedCity == 4 ? 'active' : ''}">서울</button>
 		<button type="button" onclick="loadCity(1, this)" class="city-btn ${selectedCity == 1 ? 'active' : ''}">부산</button>
 		<button type="button" onclick="loadCity(2, this)" class="city-btn ${selectedCity == 2 ? 'active' : ''}">제주도</button>
-		<button type="button" onclick="loadCity(7, this)" class="city-btn ${selectedCity == 6 ? 'active' : ''}">강릉</button>
-		<button type="button" onclick="loadCity(5, this)" class="city-btn ${selectedCity == 1 ? 'active' : ''}">경주</button>
-		<button type="button" onclick="loadCity(3, this)" class="city-btn ${selectedCity == 2 ? 'active' : ''}">수원</button>
+		<button type="button" onclick="loadCity(7, this)" class="city-btn ${selectedCity == 7 ? 'active' : ''}">강릉</button>
+		<button type="button" onclick="loadCity(5, this)" class="city-btn ${selectedCity == 5 ? 'active' : ''}">경주</button>
+		<button type="button" onclick="loadCity(3, this)" class="city-btn ${selectedCity == 3 ? 'active' : ''}">수원</button>
 		<button type="button" onclick="loadCity(6, this)" class="city-btn ${selectedCity == 6 ? 'active' : ''}">속초</button>
     </div>
 
     <%-- 2. 인기 관광지 섹션 (TOUR) --%>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>📍 인기 관광지</h2>
-        <a href="#" style="color: #888; text-decoration: none; font-size: 14px;">더 보기 ></a>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 65px;">
+        <h2>인기 관광지</h2>
+		<a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=TOUR" 
+		class="all-link" data-cat="TOUR"       
+		style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
     </div>
+	
     <div class="slider-wrapper">
         <button class="nav-btn" onclick="sideScroll('tour-slider', 'left')">‹</button>
         <div class="card-container" id="tour-slider">
@@ -71,7 +74,12 @@
     </div>
 
     <%-- 3. 추천 숙소 섹션 (STAY) --%>
-    <h2>🏠 추천 숙소</h2>
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 65px;">
+	        <h2 style="margin: 0;">추천 숙소</h2>
+	        <a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=STAY" 
+			class="all-link" data-cat="STAY"
+	           style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
+	    </div>
     <div class="slider-wrapper">
         <button class="nav-btn" onclick="sideScroll('stay-slider', 'left')">‹</button>
         <div class="card-container" id="stay-slider">
@@ -92,7 +100,13 @@
     </div>
 
     <%-- 4. 문화/액티비티 섹션 (ACT) --%>
-    <h2>🎨 문화/액티비티</h2>
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 65px;">
+	        <h2 style="margin: 0;">문화/액티비티</h2>
+	        <%-- catCode를 STAY로 바꿔서 넣어주세요! --%>
+	        <a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=ACT" 
+			class="all-link" data-cat="ACT"   
+			style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
+	    </div>
     <div class="slider-wrapper">
         <button class="nav-btn" onclick="sideScroll('act-slider', 'left')">‹</button>
         <div class="card-container" id="act-slider">
@@ -113,7 +127,13 @@
     </div>
 
     <%-- 5. 추천 맛집 섹션 (FOOD) --%>
-    <h2>🍴 추천 맛집</h2>
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 65px;">
+	        <h2 style="margin: 0;">추천 맛집</h2>
+	        <%-- catCode를 STAY로 바꿔서 넣어주세요! --%>
+	        <a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=FOOD" 
+			class="all-link" data-cat="FOOD"   
+			style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
+	    </div>
     <div class="slider-wrapper">
         <button class="nav-btn" onclick="sideScroll('food-slider', 'left')">‹</button>
         <div class="card-container" id="food-slider">
@@ -134,46 +154,39 @@
     </div>
 </div>
 
-
-<!--<script>
-    function sideScroll(elementId, direction) {
-        const container = document.getElementById(elementId);
-        
-        // 1. 카드 한 장의 너비를 가져옵니다 (첫 번째 카드 기준)
-        const card = container.querySelector('.card-item');
-        if (!card) return; // 카드가 없으면 실행 안 함
-
-        // 2. 이동 거리 계산: 카드 너비 + 사이 간격(20px)
-        const scrollAmount = card.clientWidth + 20; 
-
-        if (direction === 'left') {
-            container.scrollLeft -= scrollAmount;
-        } else {
-            container.scrollLeft += scrollAmount;
-        }
-    }
-</script>-->
 <script>
-    // 1. 도시 데이터를 비동기로 불러오는 함수
+    // 1. 데이터를 불러오고 화면을 갱신하는 핵심 함수
     function loadCity(cityId, btn) {
+        if (!btn) return;
+
+        // 현재 선택한 도시 ID를 브라우저에 저장 (뒤로가기용)
+        sessionStorage.setItem("lastCityId", cityId);
+
         // 버튼 활성화 스타일 처리
         document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // 서버로 데이터 요청
-        fetch("${pageContext.request.contextPath}/spots/api/contents?cityId=" + cityId)
+        const contextPath = "${pageContext.request.contextPath}";
+
+        // 전체보기 링크 갱신
+        document.querySelectorAll('.all-link').forEach(link => {
+            const catCode = link.getAttribute('data-cat');
+            link.href = contextPath + "/spots/all?cityId=" + cityId + "&catCode=" + catCode;
+        });
+
+        // 실제 데이터 서버에 요청
+        fetch(contextPath + "/spots/api/contents?cityId=" + cityId)
             .then(res => res.json())
             .then(data => {
-                // 받은 데이터로 각 섹션 그리기
                 renderSection('tour-slider', data.tourList, '🏛️');
                 renderSection('stay-slider', data.stayList, '🛌');
                 renderSection('act-slider', data.actList, '🏄');
                 renderSection('food-slider', data.foodList, '🍱');
             })
-            .catch(err => console.error("로딩 실패:", err));
+            .catch(err => console.error("데이터 로딩 실패:", err));
     }
 
-    // 2. 카드를 화면에 그려주는 함수
+    // 2. 섹션 그리기 함수
     function renderSection(containerId, list, emoji) {
         const container = document.getElementById(containerId);
         container.innerHTML = ''; 
@@ -201,26 +214,39 @@
         });
     }
 
-    // 3. 사용자님이 주신 화살표 슬라이드 함수 (그대로 유지!)
+    // 3. 슬라이더 이동 함수
     function sideScroll(elementId, direction) {
         const container = document.getElementById(elementId);
         const card = container.querySelector('.card-item');
         if (!card) return; 
-
         const scrollAmount = card.clientWidth + 20; 
-
-        if (direction === 'left') {
-            container.scrollLeft -= scrollAmount;
-        } else {
-            container.scrollLeft += scrollAmount;
-        }
+        if (direction === 'left') container.scrollLeft -= scrollAmount;
+        else container.scrollLeft += scrollAmount;
     }
 
-    // 4. 페이지 처음 켰을 때 서울(4) 데이터를 기본으로 불러오기
-    window.onload = () => {
-        const defaultBtn = document.querySelector('.city-btn.active') || document.querySelector('.city-btn');
-        if(defaultBtn) loadCity(4, defaultBtn);
-    };
+    // 4. [가장 중요] 페이지 진입 시 실행 로직
+    document.addEventListener("DOMContentLoaded", function() {
+        // 저장된 도시 ID 확인 (없으면 서울 4번)
+        const savedCityId = sessionStorage.getItem("lastCityId") || "4";
+        
+        // 해당 ID를 가진 버튼 찾기 (onclick 속성에 해당 숫자가 포함된 버튼)
+        const buttons = document.querySelectorAll('.city-btn');
+        let targetBtn = null;
+        
+        buttons.forEach(btn => {
+            if (btn.getAttribute('onclick').includes(savedCityId)) {
+                targetBtn = btn;
+            }
+        });
+
+        // 찾은 버튼이 있으면 클릭 효과와 함께 데이터 로딩 실행
+        if (targetBtn) {
+            loadCity(savedCityId, targetBtn);
+        } else if (buttons.length > 0) {
+            // 버튼을 못 찾으면 첫 번째 버튼이라도 실행
+            loadCity("4", buttons[0]);
+        }
+    });
 </script>
 </body>
 </html>
