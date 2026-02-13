@@ -9,12 +9,62 @@
         body { font-family: 'Pretendard', sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0; }
         .section-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         
-        /* 도시 버튼 스타일 */
-        .city-nav { display: flex; gap: 15px; margin-bottom: 40px; overflow-x: auto; padding: 10px 0; }
-        .city-btn { padding: 12px 25px; border: 1px solid #eee; border-radius: 25px; background: white; 
-                    cursor: pointer; font-weight: bold; text-decoration: none; color: #555; box-shadow: 0 2px 8px rgba(0,0,0,0.05); white-space: nowrap; }
-        .city-btn.active { background: #3264ff; color: white; border-color: #3264ff; }
+		.city-nav { 
+		    display: flex; 
+		    gap: 15px; 
+		    margin-bottom: 40px; 
+		    overflow-x: auto; 
+		    padding: 20px 5px; 
+		    scrollbar-width: none; /* 스크롤바 숨기기 */
+		}
+		.city-nav::-webkit-scrollbar { display: none; }
 
+		.city-btn { 
+		    /* 버튼 크기 및 배경 설정 */
+		    min-width: 160px; 
+		    height: 100px; 
+		    border: none; 
+		    border-radius: 15px; 
+		    background-size: cover; 
+		    background-position: center; 
+		    
+		    /* 텍스트 배치 및 스타일 */
+		    cursor: pointer; 
+		    font-weight: 800; 
+		    font-size: 18px;
+		    color: white; 
+		    display: flex;
+		    align-items: flex-end; /* 텍스트를 버튼 아래쪽에 배치 */
+		    padding: 15px;
+		    position: relative;
+		    overflow: hidden;
+		    transition: all 0.3s ease;
+		    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+		}
+
+		/* 이미지 위에 글자가 잘 보이도록 어둡게 덮는 효과 */
+		.city-btn::before {
+		    content: '';
+		    position: absolute;
+		    top: 0; left: 0; right: 0; bottom: 0;
+		    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
+		    z-index: 1;
+		}
+
+		/* 글자가 효과 레이어보다 위에 오도록 설정 */
+		.city-btn span {
+		    position: relative;
+		    z-index: 2;
+		    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+		}
+
+		/* 활성화(선택) 되었을 때 스타일 */
+		.city-btn.active { 
+		    transform: translateY(-8px); /* 살짝 위로 떠오름 */
+		    box-shadow: 0 8px 20px rgba(50, 100, 255, 0.4);
+		    outline: 4px solid #3264ff; /* 파란색 테두리 */
+		    outline-offset: -4px;
+		}
         /* 슬라이더 및 카드 스타일 */
         .slider-wrapper { position: relative; display: flex; align-items: center; gap: 10px; margin-bottom: 60px; }
         .card-container { display: flex; overflow-x: hidden; scroll-behavior: smooth; gap: 20px; width: 100%; padding: 10px 5px; }
@@ -26,23 +76,64 @@
                     box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
         h2 { font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-    </style>
+  
+		  </style>
 </head>
 <body>
+	<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+	    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
+	        
+	        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
+	            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
+	                 alt="PlanTrip 로고" 
+	                 style="height: 45px; width: auto; object-fit: contain;">
+	        </a>
 
+	        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
+	            </nav>
+	        
+	    </div>
+	</header>
 <div class="section-container">
-    <h1 style="font-size: 32px; font-weight: 800; margin-top: 50px;">대한민국에서 놓치면 안 될 인기 명소</h1>
+    <h1 style="font-size: 32px; font-weight: 800; margin-top: 50px; margin-left: 60px;">대한민국에서 놓치면 안 될 인기 명소</h1>
 
-    <%-- 1. 도시 선택 버튼 --%>
-    <div class="city-nav">
-		<button type="button" onclick="loadCity(4, this)" class="city-btn ${selectedCity == 4 ? 'active' : ''}">서울</button>
-		<button type="button" onclick="loadCity(1, this)" class="city-btn ${selectedCity == 1 ? 'active' : ''}">부산</button>
-		<button type="button" onclick="loadCity(2, this)" class="city-btn ${selectedCity == 2 ? 'active' : ''}">제주도</button>
-		<button type="button" onclick="loadCity(7, this)" class="city-btn ${selectedCity == 7 ? 'active' : ''}">강릉</button>
-		<button type="button" onclick="loadCity(5, this)" class="city-btn ${selectedCity == 5 ? 'active' : ''}">경주</button>
-		<button type="button" onclick="loadCity(3, this)" class="city-btn ${selectedCity == 3 ? 'active' : ''}">수원</button>
-		<button type="button" onclick="loadCity(6, this)" class="city-btn ${selectedCity == 6 ? 'active' : ''}">속초</button>
-    </div>
+	<%-- 1. 도시 선택 버튼 (4개씩 슬라이더 버전) --%>
+	<div class="slider-wrapper" style="margin-top: 40px; margin-bottom: 50px;">
+	    <button class="nav-btn" onclick="sideScroll('city-slider', 'left')">‹</button>
+	    
+	    <div class="card-container" id="city-slider">
+	        <button type="button" onclick="loadCity(4, this)" class="card-item city-btn ${selectedCity == 4 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>서울</span>
+	        </button>
+	        <button type="button" onclick="loadCity(1, this)" class="card-item city-btn ${selectedCity == 1 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>부산</span>
+	        </button>
+	        <button type="button" onclick="loadCity(2, this)" class="card-item city-btn ${selectedCity == 2 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>제주도</span>
+	        </button>
+	        <button type="button" onclick="loadCity(7, this)" class="card-item city-btn ${selectedCity == 7 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>강릉</span>
+	        </button>
+	        <button type="button" onclick="loadCity(5, this)" class="card-item city-btn ${selectedCity == 5 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>경주</span>
+	        </button>
+	        <button type="button" onclick="loadCity(3, this)" class="card-item city-btn ${selectedCity == 3 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>수원</span>
+	        </button>
+	        <button type="button" onclick="loadCity(6, this)" class="card-item city-btn ${selectedCity == 6 ? 'active' : ''}" 
+	                style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
+	            <span>속초</span>
+	        </button>
+	    </div>
+
+	    <button class="nav-btn" onclick="sideScroll('city-slider', 'right')">›</button>
+	</div>
 
     <%-- 2. 인기 관광지 섹션 (TOUR) --%>
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 65px;">

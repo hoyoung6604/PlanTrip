@@ -9,71 +9,128 @@
         body { font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         
-        .header-section { margin-bottom: 40px; }
-        .category-title { font-size: 28px; font-weight: 800; color: #333; }
+        /* 2단 레이아웃 설정 */
+        .main-layout { display: flex; gap: 30px; align-items: flex-start; }
+        
+        /* 왼쪽 사이드바 스타일 */
+        .sidebar { width: 240px; position: sticky; top: 20px; flex-shrink: 0; }
+        .category-menu { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .menu-title { font-size: 16px; font-weight: bold; color: #888; margin-bottom: 15px; padding-left: 10px; }
+        .menu-list { list-style: none; padding: 0; margin: 0; }
+        .menu-item a { 
+            display: block; padding: 12px 15px; text-decoration: none; color: #555; 
+            border-radius: 10px; margin-bottom: 5px; transition: 0.2s; font-weight: 500;
+        }
+        .menu-item a:hover { background: #f0f4ff; color: #3264ff; }
+        .menu-item.active a { background: #3264ff; color: white; font-weight: bold; }
+
+        /* 오른쪽 컨텐츠 영역 */
+        .content-area { flex: 1; }
+        .header-section { margin-bottom: 30px; }
+        .category-title { font-size: 24px; font-weight: 800; color: #333; }
         .city-name { color: #3264ff; }
 
-        /* 격자 레이아웃: 한 줄에 4개씩 */
-        .spot-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 25px; 
-        }
-
+        /* 리스트형 카드 디자인 */
+        .spot-list { display: flex; flex-direction: column; gap: 20px; }
         .card { 
             background: white; border-radius: 16px; overflow: hidden; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;
-            cursor: pointer; text-decoration: none; color: inherit;
-            display: block;
+            text-decoration: none; color: inherit; display: flex; height: 180px;
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         
-        .img-box { height: 200px; background-color: #eee; background-size: cover; background-position: center; }
+        .img-box { width: 240px; background-color: #eee; background-size: cover; background-position: center; flex-shrink: 0; }
         
-        .info-box { padding: 20px; }
-        .spot-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #333; }
-        .spot-addr { font-size: 14px; color: #777; line-height: 1.4; }
+        .info-box { padding: 25px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .spot-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #333; }
+        .spot-addr { font-size: 15px; color: #777; margin-bottom: 10px; }
+        .spot-price { font-size: 16px; color: #3264ff; font-weight: bold; }
+        
+        .btn-detail { 
+            position: absolute; right: 25px; bottom: 25px;
+            background: #f0f4ff; color: #3264ff; padding: 8px 18px; 
+            border-radius: 8px; font-size: 14px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
+	<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+		    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
+		        
+		        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
+		            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
+		                 alt="PlanTrip 로고" 
+		                 style="height: 45px; width: auto; object-fit: contain;">
+		        </a>
 
+		        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
+		            </nav>
+		        
+		    </div>
+		</header>
 <div class="container">
-	<div class="header-section">
-	    <a href="${pageContext.request.contextPath}/spots/list?cityId=${selectedCity}" 
-	       style="text-decoration: none; color: #888; font-size: 14px; display: inline-block; margin-bottom: 15px; font-weight: bold;">
-	       &lt; 뒤로가기
-	    </a>
-	    
-	    <div class="category-title">
-	        <span class="city-name">${city.name}</span> 
-	        <j:choose>
-	            <j:when test="${catCode eq 'TOUR'}">인기 관광지</j:when>
-	            <j:when test="${catCode eq 'STAY'}">추천 숙소</j:when>
-	            <j:when test="${catCode eq 'ACT'}">문화/액티비티</j:when>
-	            <j:when test="${catCode eq 'FOOD'}">추천 맛집</j:when>
-	        </j:choose>
-	        전체보기
-	    </div>
-	</div>
-
-    <div class="spot-grid">
-        <j:forEach var="s" items="${spotList}">
-            <a href="${pageContext.request.contextPath}/spots/detail/${s.id}" class="card">
-                <%-- 임시로 hero.jpg를 사용하고, 나중에 DB 이미지 필드 추가 시 변경 가능 --%>
-                <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');"></div>
-                <div class="info-box">
-                    <div class="spot-title">${s.name}</div>
-                    <div class="spot-addr">${s.addr}</div>
-                </div>
+    <div class="main-layout">
+        
+        <aside class="sidebar">
+            <a href="${pageContext.request.contextPath}/spots/list?cityId=${selectedCity}" 
+               style="text-decoration: none; color: #888; font-size: 14px; display: inline-block; margin-bottom: 20px; font-weight: bold;">
+               &lt; 메인으로 돌아가기
             </a>
-        </j:forEach>
+            <div class="category-menu">
+                <div class="menu-title">카테고리</div>
+                <ul class="menu-list">
+                    <li class="menu-item ${catCode eq 'TOUR' ? 'active' : ''}">
+                        <a href="?cityId=${selectedCity}&catCode=TOUR">🏛️ 인기 관광지</a>
+                    </li>
+                    <li class="menu-item ${catCode eq 'STAY' ? 'active' : ''}">
+                        <a href="?cityId=${selectedCity}&catCode=STAY">🛌 추천 숙소</a>
+                    </li>
+                    <li class="menu-item ${catCode eq 'ACT' ? 'active' : ''}">
+                        <a href="?cityId=${selectedCity}&catCode=ACT">🏄 문화/액티비티</a>
+                    </li>
+                    <li class="menu-item ${catCode eq 'FOOD' ? 'active' : ''}">
+                        <a href="?cityId=${selectedCity}&catCode=FOOD">🍱 추천 맛집</a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="header-section">
+                <div class="category-title">
+                    <span class="city-name">${city.name}</span> 
+                    <j:choose>
+                        <j:when test="${catCode eq 'TOUR'}">인기 관광지</j:when>
+                        <j:when test="${catCode eq 'STAY'}">추천 숙소</j:when>
+                        <j:when test="${catCode eq 'ACT'}">문화/액티비티</j:when>
+                        <j:when test="${catCode eq 'FOOD'}">추천 맛집</j:when>
+                    </j:choose>
+                </div>
+                <div style="color: #999; margin-top: 5px;">총 ${spotList.size()}개의 장소가 검색되었습니다.</div>
+            </div>
+
+            <div class="spot-list">
+                <j:forEach var="s" items="${spotList}">
+                    <a href="${pageContext.request.contextPath}/spots/detail/${s.id}" class="card">
+                        <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');"></div>
+                        <div class="info-box">
+                            <div class="spot-title">${s.name}</div>
+                            <div class="spot-addr">${s.addr}</div>
+                            <div class="spot-price">★ ${not empty s.price ? s.price : '0.0'}</div>
+                            <div class="btn-detail">상세보기</div>
+                        </div>
+                    </a>
+                </j:forEach>
+            </div>
+            
+            <j:if test="${empty spotList}">
+                <div style="text-align: center; padding: 100px 0; color: #999; background: white; border-radius: 16px;">
+                    등록된 장소가 없습니다.
+                </div>
+            </j:if>
+        </main>
+        
     </div>
-    
-    <j:if test="${empty spotList}">
-        <div style="text-align: center; padding: 100px 0; color: #999;">
-            등록된 장소가 없습니다.
-        </div>
-    </j:if>
 </div>
 
 </body>
