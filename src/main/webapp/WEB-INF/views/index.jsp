@@ -50,7 +50,7 @@
 
 	      <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
 	        <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-	        <a href="${pageContext.request.contextPath}/transport/bus">버스</a>
+	        <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
 	        <a href="${pageContext.request.contextPath}/transport/train">기차</a>
 	      </div>
 	    </div>

@@ -26,17 +26,18 @@ public class TransportController {
 
     private final TransportService transportService;
     
-    private TransportController(TransportService transportService) {
-        this.transportService = transportService;
+    public TransportController(TransportService transportService) {
+    	this.transportService = transportService;
     }
 
-
-    // ✅ 페이지 진입 시: 기본으로 "오늘 날짜" 제주↔전국 공항 운항편 자동 표시
+    // =========================
+    //  항공권 (기존 유지)
+    // =========================
     @GetMapping("/flight")
     public String flight(
             @RequestParam(required = false) String depPlandTime,
             @RequestParam(required = false) String airportId,
-            @RequestParam(defaultValue = "JEJU_OUT") String direction, // ✅ JEJU_OUT / JEJU_IN
+            @RequestParam(defaultValue = "JEJU_OUT") String direction,
             @RequestParam(defaultValue = "1") int page,
             Model model
     ) {
@@ -47,7 +48,6 @@ public class TransportController {
         model.addAttribute("airports", transportService.getAirports());
         model.addAttribute("depPlandTime", date);
 
-        // ✅ 달력용 yyyy-MM-dd
         String depPlandTimeIso = LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE)
                 .format(DateTimeFormatter.ISO_LOCAL_DATE);
         model.addAttribute("depPlandTimeIso", depPlandTimeIso);
@@ -59,13 +59,9 @@ public class TransportController {
         model.addAttribute("selectedAirportId", selected);
         model.addAttribute("direction", direction);
 
-        // ✅ 전체(선택공항↔제주) 조회
         List<Map<String, Object>> all = transportService.searchJejuRouteByAirport(selected, date);
 
-        // ✅ 방향 필터: 출발공항 기준
-        // JEJU_OUT = 제주 출발(=depAirportId가 JEJU_ID)
-        // JEJU_IN  = 선택공항 출발(=depAirportId가 selected)
-        String jejuId = "NAARKPC"; // 제주 공항 ID (서비스와 동일)
+        String jejuId = "NAARKPC";
         List<Map<String, Object>> filtered = new ArrayList<>();
 
         for (Map<String, Object> m : all) {
@@ -77,19 +73,125 @@ public class TransportController {
             boolean depIsJeju = jejuId.equals(depId) || depNm.contains("제주");
             boolean arrIsJeju = jejuId.equals(arrId) || arrNm.contains("제주");
 
-            // ✅ 제주가 출발이면 "제주 출발"
             if ("JEJU_OUT".equals(direction)) {
                 if (depIsJeju) filtered.add(m);
-            }
-            // ✅ 제주가 도착이면 "선택공항 출발"(=제주 도착)
-            else if ("JEJU_IN".equals(direction)) {
+            } else if ("JEJU_IN".equals(direction)) {
                 if (arrIsJeju) filtered.add(m);
             }
         }
 
-        // ✅ 페이지네이션(10개씩)
-        int pageSize = 10;
-        int total = filtered.size();
+        addPaging(model, filtered, page, 10);
+        return "transport/flight";
+    }
+
+    @GetMapping("/flight/search")
+    public String searchFlight(
+            @RequestParam String depAirportId,
+            @RequestParam String arrAirportId,
+            @RequestParam String depPlandTime,
+            @RequestParam(defaultValue = "1") int page,
+            Model model
+    ) {
+        List<?> all = transportService.searchFlight(depAirportId, arrAirportId, depPlandTime);
+        if (all == null) all = Collections.emptyList();
+
+        model.addAttribute("depPlandTime", depPlandTime);
+        addPagingGeneric(model, all, page, 10);
+
+        return "transport/flight";
+    }
+
+    // =========================
+    //  고속버스 (6개 도시 고정)
+    //  ✅ ID 하드코딩 제거 → 서비스가 "터미널 목록 조회"로 매핑해서 조회
+    // =========================
+    @GetMapping("/expbus")
+    public String expbus(
+            @RequestParam(required = false) String depPlandTime,
+            @RequestParam(required = false) String depCity,
+            @RequestParam(required = false) String arrCity,
+            @RequestParam(defaultValue = "1") int page,
+            Model model
+    ) {
+        String date = (depPlandTime == null || depPlandTime.isBlank())
+                ? LocalDate.now(ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.BASIC_ISO_DATE)
+                : depPlandTime;
+
+        List<String> cities = transportService.getFixedCities();
+        model.addAttribute("cities", cities);
+
+        String dep = (depCity == null || depCity.isBlank()) ? "서울" : depCity;
+        String arr = (arrCity == null || arrCity.isBlank()) ? "부산" : arrCity;
+        model.addAttribute("depCity", dep);
+        model.addAttribute("arrCity", arr);
+
+        model.addAttribute("depPlandTime", date);
+        model.addAttribute("depPlandTimeIso",
+                LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE).format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        // ✅ 도시명 기반 조회(서비스에서 터미널ID를 API로 찾아서 처리)
+        List<Map<String, Object>> all = transportService.searchExpBusByCity(dep, arr, date);
+
+        if (all.isEmpty()) {
+            model.addAttribute("errorMsg", "조회 결과가 없습니다. (터미널ID 매핑이 맞는지 확인 필요)");
+        }
+
+        addPaging(model, all, page, 10);
+        return "transport/expbus";
+    }
+
+    // =========================
+    //  기차 (기존 유지)
+    // =========================
+    @GetMapping("/train")
+    public String train(
+            @RequestParam(required = false) String depPlandTime,
+            @RequestParam(required = false) String depCity,
+            @RequestParam(required = false) String arrCity,
+            @RequestParam(defaultValue = "1") int page,
+            Model model
+    ) {
+        String date = (depPlandTime == null || depPlandTime.isBlank())
+                ? LocalDate.now(ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.BASIC_ISO_DATE)
+                : depPlandTime;
+
+        List<String> cities = transportService.getFixedCities();
+        model.addAttribute("cities", cities);
+
+        String dep = (depCity == null || depCity.isBlank()) ? "서울" : depCity;
+        String arr = (arrCity == null || arrCity.isBlank()) ? "부산" : arrCity;
+        model.addAttribute("depCity", dep);
+        model.addAttribute("arrCity", arr);
+
+        model.addAttribute("depPlandTime", date);
+        model.addAttribute("depPlandTimeIso",
+                LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE).format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        String depPlaceId = transportService.resolveTrainStationId(dep);
+        String arrPlaceId = transportService.resolveTrainStationId(arr);
+
+        if (depPlaceId == null || arrPlaceId == null) {
+            model.addAttribute("errorMsg", "선택한 지역의 기차역 ID를 찾지 못했습니다. (예: 속초는 열차역 매핑이 없을 수 있어요)");
+            addPaging(model, Collections.emptyList(), 1, 10);
+            return "transport/train";
+        }
+
+        List<Map<String, Object>> all = transportService.searchTrain(depPlaceId, arrPlaceId, date);
+
+        model.addAttribute("depPlaceId", depPlaceId);
+        model.addAttribute("arrPlaceId", arrPlaceId);
+
+        addPaging(model, all, page, 10);
+        return "transport/train";
+    }
+
+    // =========================
+    //  paging utils
+    // =========================
+    private void addPaging(Model model, List<Map<String, Object>> list, int page, int pageSize) {
+        if (list == null) list = Collections.emptyList();
+
+        int total = list.size();
         int totalPages = (int) Math.ceil((double) total / pageSize);
         if (totalPages == 0) totalPages = 1;
 
@@ -100,31 +202,18 @@ public class TransportController {
         int toIndex = Math.min(fromIndex + pageSize, total);
 
         List<Map<String, Object>> paged = (fromIndex < total)
-                ? filtered.subList(fromIndex, toIndex)
+                ? list.subList(fromIndex, toIndex)
                 : Collections.emptyList();
 
         model.addAttribute("result", paged);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-
-        return "transport/flight";
     }
 
+    private void addPagingGeneric(Model model, List<?> list, int page, int pageSize) {
+        if (list == null) list = Collections.emptyList();
 
-
-    // (원하면 검색도 유지 가능) - 검색도 페이지네이션 넣고 싶으면 여기도 동일하게 추가 가능
-    @GetMapping("/flight/search")
-    public String searchFlight(@RequestParam String depAirportId,
-                               @RequestParam String arrAirportId,
-                               @RequestParam String depPlandTime,
-                               @RequestParam(defaultValue = "1") int page, // ✅ 추가
-                               Model model) {
-
-        List<?> all = transportService.searchFlight(depAirportId, arrAirportId, depPlandTime);
-        if (all == null) all = Collections.emptyList();
-
-        int pageSize = 10;
-        int total = all.size();
+        int total = list.size();
         int totalPages = (int) Math.ceil((double) total / pageSize);
         if (totalPages == 0) totalPages = 1;
 
@@ -134,16 +223,12 @@ public class TransportController {
         int fromIndex = (page - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, total);
 
-        List<?> paged = (fromIndex < total) ? all.subList(fromIndex, toIndex) : Collections.emptyList();
+        List<?> paged = (fromIndex < total)
+                ? list.subList(fromIndex, toIndex)
+                : Collections.emptyList();
 
-        model.addAttribute("depPlandTime", depPlandTime);
         model.addAttribute("result", paged);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-
-        return "transport/flight";
     }
 }
-
-
-
