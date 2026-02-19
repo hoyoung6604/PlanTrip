@@ -21,10 +21,55 @@
   <form method="get" action="${pageContext.request.contextPath}/transport/flight"
         style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
     <div>
-      <div style="font-size:12px; color:#6b7280;">출발일(YYYYMMDD)</div>
-      <input name="depPlandTime" class="input" value="${depPlandTime}" required/>
+	  <div>
+	    <div style="font-size:12px; color:#6b7280;">출발일</div>
+
+	    <!-- 달력 input: value는 yyyy-MM-dd -->
+	    <input id="depDate"
+	           type="date"
+	           class="input"
+	           value="${depPlandTimeIso}"
+	           required />
+	  </div>
+
+	  <!-- ✅ 출발방향 토글 -->
+	  <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+	    <a class="btn ${direction eq 'JEJU_OUT' ? 'solid' : ''}"
+	       href="${pageContext.request.contextPath}/transport/flight?airportId=${selectedAirportId}&depPlandTime=${depPlandTime}&direction=JEJU_OUT">
+	      제주 출발
+	    </a>
+
+	    <a class="btn ${direction eq 'JEJU_IN' ? 'solid' : ''}"
+	       href="${pageContext.request.contextPath}/transport/flight?airportId=${selectedAirportId}&depPlandTime=${depPlandTime}&direction=JEJU_IN">
+	      선택공항 출발
+	    </a>
+	  </div>
+
+	  <!-- depPlandTime(YYYYMMDD)를 서버로 보낼 hidden -->
+	  <input type="hidden" name="depPlandTime" id="depPlandTime" value="${depPlandTime}" />
+
+	  <!-- airportId 유지 -->
+	  <input type="hidden" name="airportId" value="${selectedAirportId}" />
+
+	  <script>
+	    (function () {
+	      const depDate = document.getElementById('depDate');
+	      const depPlandTime = document.getElementById('depPlandTime');
+
+	      function toYYYYMMDD(iso) {
+	        // "2026-02-17" -> "20260217"
+	        return iso ? iso.replaceAll('-', '') : '';
+	      }
+
+	      depDate.addEventListener('change', function () {
+	        depPlandTime.value = toYYYYMMDD(depDate.value);
+
+	        // ✅ 날짜 클릭/선택 즉시 자동 검색되게
+	        depDate.form.submit();
+	      });
+	    })();
+	  </script>
     </div>
-    <button class="btn solid" type="submit">날짜 적용</button>
   </form>
 
   <!-- ✅ 공항 버튼들 -->
@@ -73,6 +118,15 @@
           </j:forEach>
           </tbody>
         </table>
+		<div style="margin-top:16px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+		  <j:forEach begin="1" end="${totalPages}" var="p">
+		    <a class="btn ${p == currentPage ? 'solid' : ''}"
+		       href="${pageContext.request.contextPath}/transport/flight?airportId=${selectedAirportId}&depPlandTime=${depPlandTime}&page=${p}">
+		      ${p}
+		    </a>
+		  </j:forEach>
+		</div>
+
       </div>
     </j:if>
   </div>

@@ -1,21 +1,17 @@
 package com.exam.literaryplanner.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-import lombok.RequiredArgsConstructor;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,9 +60,7 @@ public class TransportService {
         List<Map<String, Object>> all = new ArrayList<>();
 
         for (String otherAirportId : AIRPORTS.keySet()) { // ✅ keySet()!!!
-            if (JEJU_ID.equals(otherAirportId)) {
-				continue;
-			}
+            if (JEJU_ID.equals(otherAirportId)) continue;
 
             all.addAll(searchFlight(otherAirportId, JEJU_ID, depPlandTime));
             all.addAll(searchFlight(JEJU_ID, otherAirportId, depPlandTime));
@@ -97,17 +91,13 @@ public class TransportService {
 
     private List<Map<String, Object>> extract(JsonNode root) {
         List<Map<String, Object>> list = new ArrayList<>();
-        if (root == null) {
-			return list;
-		}
+        if (root == null) return list;
 
         JsonNode items = root.path("response").path("body").path("items").path("item");
         ObjectMapper mapper = new ObjectMapper();
 
         if (items.isArray()) {
-            for (JsonNode n : items) {
-				list.add(mapper.convertValue(n, Map.class));
-			}
+            for (JsonNode n : items) list.add(mapper.convertValue(n, Map.class));
         } else if (!items.isMissingNode() && !items.isNull()) {
             list.add(mapper.convertValue(items, Map.class));
         }
@@ -127,13 +117,9 @@ public class TransportService {
     }
 
     private String prettyTime(String yyyymmddhhmi) {
-        if (yyyymmddhhmi == null) {
-			return "";
-		}
+        if (yyyymmddhhmi == null) return "";
         String s = yyyymmddhhmi.trim();
-        if (s.length() != 12) {
-			return s;
-		}
+        if (s.length() != 12) return s;
 
         LocalDateTime dt = LocalDateTime.parse(s, DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
         return dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
