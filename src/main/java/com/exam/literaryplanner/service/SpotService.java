@@ -61,4 +61,8 @@ public class SpotService {
 
 		return spot;
 	}
+	
+	public Spot findFirstByCityId(Integer cityId) {
+	    return spotRepository.findFirstByCity_IdOrderByIdAsc(cityId).orElse(null);
+	}
 }

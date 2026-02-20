@@ -102,32 +102,94 @@ public class TransportService {
     private static final String BUS_URL =
             "http://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo";
 
+    // 터미널 목록 조회 API
+    private static final String BUS_TERMINAL_URL =
+            "http://apis.data.go.kr/1613000/ExpBusInfoService/getExpBusTrminlList";
+
+    // ✅ terminalNm -> terminalId
+    public Map<String, String> getExpBusTerminals() {
+        JsonNode root = webClient.get()
+                .uri(BUS_TERMINAL_URL, uriBuilder -> uriBuilder
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("_type", "json")
+                        .queryParam("numOfRows", 1000)
+                        .queryParam("pageNo", 1)
+                        .build())
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+
+        List<Map<String, Object>> items = extract(root);
+
+        Map<String, String> map = new LinkedHashMap<>();
+        for (Map<String, Object> m : items) {
+            String id = Objects.toString(m.get("terminalId"), "").trim();
+            String nm = Objects.toString(m.get("terminalNm"), "").trim();
+            if (!id.isBlank() && !nm.isBlank()) map.put(nm, id);
+        }
+        return map;
+    }
+
     /**
-     * ✅ 도시명 -> 고속버스터미널ID
-     * - 여기 값이 “조회 결과 없음”이면 API 문제 아니고 ID가 다른 거임.
-     * - 일단 컴파일/흐름을 완성하는 목적이라 고정 매핑으로 둠.
+     * ✅ 도시명으로 "해당 도시 터미널 목록" 반환
+     * - 우선순위: (서울/부산 특수) + "고속" "종합" "시외" 같은 키워드를 앞으로.
+     * - 반환형: List<Map<String,String>>  (JSP에서 쓰기 편하게)
      */
-    private static final Map<String, String> EXPBUS_CITY_TO_TERMINAL_ID = new LinkedHashMap<>();
-    static {
-        // 자주 쓰는 대표 터미널로 고정
-        EXPBUS_CITY_TO_TERMINAL_ID.put("서울", "NAEK010"); // 서울(경부)
-        EXPBUS_CITY_TO_TERMINAL_ID.put("부산", "NAEK070"); // 부산
+    public List<Map<String, String>> getExpBusTerminalsByCity(String city) {
+        Map<String, String> all = getExpBusTerminals();
 
-        // 아래 4개는 환경/문서에 따라 ID가 다를 수 있어.
-        // "결과 없음"이면 여기만 너가 실제 ID로 바꾸면 끝.
-        EXPBUS_CITY_TO_TERMINAL_ID.put("강릉", "NAEK190");
-        EXPBUS_CITY_TO_TERMINAL_ID.put("경주", "NAEK300");
-        EXPBUS_CITY_TO_TERMINAL_ID.put("수원", "NAEK110");
-        EXPBUS_CITY_TO_TERMINAL_ID.put("속초", "NAEK210");
+        List<Map<String, String>> list = new ArrayList<>();
+        if (city == null || city.isBlank()) return list;
+
+        // 1) 매칭 키워드 구성(도시별 우선 키워드)
+        List<String> keys;
+        switch (city) {
+            case "서울":
+                keys = List.of("서울경부", "서울"); break;
+            case "부산":
+                keys = List.of("부산", "부산종합"); break;
+            default:
+                keys = List.of(city); break;
+        }
+
+        // 2) terminalNm에 키워드 포함되는 것들 수집
+        for (Map.Entry<String, String> e : all.entrySet()) {
+            String terminalNm = e.getKey();
+            for (String k : keys) {
+                if (terminalNm.contains(k)) {
+                    Map<String, String> row = new LinkedHashMap<>();
+                    row.put("terminalNm", terminalNm);
+                    row.put("terminalId", e.getValue());
+                    list.add(row);
+                    break;
+                }
+            }
+        }
+
+        // 3) 보기 좋게 정렬(고속/종합/시외 우선)
+        list.sort((a, b) -> scoreTerminal(b.get("terminalNm")) - scoreTerminal(a.get("terminalNm")));
+        return list;
     }
 
-    // ✅ 컨트롤러에서 호출
-    public String resolveExpBusTerminalId(String city) {
-        String id = EXPBUS_CITY_TO_TERMINAL_ID.get(city);
-        return (id == null || id.isBlank()) ? null : id;
+    private int scoreTerminal(String name) {
+        if (name == null) return 0;
+        int s = 0;
+        if (name.contains("고속")) s += 30;
+        if (name.contains("종합")) s += 20;
+        if (name.contains("시외")) s += 10;
+        // 너무 긴 이름은 뒤로(선택사항)
+        if (name.length() <= 6) s += 3;
+        return s;
     }
 
-    // ✅ 컨트롤러에서 호출
+    // ✅ terminalId로 바로 조회 (UI에서 선택한 터미널ID를 그대로 넣는 방식)
+    public List<Map<String, Object>> searchExpBusByTerminal(String depTerminalId, String arrTerminalId, String depPlandTime) {
+        if (depTerminalId == null || depTerminalId.isBlank()) return Collections.emptyList();
+        if (arrTerminalId == null || arrTerminalId.isBlank()) return Collections.emptyList();
+        return searchExpBus(depTerminalId, arrTerminalId, depPlandTime);
+    }
+
+    // 기존 searchExpBus 그대로
     public List<Map<String, Object>> searchExpBus(String depTerminalId, String arrTerminalId, String depPlandTime) {
         JsonNode root = webClient.get()
                 .uri(BUS_URL, uriBuilder -> uriBuilder
@@ -148,13 +210,11 @@ public class TransportService {
 
     private List<Map<String, Object>> postProcessBus(List<Map<String, Object>> list) {
         for (Map<String, Object> m : list) {
-            // 고속버스: 12자리 yyyyMMddHHmm
             String dep = Objects.toString(m.get("depPlandTime"), "");
             String arr = Objects.toString(m.get("arrPlandTime"), "");
             m.put("depTimeText", prettyTime12(dep));
             m.put("arrTimeText", prettyTime12(arr));
 
-            // JSP에서 쓰기 쉽게 통일 키도 추가
             m.put("gradeText", Objects.toString(m.get("gradeNm"), ""));
             m.put("chargeText", Objects.toString(m.get("charge"), ""));
         }
@@ -293,19 +353,6 @@ public class TransportService {
             return s;
         }
     }
-    
- // 터미널 목록 조회 API
-    private static final String BUS_TERMINAL_URL =
-            "http://apis.data.go.kr/1613000/ExpBusInfoService/getExpBusTrminlList";
-
-    // city -> terminalId 자동 매핑해서 버스 조회
-    public List<Map<String, Object>> searchExpBusByCity(String depCity, String arrCity, String depPlandTime) {
-        String depTerminalId = resolveExpBusTerminalIdAuto(depCity);
-        String arrTerminalId = resolveExpBusTerminalIdAuto(arrCity);
-
-        if (depTerminalId == null || arrTerminalId == null) return Collections.emptyList();
-        return searchExpBus(depTerminalId, arrTerminalId, depPlandTime);
-    }
 
     // ✅ 하드코딩 말고, 터미널 목록에서 도시명 포함되는 terminalId 찾아냄
     private String resolveExpBusTerminalIdAuto(String city) {
@@ -326,30 +373,5 @@ public class TransportService {
         }
         return null;
     }
-
-    // terminalNm -> terminalId
-    public Map<String, String> getExpBusTerminals() {
-        JsonNode root = webClient.get()
-                .uri(BUS_TERMINAL_URL, uriBuilder -> uriBuilder
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("_type", "json")
-                        .queryParam("numOfRows", 1000)
-                        .queryParam("pageNo", 1)
-                        .build())
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .block();
-
-        List<Map<String, Object>> items = extract(root);
-
-        Map<String, String> map = new LinkedHashMap<>();
-        for (Map<String, Object> m : items) {
-            String id = Objects.toString(m.get("terminalId"), "").trim();
-            String nm = Objects.toString(m.get("terminalNm"), "").trim();
-            if (!id.isBlank() && !nm.isBlank()) map.put(nm, id);
-        }
-        return map;
-    }
-
 
 }

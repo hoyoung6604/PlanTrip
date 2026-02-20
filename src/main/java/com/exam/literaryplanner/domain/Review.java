@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "reviewT")
@@ -19,10 +22,22 @@ public class Review {
 
     @Column(name = "s_idx", nullable = false)
     private Integer sIdx; // FK -> spotT(s_idx)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "s_idx", insertable = false, updatable = false)
+    private Spot spot;
+
+    public Spot getSpot() { return spot; }
 
     @Column(name = "m_idx", nullable = false)
     private Integer mIdx; // FK -> memberT(m_idx)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "m_idx", insertable = false, updatable = false)
+    private Member member;
 
+    public Member getMember() { return member; }
+    
     @Column(name = "rv_star", nullable = false)
     private Integer rvStar; // 1~5 (DB CHECK)
 
@@ -54,4 +69,6 @@ public class Review {
 
     public String getRvTitle() { return rvTitle; }
     public void setRvTitle(String rvTitle) { this.rvTitle = rvTitle; }
+    
+    
 }

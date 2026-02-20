@@ -102,14 +102,15 @@ public class TransportController {
     }
 
     // =========================
-    //  고속버스 (6개 도시 고정)
-    //  ✅ ID 하드코딩 제거 → 서비스가 "터미널 목록 조회"로 매핑해서 조회
+    //  고속버스: 도시 → 터미널 선택 → 조회
     // =========================
     @GetMapping("/expbus")
     public String expbus(
             @RequestParam(required = false) String depPlandTime,
             @RequestParam(required = false) String depCity,
             @RequestParam(required = false) String arrCity,
+            @RequestParam(required = false) String depTerminalId,
+            @RequestParam(required = false) String arrTerminalId,
             @RequestParam(defaultValue = "1") int page,
             Model model
     ) {
@@ -122,6 +123,7 @@ public class TransportController {
 
         String dep = (depCity == null || depCity.isBlank()) ? "서울" : depCity;
         String arr = (arrCity == null || arrCity.isBlank()) ? "부산" : arrCity;
+
         model.addAttribute("depCity", dep);
         model.addAttribute("arrCity", arr);
 
@@ -129,11 +131,28 @@ public class TransportController {
         model.addAttribute("depPlandTimeIso",
                 LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE).format(DateTimeFormatter.ISO_LOCAL_DATE));
 
-        // ✅ 도시명 기반 조회(서비스에서 터미널ID를 API로 찾아서 처리)
-        List<Map<String, Object>> all = transportService.searchExpBusByCity(dep, arr, date);
+        // ✅ 도시별 터미널 목록 내려주기
+        List<Map<String, String>> depTerminals = transportService.getExpBusTerminalsByCity(dep);
+        List<Map<String, String>> arrTerminals = transportService.getExpBusTerminalsByCity(arr);
 
-        if (all.isEmpty()) {
-            model.addAttribute("errorMsg", "조회 결과가 없습니다. (터미널ID 매핑이 맞는지 확인 필요)");
+        model.addAttribute("depTerminals", depTerminals);
+        model.addAttribute("arrTerminals", arrTerminals);
+
+        // ✅ 선택된 terminalId 유지
+        model.addAttribute("depTerminalId", depTerminalId);
+        model.addAttribute("arrTerminalId", arrTerminalId);
+
+        // ✅ 둘 다 선택된 경우에만 조회
+        List<Map<String, Object>> all = Collections.emptyList();
+        if (depTerminalId != null && !depTerminalId.isBlank()
+                && arrTerminalId != null && !arrTerminalId.isBlank()) {
+            all = transportService.searchExpBusByTerminal(depTerminalId, arrTerminalId, date);
+        }
+
+        if ((depTerminalId != null && !depTerminalId.isBlank())
+                && (arrTerminalId != null && !arrTerminalId.isBlank())
+                && all.isEmpty()) {
+            model.addAttribute("errorMsg", "조회 결과가 없습니다. (선택한 터미널 조합에 고속버스 운행이 없을 수 있어요)");
         }
 
         addPaging(model, all, page, 10);

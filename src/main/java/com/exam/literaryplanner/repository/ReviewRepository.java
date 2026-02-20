@@ -1,6 +1,7 @@
 package com.exam.literaryplanner.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,13 +13,35 @@ import com.exam.literaryplanner.domain.Review;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
+    // ✅ 상세(뷰/수정폼에서 사용) - member/spot/city 까지 같이 로딩
+    @Query("""
+        SELECT r
+        FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
+        WHERE r.rvIdx = :rvIdx
+    """)
+    Optional<Review> findDetail(@Param("rvIdx") Integer rvIdx);
+
     // ===== 내 후기 =====
-    @Query("SELECT r FROM Review r WHERE r.mIdx = :mIdx ORDER BY r.rvIdx DESC")
+    @Query("""
+        SELECT r
+        FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
+        WHERE r.mIdx = :mIdx
+        ORDER BY r.rvIdx DESC
+    """)
     List<Review> findByMIdxOrderByRvIdxDesc(@Param("mIdx") Integer mIdx);
 
     @Query("""
         SELECT r
         FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
         WHERE r.mIdx = :mIdx
           AND r.rvTitle LIKE CONCAT('%', :rvTitle, '%')
         ORDER BY r.rvIdx DESC
@@ -32,6 +55,9 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("""
         SELECT r
         FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
         WHERE (:kw IS NULL OR :kw = '' OR r.rvTitle LIKE CONCAT('%', :kw, '%') OR r.rvCont LIKE CONCAT('%', :kw, '%'))
           AND (:minStar IS NULL OR r.rvStar >= :minStar)
           AND (:sIdx IS NULL OR r.sIdx = :sIdx)
@@ -45,6 +71,9 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("""
         SELECT r
         FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
         WHERE (:kw IS NULL OR :kw = '' OR r.rvTitle LIKE CONCAT('%', :kw, '%') OR r.rvCont LIKE CONCAT('%', :kw, '%'))
           AND (:minStar IS NULL OR r.rvStar >= :minStar)
           AND (:sIdx IS NULL OR r.sIdx = :sIdx)
@@ -55,10 +84,23 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
                                       @Param("sIdx") Integer sIdx);
 
     // 전체
-    @Query("SELECT r FROM Review r ORDER BY r.rvIdx DESC")
+    @Query("""
+        SELECT r
+        FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
+        ORDER BY r.rvIdx DESC
+    """)
     List<Review> findAllLatest();
 
-    @Query("SELECT r FROM Review r ORDER BY r.rvStar DESC, r.rvIdx DESC")
+    @Query("""
+        SELECT r
+        FROM Review r
+        JOIN FETCH r.member m
+        JOIN FETCH r.spot s
+        JOIN FETCH s.city c
+        ORDER BY r.rvStar DESC, r.rvIdx DESC
+    """)
     List<Review> findAllStar();
 }
-

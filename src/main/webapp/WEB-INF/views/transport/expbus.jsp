@@ -23,12 +23,13 @@
       <div style="font-size:12px; color:#6b7280;">출발일</div>
       <input id="depDate" type="date" class="input" value="${depPlandTimeIso}" required />
 
-      <!-- 서버로 보낼 YYYYMMDD -->
       <input type="hidden" name="depPlandTime" id="depPlandTime" value="${depPlandTime}" />
-
-      <!-- ✅ 컨트롤러 파라미터와 일치 -->
       <input type="hidden" name="depCity" value="${depCity}" />
       <input type="hidden" name="arrCity" value="${arrCity}" />
+
+      <!-- ✅ 터미널 선택값 유지 -->
+      <input type="hidden" name="depTerminalId" value="${depTerminalId}" />
+      <input type="hidden" name="arrTerminalId" value="${arrTerminalId}" />
     </div>
 
     <script>
@@ -45,29 +46,65 @@
     </script>
   </form>
 
-  <!-- ✅ 출발(도시) 버튼 -->
+  <!-- ✅ 출발(도시) -->
   <div style="margin-top:10px;">
-    <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">출발</div>
+    <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">출발 도시</div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <j:forEach var="c" items="${cities}">
         <a class="btn ${c == depCity ? 'solid' : ''}"
-           href="${pageContext.request.contextPath}/transport/expbus?depCity=${c}&arrCity=${arrCity}&depPlandTime=${depPlandTime}">
+           href="${pageContext.request.contextPath}/transport/expbus?depCity=${c}&arrCity=${arrCity}&depPlandTime=${depPlandTime}&arrTerminalId=${arrTerminalId}">
           ${c}
         </a>
       </j:forEach>
     </div>
+
+    <!-- ✅ 출발 터미널 목록 -->
+    <div style="margin-top:10px;">
+      <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">출발 터미널</div>
+      <j:if test="${empty depTerminals}">
+        <div style="color:#6b7280;">터미널 목록을 찾지 못했습니다.</div>
+      </j:if>
+      <j:if test="${not empty depTerminals}">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <j:forEach var="t" items="${depTerminals}">
+            <a class="btn ${t.terminalId == depTerminalId ? 'solid' : ''}"
+               href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}&depTerminalId=${t.terminalId}&arrTerminalId=${arrTerminalId}">
+              ${t.terminalNm}
+            </a>
+          </j:forEach>
+        </div>
+      </j:if>
+    </div>
   </div>
 
-  <!-- ✅ 도착(도시) 버튼 -->
-  <div style="margin-top:10px;">
-    <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">도착</div>
+  <!-- ✅ 도착(도시) -->
+  <div style="margin-top:16px;">
+    <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">도착 도시</div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <j:forEach var="c" items="${cities}">
         <a class="btn ${c == arrCity ? 'solid' : ''}"
-           href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${c}&depPlandTime=${depPlandTime}">
+           href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${c}&depPlandTime=${depPlandTime}&depTerminalId=${depTerminalId}">
           ${c}
         </a>
       </j:forEach>
+    </div>
+
+    <!-- ✅ 도착 터미널 목록 -->
+    <div style="margin-top:10px;">
+      <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">도착 터미널</div>
+      <j:if test="${empty arrTerminals}">
+        <div style="color:#6b7280;">터미널 목록을 찾지 못했습니다.</div>
+      </j:if>
+      <j:if test="${not empty arrTerminals}">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <j:forEach var="t" items="${arrTerminals}">
+            <a class="btn ${t.terminalId == arrTerminalId ? 'solid' : ''}"
+               href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}&depTerminalId=${depTerminalId}&arrTerminalId=${t.terminalId}">
+              ${t.terminalNm}
+            </a>
+          </j:forEach>
+        </div>
+      </j:if>
     </div>
   </div>
 
@@ -78,48 +115,50 @@
       <div style="color:#ef4444; margin-bottom:10px;">${errorMsg}</div>
     </j:if>
 
-    <j:if test="${empty result}">
-      <div style="color:#6b7280;">조회 결과가 없습니다.</div>
+    <j:if test="${empty depTerminalId || empty arrTerminalId}">
+      <div style="color:#6b7280;">출발/도착 터미널을 선택하면 운행 목록이 표시됩니다.</div>
     </j:if>
 
-    <j:if test="${not empty result}">
-      <div style="overflow:auto;">
-        <table style="width:100%; border-collapse:collapse; margin-top:6px; background:#fff;">
-          <thead>
-          <tr style="text-align:left; color:#6b7280; font-size:12px; background:#f8fafc;">
-            <th style="padding:10px 8px;">등급</th>
-            <th style="padding:10px 8px;">출발</th>
-            <th style="padding:10px 8px;">도착</th>
-            <th style="padding:10px 8px;">출발시각</th>
-            <th style="padding:10px 8px;">도착시각</th>
-            <th style="padding:10px 8px;">요금</th>
-          </tr>
-          </thead>
+    <j:if test="${not empty depTerminalId && not empty arrTerminalId}">
+      <j:if test="${empty result}">
+        <div style="color:#6b7280;">조회 결과가 없습니다.</div>
+      </j:if>
 
-          <tbody>
-          <j:forEach var="r" items="${result}">
-            <tr style="border-top:1px solid #f1f5f9;">
-              <td style="padding:10px 8px;">${r.gradeText}</td>
-              <td style="padding:10px 8px;">${depCity}</td>
-              <td style="padding:10px 8px;">${arrCity}</td>
-              <td style="padding:10px 8px;">${r.depTimeText}</td>
-              <td style="padding:10px 8px;">${r.arrTimeText}</td>
-              <td style="padding:10px 8px;">${r.chargeText}</td>
+      <j:if test="${not empty result}">
+        <div style="overflow:auto;">
+          <table style="width:100%; border-collapse:collapse; margin-top:6px; background:#fff;">
+            <thead>
+            <tr style="text-align:left; color:#6b7280; font-size:12px; background:#f8fafc;">
+              <th style="padding:10px 8px;">등급</th>
+              <th style="padding:10px 8px;">출발시각</th>
+              <th style="padding:10px 8px;">도착시각</th>
+              <th style="padding:10px 8px;">요금</th>
             </tr>
-          </j:forEach>
-          </tbody>
-        </table>
+            </thead>
 
-        <!-- ✅ 페이지네이션: depCity/arrCity 유지 -->
-        <div style="margin-top:16px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
-          <j:forEach begin="1" end="${totalPages}" var="p">
-            <a class="btn ${p == currentPage ? 'solid' : ''}"
-               href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}&page=${p}">
-              ${p}
-            </a>
-          </j:forEach>
+            <tbody>
+            <j:forEach var="r" items="${result}">
+              <tr style="border-top:1px solid #f1f5f9;">
+                <td style="padding:10px 8px;">${r.gradeText}</td>
+                <td style="padding:10px 8px;">${r.depTimeText}</td>
+                <td style="padding:10px 8px;">${r.arrTimeText}</td>
+                <td style="padding:10px 8px;">${r.chargeText}</td>
+              </tr>
+            </j:forEach>
+            </tbody>
+          </table>
+
+          <!-- ✅ 페이지네이션: terminalId까지 유지 -->
+          <div style="margin-top:16px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+            <j:forEach begin="1" end="${totalPages}" var="p">
+              <a class="btn ${p == currentPage ? 'solid' : ''}"
+                 href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}&depTerminalId=${depTerminalId}&arrTerminalId=${arrTerminalId}&page=${p}">
+                ${p}
+              </a>
+            </j:forEach>
+          </div>
         </div>
-      </div>
+      </j:if>
     </j:if>
 
   </div>
