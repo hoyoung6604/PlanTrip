@@ -239,11 +239,15 @@ public class CommunityController {
      * ========================= */
     @GetMapping("/view")
     public String view(@RequestParam Integer rvIdx, Model model) {
-        Review review = reviewRepository.findById(rvIdx).orElseThrow();
+        Review review = reviewRepository.findById(rvIdx).orElse(null);
+        if (review == null) {
+            return "redirect:/community"; // 또는 404 페이지
+        }
         model.addAttribute("review", review);
 
-        // ✅ 사진 목록(없으면 빈 리스트)
-        model.addAttribute("photos", reviewPhotoRepository.findByRvIdxOrderByRpIdxAsc(Integer.valueOf(rvIdx)));
+        model.addAttribute("photos",
+            reviewPhotoRepository.findByRvIdxOrderByRpIdxAsc(rvIdx)
+        );
 
         return "community/view";
     }
