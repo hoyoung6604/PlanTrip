@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Review;
+import com.exam.literaryplanner.domain.Community;
 import com.exam.literaryplanner.domain.ReviewPhoto;
-import com.exam.literaryplanner.repository.ReviewRepository;
+import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.ReviewPhotoService;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,10 +35,10 @@ import jakarta.servlet.http.HttpSession;
 public class ReviewPhotoController {
 
     private final ReviewPhotoService reviewPhotoService;
-    private final ReviewRepository reviewRepository;
+    private final CommunityRepository reviewRepository;
 
     public ReviewPhotoController(ReviewPhotoService reviewPhotoService,
-                                 ReviewRepository reviewRepository) {
+                                 CommunityRepository reviewRepository) {
         this.reviewPhotoService = reviewPhotoService;
         this.reviewRepository = reviewRepository;
     }
@@ -50,7 +50,10 @@ public class ReviewPhotoController {
         return reviewPhotoService.list(rvIdx);
     }
 
-    @GetMapping("/file/{photoId}")
+    // ✅ (중요) /review-photos/{rpIdx} 는 아래 serve()가 사용 중
+    // 여기 매핑이 겹치면 사진 요청이 꼬이거나(또는 부팅 시 Ambiguous mapping) 문제가 생길 수 있어서
+    // raw 경로로 분리
+    @GetMapping({"/raw/{photoId}", "/file/{photoId}"})
     public ResponseEntity<Resource> file(@PathVariable("photoId") Integer photoId) {
         try {
             ReviewPhoto photo = reviewPhotoService.getPhoto(photoId);
@@ -95,7 +98,7 @@ public class ReviewPhotoController {
 			return "redirect:/members/login";
 		}
 
-        Review review = reviewRepository.findById(rvIdx).orElse(null);
+        Community review = reviewRepository.findById(rvIdx).orElse(null);
         if (review == null) {
 			return "redirect:/community";
 		}
@@ -119,17 +122,61 @@ public class ReviewPhotoController {
         ReviewPhoto meta = reviewPhotoService.getMeta(rpIdx);
         Resource resource = reviewPhotoService.loadAsResource(rpIdx);
 
+        // 파일이 실제로 없으면 500 대신 404
+        try {
+            if (resource == null || !resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+
         MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
         try {
-            if (meta.getRpContentType() != null) {
-                mediaType = MediaType.parseMediaType(meta.getRpContentType());
+            String ct = meta.getRpContentType();
+            if (ct != null && !ct.isBlank()) {
+                mediaType = MediaType.parseMediaType(ct);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
 
         return ResponseEntity.ok()
                 .contentType(mediaType)
                 .cacheControl(CacheControl.noCache())
                 .body(resource);
+    }
+
+    // ✅ (호환) DB에 rp_idx 메타가 없고, communityT.c_img(저장 파일명)만 남아있는 경우
+    // /review-photos/name/{storedName} 형태로 직접 파일을 서빙
+    @GetMapping("/name/{storedName:.+}")
+    public ResponseEntity<Resource> serveByStoredName(@PathVariable String storedName) {
+        try {
+            Path root = Paths.get(System.getProperty("user.home"), "literaryplanner_uploads", "reviews");
+            Path legacyRoot = Paths.get(System.getProperty("user.home"), "plantrip_uploads", "reviews");
+
+            Path filePath = root.resolve(storedName);
+            if (!Files.exists(filePath)) {
+                filePath = legacyRoot.resolve(storedName);
+            }
+            if (!Files.exists(filePath)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Resource resource = new UrlResource(filePath.toUri());
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null || contentType.isBlank()) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .cacheControl(CacheControl.noCache())
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // 추가부분
@@ -143,7 +190,7 @@ public class ReviewPhotoController {
 			return "redirect:/members/login";
 		}
 
-        Review review = reviewRepository.findById(rvIdx).orElse(null);
+        Community review = reviewRepository.findById(rvIdx).orElse(null);
         if (review == null) {
 			return "redirect:/community";
 		}

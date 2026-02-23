@@ -105,10 +105,12 @@
 						<div class="mp-card-title">여행 후기 목록</div>
 						<div class="mp-card-sub">모든 사용자의 후기를 확인할 수 있어요</div>
 					</div>
-					<button class="mp-btn" type="button"
-						onclick="location.href='${pageContext.request.contextPath}/community/write'">
-						새 후기
-					</button>
+					<div class="cm-head-right">
+						<!-- ✅ 새후기 버튼 제거, 우측 상단에 총 건수만 표시 -->
+						<div class="cm-total">
+							총 <b><c:out value="${fn:length(reviews)}"/></b>건
+						</div>
+					</div>
 				</div>
 
 				<div class="mp-card-body">
@@ -124,19 +126,7 @@
 							</div>
 
 							<div class="cm-filters">
-								<select class="cm-select" name="minStar">
-									<option value="">최소 별점</option>
-									<option value="5" <c:if test="${minStar == 5}">selected</c:if>>5점
-									</option>
-									<option value="4" <c:if test="${minStar == 4}">selected</c:if>>4점 이상
-									</option>
-									<option value="3" <c:if test="${minStar == 3}">selected</c:if>>3점 이상
-									</option>
-									<option value="2" <c:if test="${minStar == 2}">selected</c:if>>2점 이상
-									</option>
-									<option value="1" <c:if test="${minStar == 1}">selected</c:if>>1점 이상
-									</option>
-								</select>
+								
 
 								<select class="cm-select" name="sort">
 									<option value="latest" <c:if test="${sort == 'latest'}">selected
@@ -189,16 +179,61 @@
 														<c:out value="${r.rvTitle}" />
 													</a>
 												</td>
-												<td>
+										<td class="cm-col-date">
 												  <c:out value="${r.member.MName}" />
 												</td>
-												<td><span class="cm-muted">-</span></td>
-												<td><span class="cm-muted">-</span></td>
+											<td>
+												<c:choose>
+													<c:when test="${empty r.rvRegDate}"><span class="cm-muted">-</span></c:when>
+													<c:otherwise>
+														<span class="cm-muted">${fn:replace(fn:substring(r.rvRegDate,0,10),'-','.')}</span>
+													</c:otherwise>
+												</c:choose>
+											</td>
+											<td>
+												<c:out value="${empty r.rvVCount ? 0 : r.rvVCount}"/>
+											</td>
 											</tr>
 										</c:forEach>
 									</tbody>
 								</table>
 							</div>
+
+						<!-- ✅ 페이지네이션(클라이언트) : 로직/DB 건드리지 않고 10개씩 나눠서 보여줌 -->
+						<div class="cm-pagination" id="cmPagination" aria-label="페이지네이션"></div>
+						<script>
+						(function(){
+						  const table = document.querySelector('.cm-table');
+						  if(!table) return;
+						  const tbody = table.querySelector('tbody');
+						  if(!tbody) return;
+						  const rows = Array.from(tbody.querySelectorAll('tr'));
+						  const pager = document.getElementById('cmPagination');
+						  const pageSize = 10;
+						  const total = rows.length;
+						  const pages = Math.max(1, Math.ceil(total / pageSize));
+						  let current = 1;
+						
+						  function render(){
+						    rows.forEach((row, idx)=>{
+						      const page = Math.floor(idx / pageSize) + 1;
+						      row.style.display = (page === current) ? '' : 'none';
+						    });
+						
+						    if(!pager) return;
+						    pager.innerHTML = '';
+						    for(let i=1;i<=pages;i++){
+						      const a = document.createElement('button');
+						      a.type = 'button';
+						      a.className = 'cm-page' + (i===current ? ' is-active' : '');
+						      a.textContent = String(i);
+						      a.addEventListener('click', ()=>{ current=i; render(); window.scrollTo({top:0, behavior:'smooth'}); });
+						      pager.appendChild(a);
+						    }
+						  }
+						  render();
+						})();
+						</script>
 						</c:otherwise>
 					</c:choose>
 

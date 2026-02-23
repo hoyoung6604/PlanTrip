@@ -50,7 +50,7 @@
 
 	      <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
 	        <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-	        <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
+	        <a href="${pageContext.request.contextPath}/transport/bus">버스</a>
 	        <a href="${pageContext.request.contextPath}/transport/train">기차</a>
 	      </div>
 	    </div>
@@ -85,7 +85,6 @@
 		                  <j:if test="${sessionScope.loginMember.MRole != 9}">(회원)</j:if>
 		                </span>
 		              </div>
-		              <a class="menu-item" href="/profile">프로필</a>
 		              <a class="menu-item" href="/members/mypage">마이페이지</a>
 		              <a class="menu-item" href="/plan">내 여행 계획</a>
 

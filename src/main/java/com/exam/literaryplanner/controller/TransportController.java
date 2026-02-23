@@ -26,9 +26,9 @@ public class TransportController {
 
     private final TransportService transportService;
     
-    public TransportController(TransportService transportService) {
-    	this.transportService = transportService;
-    }
+//    public TransportController(TransportService transportService) {
+//    	this.transportService = transportService;
+//    }
 
     // =========================
     //  항공권 (기존 유지)

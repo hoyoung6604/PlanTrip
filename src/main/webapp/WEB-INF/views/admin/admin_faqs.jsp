@@ -73,7 +73,7 @@
                 </tr>
               </c:forEach>
 
-              <c:if test="${empty faqs}">
+              <c:if test="${empty faqList}">
                 <tr>
                   <td colspan="3" class="admin-empty">등록된 FAQ가 없습니다.</td>
                 </tr>

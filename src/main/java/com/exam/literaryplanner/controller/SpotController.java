@@ -28,10 +28,10 @@ public class SpotController {
     private final SpotService spotService;
     private final CityRepository cityRepository;
     
-    public SpotController(SpotService spotService, CityRepository cityRepository) {
-    	this.spotService = spotService;
-    	this.cityRepository = cityRepository;
-    }
+//    public SpotController(SpotService spotService, CityRepository cityRepository) {
+//    	this.spotService = spotService;
+//    	this.cityRepository = cityRepository;
+//    }
 
     /**
      * 메인(index.jsp)에서 /spots?cat=CITY|HOTEL|ACT|FOOD 형태로 접근합니다.

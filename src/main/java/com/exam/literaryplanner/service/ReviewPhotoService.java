@@ -23,10 +23,16 @@ public class ReviewPhotoService {
     private final ReviewPhotoRepository reviewPhotoRepository;
 
     // ✅ (중요) Tomcat 임시폴더가 아니라 "고정 폴더"로 저장
-
+    // 현재(기준) 경로
     private final Path uploadRoot = Paths.get(
             System.getProperty("user.home"),
             "literaryplanner_uploads",
+            "reviews"
+    );
+    // 과거 버전 호환: 이전에 다른 폴더명으로 저장된 사진이 있을 수 있어서 조회 시 함께 탐색
+    private final Path legacyUploadRoot = Paths.get(
+            System.getProperty("user.home"),
+            "plantrip_uploads",
             "reviews"
     );
 
@@ -73,8 +79,24 @@ public class ReviewPhotoService {
 
     public Resource loadAsResource(Integer rpIdx) {
         ReviewPhoto photo = reviewPhotoRepository.findById(rpIdx).orElseThrow();
-        File f = uploadRoot.resolve(photo.getRpStoredName()).toFile();
-        return new FileSystemResource(f);
+        String stored = photo.getRpStoredName();
+
+        // 1) 기본 경로에서 먼저 찾기
+        File f = uploadRoot.resolve(stored).toFile();
+        FileSystemResource res = new FileSystemResource(f);
+        if (res.exists() && res.isReadable()) {
+            return res;
+        }
+
+        // 2) 과거 경로(폴더명 변경 등)에서도 찾아보기
+        File legacy = legacyUploadRoot.resolve(stored).toFile();
+        FileSystemResource legacyRes = new FileSystemResource(legacy);
+        if (legacyRes.exists() && legacyRes.isReadable()) {
+            return legacyRes;
+        }
+
+        // ✅ 파일이 실제로 없으면 컨트롤러에서 404로 처리할 수 있게 null 반환
+        return null;
     }
 
     public ReviewPhoto getMeta(Integer rpIdx) {
@@ -116,7 +138,12 @@ public class ReviewPhotoService {
             if (f == null || f.isEmpty()) {
 				continue;
 			}
-            save(rvIdx, f); // 기존 save 재사용 (기존코드 안 건드림)
+            // ✅ 파일 하나가 실패해도 나머지는 계속 저장 (상세보기에서 "사진 없음"이 뜨는 상황 방지)
+            try {
+                save(rvIdx, f); // 기존 save 재사용
+            } catch (Exception ignored) {
+                // 사진 저장 실패해도 글/다른 사진 저장은 유지
+            }
         }
     }
 

@@ -79,10 +79,10 @@
               <td class="support-ellipsis">
                 <a class="support-link" href="${pageContext.request.contextPath}/support/qna/${q['qIdx']}">${q['qTitle']}</a>
               </td>
-              <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}}</td>
+              <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}</td>
               <td>
                 <c:choose>
-                  <c:when test="${not empty q['qAnswer']}">
+                  <c:when test="${q['qStatus'] == 1}">
                     <span class="support-pill is-done">답변완료</span>
                   </c:when>
                   <c:otherwise>

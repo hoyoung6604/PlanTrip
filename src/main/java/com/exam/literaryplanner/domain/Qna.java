@@ -43,6 +43,8 @@ public class Qna {
     private Integer qStatus = 0; // 0:대기, 1:완료
 
     // DB DEFAULT CURRENT_TIMESTAMP 쓰려면 insertable/updatable false
+    // DB 컬럼명이 camelCase(q_regDate)라서 스프링 기본 네이밍 전략(스네이크 케이스)과 충돌함
+    // → 컬럼명을 정확히 지정해서 Unknown column 오류를 방지
     @Column(name = "q_reg_date", nullable = false)
     private LocalDateTime qRegDate;
 

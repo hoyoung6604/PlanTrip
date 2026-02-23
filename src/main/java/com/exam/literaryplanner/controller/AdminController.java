@@ -44,9 +44,34 @@ public class AdminController {
     public String adminIndex(Model model) {
 
         long pendingQnaCount = qnaRepository.countPendingByStatus(0);
-
-        // 공지/FAQ도 나중에 추가 가능
         model.addAttribute("pendingQnaCount", pendingQnaCount);
+
+        // 최근 문의 목록(미처리만, 최신순)
+        // - 카운트는 뜨는데 목록/문의관리에서 비어 보이는 현상은
+        //   findAll + 화면 필터 조합이 꼬여서 생기는 경우가 많아서
+        //   "미처리(0)"를 DB에서 직접 최신순으로 뽑아옵니다.
+        List<java.util.Map<String, Object>> recentQnaList = new java.util.ArrayList<>();
+        for (com.exam.literaryplanner.domain.Qna q : qnaRepository.findTop5ByQStatusOrderByQRegDateDesc(0)) {
+            java.util.Map<String, Object> v = new java.util.HashMap<>();
+            v.put("qIdx", q.getQIdx());
+            v.put("qTitle", q.getQTitle());
+            v.put("qStatus", q.getQStatus());
+            v.put("qRegDate", q.getQRegDate());
+            v.put("mName", (q.getMember() != null ? q.getMember().getMName() : "-"));
+            recentQnaList.add(v);
+        }
+        model.addAttribute("recentQnaList", recentQnaList);
+
+
+        // 최근 FAQ (최신 5개)
+        List<Board> allFaqs = boardService.listFaqs();
+        List<Board> recentFaqList = new ArrayList<>();
+        if (allFaqs != null) {
+            for (int i = 0; i < allFaqs.size() && i < 5; i++) {
+                recentFaqList.add(allFaqs.get(i));
+            }
+        }
+        model.addAttribute("recentFaqList", recentFaqList);
 
         return "admin/admin_index";
     }
@@ -179,7 +204,50 @@ public class AdminController {
             return "redirect:/";
         }
 
-        model.addAttribute("qnaList", adminQnaService.listAllQna());
+        // 사이드바 배지(미처리 문의 수) 공통 제공
+        model.addAttribute("pendingQnaCount", qnaRepository.countPendingByStatus(0));
+
+        // =========================
+        // ✅ 문의 목록
+        // - 카운트는 정상인데 목록이 비어 보이는 문제를 막기 위해,
+        //   상태값으로 DB에서 직접 가져와서 화면에 전달합니다.
+        // =========================
+        List<java.util.Map<String, Object>> pending = new ArrayList<>();
+        List<java.util.Map<String, Object>> done = new ArrayList<>();
+
+        for (com.exam.literaryplanner.domain.Qna q : qnaRepository.findByQStatusOrderByQRegDateDesc(0)) {
+            java.util.Map<String, Object> v = new java.util.HashMap<>();
+            v.put("qIdx", q.getQIdx());
+            v.put("qTitle", q.getQTitle());
+            v.put("qStatus", q.getQStatus());
+            v.put("qRegDate", q.getQRegDate());
+            v.put("mName", (q.getMember() != null ? q.getMember().getMName() : "-"));
+            pending.add(v);
+        }
+
+        for (com.exam.literaryplanner.domain.Qna q : qnaRepository.findByQStatusOrderByQRegDateDesc(1)) {
+            java.util.Map<String, Object> v = new java.util.HashMap<>();
+            v.put("qIdx", q.getQIdx());
+            v.put("qTitle", q.getQTitle());
+            v.put("qStatus", q.getQStatus());
+            v.put("qRegDate", q.getQRegDate());
+            v.put("mName", (q.getMember() != null ? q.getMember().getMName() : "-"));
+            done.add(v);
+        }
+
+        int total = pending.size() + done.size();
+        int pendingCnt = pending.size();
+        int doneCnt = done.size();
+        int donePct = (total == 0) ? 0 : (int) Math.round((doneCnt * 100.0) / total);
+
+        model.addAttribute("qnaTotal", total);
+        model.addAttribute("qnaPendingCount", pendingCnt);
+        model.addAttribute("qnaDoneCount", doneCnt);
+        model.addAttribute("qnaDonePct", donePct);
+
+        model.addAttribute("qnaPendingList", pending);
+        model.addAttribute("qnaDoneList", done);
+
         return "admin/inquiries"; // /WEB-INF/views/admin/inquiries.jsp
     }
 

@@ -1,0 +1,1181 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
+
+:root{
+  --bg:#fff;
+  --text:#111;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --primary:#2f6fed;
+  --shadow:0 10px 30px rgba(0,0,0,.12);
+  --maxW:1200px;
+  --font:"Pretendard","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --scriptFont:"Dancing Script","Pretendard","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  
+  :root{
+    --hero-bg: url("/img/main.jpg");   /* 다크(야경) */
+    --page-text: rgba(255,255,255,.92);
+    --page-muted: rgba(255,255,255,.70);
+
+    --header-solid-bg: rgba(255,255,255,.92);
+    --header-solid-text: #111;
+
+    --pill-bg: rgba(255,255,255,.16);
+    --pill-border: rgba(255,255,255,.22);
+    --pill-text: rgba(255,255,255,.92);
+  }
+
+  /* 라이트 모드 */
+  :root[data-theme="light"]{
+    --hero-bg: url("/img/main_light.jpg"); /* 주간 이미지 파일명은 네가 맞춰서 */
+    --page-text: #111;
+    --page-muted: #6b7280;
+
+    --header-solid-bg: rgba(255,255,255,.92);
+    --header-solid-text: #111;
+
+    --pill-bg: rgba(0,0,0,.06);
+    --pill-border: rgba(0,0,0,.12);
+    --pill-text: #111;
+  }
+
+  /*
+    ✅ 네이티브 폼 UI 컬러 스킴
+    - 다크모드에서 select/option 배경이 강제로 흰색이 되는 현상을 줄임
+  */
+  :root{ color-scheme: dark; }
+  :root[data-theme="light"]{ color-scheme: light; }
+
+
+*{ box-sizing:border-box; }
+html{
+  scroll-behavior:smooth;
+  scrollbar-gutter: stable;
+}
+
+/*
+  스크롤바는 기본 숨김, 스크롤 중에만 잠깐 표시
+  - JS: /js/scrollbar-auto.js 에서 html.show-scrollbar 토글
+  - 레이아웃 흔들림(스크롤바 너비로 인한 좌우 이동) 최소화
+*/
+html:not(.show-scrollbar){
+  scrollbar-width: none;
+}
+html.show-scrollbar{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,.38) transparent;
+}
+html::-webkit-scrollbar{
+  width:0;
+  height:0;
+}
+html.show-scrollbar::-webkit-scrollbar{
+  width:10px;
+}
+html::-webkit-scrollbar-track{ background: transparent; }
+html::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.28);
+  border-radius: 999px;
+}
+html.show-scrollbar::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.38);
+}
+
+body{
+  margin:0;
+  font-family:var(--font);
+  color:var(--text);
+  background:var(--bg);
+}
+
+/* [유지] 페이지 전체 배경을 고정으로 깔기 */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+    background: var(--hero-bg) center/cover no-repeat;
+  z-index:-2;
+}
+
+/* [유지] 트리플 느낌의 오버레이 */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.18));
+  z-index:-1;
+}
+
+/* [추가] 지도 페이지 전용 (지도 비침/레이어 문제 방지) */
+/* body.maps-page{ background:#fff; } */
+
+/* 메인처럼 고정 배경이 map 화면에 비치지 않도록 “지도 페이지에서만” 약화/제거 */
+/* body.maps-page::before{ background:none !important; } body.maps-page::after{ background:none !important; } */
+
+/* 지도 영역이 확실히 위에 올라오게 */
+body.maps-page #map{
+  position:relative;
+  z-index:1;
+  background:#fff;
+}
+
+a{ color:inherit; text-decoration:none; }
+main{ background: transparent; }
+.header, .header *{ font-family:inherit; }
+input,button,select,textarea{ font-family:inherit; }
+
+.container{
+  width:min(var(--maxW), calc(100% - 48px));
+  margin:0 auto;
+}
+
+/* Header (투명 → 스크롤 시 흰색) */
+
+/* [수정] 기본은 투명(글씨만 보이게) */
+.header{
+  background:transparent;              /* 변경 */
+  backdrop-filter:blur(0);             /* 변경 */
+  border-bottom:1px solid transparent; /* 변경 */
+  position:sticky;
+  top:0;
+  pointer-events:auto;
+  z-index: 99999;
+  transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease;
+}
+
+/* [추가] 시트가 헤더 아래로 올라오면 흰색(기존 헤더 스타일) */
+.header.is-solid{
+	background: var(--header-solid-bg);
+	 color: var(--header-solid-text);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.header.is-solid .nav a{ color: var(--header-solid-text); }
+/* [추가] 투명 헤더일 때 글씨가 배경 위에서 잘 보이도록 */
+.header:not(.is-solid) .nav a,
+.header:not(.is-solid) .header-link,
+.header:not(.is-solid) .nav-drop-btn{
+  color:rgba(255,255,255,.95);
+  text-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+
+/* [추가] 투명 헤더일 때 hover 배경도 투명하게 */
+.header:not(.is-solid) .header-link:hover,
+.header:not(.is-solid) .nav-drop-btn:hover{
+  background:rgba(255,255,255,.14);
+}
+
+.hamburger-btn{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  cursor:pointer;
+  padding:0;
+  overflow:hidden;
+
+  /* 기본(흰 헤더) 톤 */
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(0,0,0,.04);
+}
+
+/* 투명 헤더일 때는 “유리 버튼” 톤으로 덮어쓰기 */
+.header:not(.is-solid) .hamburger-btn{
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+}
+
+.hamburger-btn span{
+  width:18px;
+  height:2px;
+  background:currentColor;
+  border-radius:2px;
+  display:block;
+}
+
+/* 투명 헤더(메인 배경)에서는 햄버거 선을 흰색으로 */
+.header:not(.is-solid) .hamburger-btn{ color:#fff; }
+
+/* solid(흰 헤더)에서는 햄버거 선을 진한색으로 */
+.header.is-solid .hamburger-btn{ color:#111; }
+/*
+  ✅ 다크/라이트 토글 버튼 UI 통일
+  - 햄버거 버튼과 같은 “유리 버튼” 톤
+  - 위치는 JSP 그대로 유지 (디자인만 변경)
+*/
+.theme-toggle{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+  color:#fff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+  font-size:16px;
+  line-height:1;
+}
+.theme-toggle:hover{ background:rgba(255,255,255,.16); }
+.theme-toggle:active{ transform:translateY(0.5px); }
+.theme-toggle:focus{ outline:none; box-shadow:0 0 0 4px rgba(255,255,255,.18); }
+
+/* 흰 헤더(is-solid)에서는 버튼도 밝은 톤으로 */
+.header.is-solid .theme-toggle{
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(0,0,0,.04);
+  color:#111;
+  backdrop-filter:blur(10px);
+}
+.header.is-solid .theme-toggle:hover{ background:rgba(0,0,0,.06); }
+.header.is-solid .theme-toggle:focus{ box-shadow:0 0 0 4px rgba(0,0,0,.10); }
+
+.header:not(.is-solid) .header:not(.is-solid) .nav-drop-menu a{
+  color:rgba(255,255,255,.92);
+  text-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+  
+/* [유지] 헤더 내부 레이아웃 */
+.header-inner{
+  height:64px;
+  display:grid;
+  grid-template-columns:200px 1fr auto;
+  align-items:center;
+}
+
+.brand-top{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:200px;
+}
+.brand-top:hover{ cursor:pointer; }
+
+.brand-logo-img{
+  height:40px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+}
+
+/* Nav */
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  gap:28px;
+}
+.nav a.active{ color:var(--primary); }
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.header-link{
+  font-weight:900;
+  color:#374151;
+  padding:8px 10px;
+  border-radius:10px;
+}
+.header-link:hover{ background:#f3f4f6; }
+
+/* Dropdown */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
+.nav-drop-btn{
+	  border:0;
+	  background:transparent;
+
+	  color:inherit;            /* ✅ 다크모드 ButtonText(흰색) 강제 적용 방지 */
+	  -webkit-appearance:none;  /* ✅ 기본 버튼 스타일 제거 */
+	  appearance:none;
+
+	  padding:8px 10px;
+	  border-radius:10px;
+	  cursor:pointer;
+	  font-weight:900;
+	}
+
+
+/* [추가] 드롭다운 화살표 회전(열림/닫힘 상태 시각화) */
+.nav-drop-btn .chev{ display:inline-block; transition:transform .18s ease; }
+.nav-dropdown.open .nav-drop-btn .chev{ transform:rotate(180deg); }
+
+/* 카테고리 드롭다운: 말풍선 + 애니메이션 */
+.nav-drop-menu{
+  position:absolute;
+  top:44px;
+  left:0;
+  width:190px;
+
+  /* 어두운 글라스 톤 */
+  background:rgba(10,16,26,.72);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:14px;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  padding:10px;
+  z-index:3000;
+
+  /* ✅ 애니메이션을 위해 display는 유지 */
+  display:block;
+  opacity:0;
+  transform: translateY(10px) scale(.98);
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s linear .18s;
+}
+
+/* 말풍선 꼬리 */
+.nav-drop-menu::before{
+  content:"";
+  position:absolute;
+  top:-8px;
+  left:18px;
+  border-style:solid;
+  border-width:0 8px 8px 8px;
+  border-color:transparent transparent rgba(10,16,26,.72) transparent;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
+}
+
+.nav-dropdown.open .nav-drop-menu{
+  opacity:1;
+  transform: translateY(0) scale(1);
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s;
+}
+
+.nav-drop-menu a{
+  display:block;
+  padding:10px 10px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:800;
+  color:rgba(255,255,255,.92);
+}
+.nav-drop-menu a:hover{
+  background:rgba(255,255,255,.10);
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:34px;
+  padding:0 14px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:900;
+  border:1px solid transparent;
+  cursor:pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.btn.ghost{ background:#fff; border-color:var(--line); }
+.btn.ghost:hover{ background:#f3f4f6; }
+.btn.solid{ background:var(--primary); color:#fff; }
+.btn.solid:hover{ filter:brightness(.95); }
+
+/* 라이트 모드에서 '완전 흰색' 느낌을 줄이고 버튼을 구분감 있게 */
+:root[data-theme="light"] .btn:not(.solid){
+  background: rgba(255,255,255,.88);
+  color: #0f172a;
+  border-color: rgba(47,111,237,.26);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+:root[data-theme="light"] .btn:not(.solid):hover{
+  background: rgba(47,111,237,.10);
+  border-color: rgba(47,111,237,.40);
+  transform: translateY(-1px);
+}
+
+/* 고객센터(라이트) 카드/박스 톤을 살짝 올려서 눈부심 줄이기 */
+html[data-page="support"][data-theme="light"] body [style*="background:#fff"],
+html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
+  background: rgba(255,255,255,.82) !important;
+  border-color: rgba(47,111,237,.20) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+/* 헤더 로그인/회원가입: '글자만' 보이게 */
+.header-auth{
+  height:auto;
+  padding:6px 8px;
+  border:0 !important;
+  background:transparent !important;
+  border-radius:8px;
+  font-weight:900;
+  font-size:14px;
+  transition: transform .18s ease, background .18s ease;
+}
+
+/* 투명 헤더(메인 히어로) 위에서는 흰 글자 */
+.header:not(.is-solid) .header-auth{
+  color:rgba(255,255,255,.92) !important;
+}
+.header:not(.is-solid) .header-auth:hover{
+  background:rgba(255,255,255,.14) !important;
+  transform: translateY(-1px) scale(1.05);
+}
+
+/* 스크롤 내려서 헤더가 solid 됐을 때는 진한 글자 */
+.header.is-solid .header-auth{
+  color:#374151; /* 만약 solid 배경이 흰색이면 여기 #374151 로 바꿔 */
+}
+.header.is-solid .header-auth:hover{
+  background:rgba(255,255,255,.10) !important;
+  transform: translateY(-1px) scale(1.05);
+}
+
+.hamburger{ position:relative; }
+/* Hamburger */
+.hamburger-menu{
+  position:absolute; 
+  top:46px;
+  right:0;
+  width:280px;
+
+  background:rgba(10,16,26,.62);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:16px;
+  box-shadow:0 18px 44px rgba(0,0,0,.32);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  padding:12px;
+  z-index:4000;
+
+  display:block;
+  opacity:0;
+  transform: translateY(10px) scale(.98);
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s linear .18s;
+}
+
+/* 말풍선 꼬리 (오른쪽 위) */
+.hamburger-menu::before{
+  content:"";
+  position:absolute;
+  top:-8px;
+  right:18px;
+  border-style:solid;
+  border-width:0 8px 8px 8px;
+  border-color:transparent transparent rgba(10,16,26,.78) transparent;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
+}
+
+.hamburger-menu.open{
+  opacity:1;
+  transform: translateY(0) scale(1);
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s;
+}
+
+/* 내부 글자 톤 */
+.hm-title{ color:rgba(255,255,255,.95); }
+.hm-subtitle{ color:rgba(255,255,255,.55); }
+
+.menu-item,
+.menu-btn{
+  color:rgba(255,255,255,.92);
+}
+
+/* ✅ 헤더가 is-solid(라이트 헤더)여도, 햄버거 메뉴 안 글씨는 항상 밝게 유지 */
+.header.is-solid .hamburger-menu .hm-title,
+.header.is-solid .hamburger-menu .hm-subtitle,
+.header.is-solid .hamburger-menu .hm-role,
+.header.is-solid .hamburger-menu .menu-item,
+.header.is-solid .hamburger-menu .menu-btn{
+  color:rgba(255,255,255,.92) !important;
+}
+.menu-item:hover,
+.menu-btn:hover{
+  background:rgba(255,255,255,.10);
+}
+
+.hm-divider{
+  background:rgba(255,255,255,.12);
+}
+
+/* solid 헤더(흰 배경)에서는 선이 더 잘 보이게 */
+.header.is-solid .hamburger-btn{
+  border-color:rgba(0,0,0,.10);
+  background:#fff;
+}
+/* solid 헤더(흰 배경)에서 hover/focus */
+.header.is-solid .hamburger-btn:hover{ transform:translateY(-1px); }
+.header.is-solid .hamburger-btn:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 4px rgba(47,111,237,.22);
+}
+
+
+/* .hamburger-menu{ position:absolute; top:46px; right:0; width:260px; [수정] 메뉴 톤 통일 (완전 흰색 -> 살짝 톤/그라데이션) background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border:1px solid rgba(0,0,0,.08); border-radius:16px; box-shadow:0 18px 40px rgba(0,0,0,.12); padding:12px; display:none; z-index:4000; } .hamburger-menu.open{ display:block; } */
+
+.hm-title{
+  font-weight:900;
+  font-size:16px;
+  letter-spacing:-.2px;
+  margin:4px 4px 10px;
+}
+
+.hm-role{
+  margin-left:6px;
+  font-size:12px;
+  font-weight:900;
+  color:rgba(255,255,255,.65);
+}
+.hm-actions{
+  display:flex;
+  gap:10px;
+  margin:0 4px 10px;
+}
+.hm-actions .btn{ flex:1; height:38px; }
+
+.hm-divider{
+  height:1px;
+  background:rgba(255,255,255,.12);
+  margin:10px 0;
+}
+
+/* [추가] 햄버거 메뉴 안에서 섹션 제목(바로가기/카테고리) */
+.hm-subtitle{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  color:rgba(255,255,255,.55);
+  margin:6px 6px 8px;
+}
+
+.menu-item{
+  display:block;
+  padding:10px 10px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:800;
+}
+.menu-item:hover{ background:rgba(255,255,255,.10); }
+
+.menu-btn{
+  width:100%;
+  text-align:left;
+  padding:10px 10px;
+  border-radius:10px;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+}
+.menu-btn:hover{ background:rgba(255,255,255,.10); }
+
+.hm-pill{
+  display:inline-flex;
+  align-items:center;
+  height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  background:rgba(47,111,237,.12);
+  color:var(--primary);
+  font-weight:900;
+  font-size:12px;
+  margin-left:8px;
+}
+
+/* Hero */
+
+/* [수정] hero는 화면을 꽉 채우되, header 높이만큼은 빼서 “짤림” 방지 */
+.hero{
+  --heroSearchTop:44%;      /* A: 검색바 위치(아래로 내리기) */
+  --heroArrowBottom:70px;   /* C: 화살표 위치(아래로 내리기) */
+
+  height:calc(100vh - 64px);
+  min-height:680px;
+  position:relative;
+  padding-top:64px;
+  overflow:hidden;
+}
+
+.hero-copy{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2;
+  text-align:center;
+  width:min(980px, calc(100% - 48px));
+  pointer-events:none;
+}
+
+.hero-copy--top{ top:calc(var(--heroSearchTop) - 16%); }
+.hero-copy--bottom{ top:calc(var(--heroSearchTop) + 10%); }
+
+.hero-pill{
+  display:inline-block;
+
+  /* 박스 제거 */
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  border:0;
+  backdrop-filter:none;
+  box-shadow:none;
+}
+
+.hero-title{
+  font-family:var(--scriptFont);
+  font-weight:700;
+  font-size:80px;
+  line-height:1.05;
+  color:rgba(255,255,255,.96);
+  text-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+.hero-sub{
+  font-weight:800;
+  font-size:18px;
+  color:rgba(255,255,255,.92);
+  text-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Searchbar (glass) - 단 한 번만 정의 */
+
+/* [중요] searchbar 관련 CSS를 여기 하나로 통일(중복 정의 삭제) */
+.searchbar{
+  position:absolute;
+  left:50%;
+  top:var(--heroSearchTop);
+  transform:translateX(-50%);
+  width:min(920px, calc(100% - 48px));
+  border-radius:999px;
+  z-index:2;
+
+  display:flex;
+  align-items:center;
+  padding:12px 14px;
+  gap:10px;
+
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.35);
+  backdrop-filter:blur(12px);
+  box-shadow:0 18px 50px rgba(0,0,0,.18);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.searchbar:focus-within{
+  box-shadow:0 22px 70px rgba(0,0,0,.22), 0 0 0 4px rgba(47,111,237,.22);
+  transform:translateX(-50%) translateY(-1px);
+}
+
+.sb-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:999px;
+  flex:1;
+}
+.sb-item + .sb-item{
+  border-left:1px solid rgba(255,255,255,.55);
+}
+
+.sb-item input{
+  border:0;
+  outline:0;
+  width:100%;
+  font-size:15px;
+  background:transparent;
+  color:#111;
+}
+
+/* [추가] select(인원)도 input과 동일한 톤으로 */
+.sb-item select{
+  border:0;
+  outline:0;
+  width:100%;
+  font-size:15px;
+  background:transparent;
+  color:#111;
+  cursor:pointer;
+}
+
+/* [추가] '화살표가 있는 선택창' 느낌 강화(브라우저 기본 화살표를 통일) */
+.sb-item.sb-select{ position:relative; }
+.sb-item.sb-select select{
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  padding-right:28px;
+}
+.sb-item.sb-select::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-right:2px solid rgba(17,17,17,.55);
+  border-bottom:2px solid rgba(17,17,17,.55);
+  transform:translateY(-50%) rotate(45deg);
+  pointer-events:none;
+}
+
+/* [추가] placeholder처럼 보이게(선택 전에는 연한 색) */
+.sb-item select:invalid{ color:rgba(17,17,17,.55); }
+.sb-item input::placeholder{
+  color:rgba(17,17,17,.55);
+}
+
+.sb-icon{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  background:rgba(17,17,17,.10);
+}
+
+/* [수정] 버튼을 그라데이션 + 약간 떠있는 느낌 */
+.sb-btn{
+  border:0;
+  color:#fff;
+  font-weight:900;
+  height:46px;
+  padding:0 26px;
+  border-radius:999px;
+  cursor:pointer;
+
+  background:linear-gradient(135deg, #2f6fed, #5b8cff);
+  box-shadow:0 10px 24px rgba(47,111,237,.28);
+  transition: transform .15s ease, filter .15s ease;
+}
+.sb-btn:hover{
+  filter:brightness(1.03);
+  transform:translateY(-1px);
+}
+.sb-btn:active{
+  transform:translateY(0);
+}
+
+/* Scroll down */
+.scroll-down{
+  position:absolute;
+  left:50%;
+   bottom:var(--heroArrowBottom);
+  transform:translateX(-50%);
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(0,0,0,.18);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:2;
+  animation:bob 1.6s ease-in-out infinite;
+}
+.scroll-down::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-right:2px solid rgba(255,255,255,.95);
+  border-bottom:2px solid rgba(255,255,255,.95);
+  transform:rotate(45deg);
+  margin-top:-2px;
+}
+@keyframes bob{
+  0%,100%{ transform:translateX(-50%) translateY(0); }
+  50%{ transform:translateX(-50%) translateY(8px); }
+}
+
+.hero { position: relative; z-index: 1; }
+.sheet{ position: relative; z-index: 5; }
+
+/* Sheet */
+.sheet{
+  position:relative;
+  z-index:5;
+  background:#fff;
+  border-radius:56px 56px 0 0;
+  box-shadow:0 -22px 60px rgba(0,0,0,.10);
+  padding:72px 0 64px;
+  border-top:1px solid rgba(0,0,0,.06);
+  transform:translateY(calc(-1px * var(--sheetLift, 0)));
+  will-change:transform;
+}
+
+/* sheet 아래로는 항상 흰 배경 유지 (배경 튀어나오는 현상 방지) */
+.sheet::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-200vh;
+  height:200vh;
+  background:#fff;
+  z-index:-1;
+}
+
+.block{ padding:14px 0 28px; }
+.block + .block{
+  border-top:1px solid rgba(0,0,0,.06);
+  padding-top:28px;
+}
+
+.block-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.block-title{
+  margin:0;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:-.6px;
+}
+.block-sub{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:700;
+}
+
+/* Cards */
+.cards{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+}
+
+.post-card{
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(0,0,0,.06);
+  background:#fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.06);
+  display:flex;
+  flex-direction:column;
+  min-height:340px;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.post-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 44px rgba(0,0,0,.10);
+}
+
+.post-img{
+  height:230px;
+  background-size:cover;
+  background-position:center;
+  background-color:#e5e7eb;
+}
+.post-body{
+  padding:18px 14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.post-title{
+  font-weight:900;
+  font-size:18px;
+  letter-spacing:-.3px;
+}
+.post-meta{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+}
+.post-tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  background:rgba(47,111,237,.10);
+  color:var(--primary);
+  font-weight:900;
+  font-size:13px;
+}
+
+/* Marquee */
+.marquee{
+  margin-top:18px;
+  overflow:hidden;
+  position:relative;
+}
+.marquee__track{
+  display:flex;
+  gap:16px;
+  width:max-content;
+  will-change:transform;
+  animation:marquee var(--marquee-duration, 22s) linear infinite;
+}
+.marquee .post-card{ flex:0 0 360px; }
+.marquee:hover .marquee__track{ animation-play-state:paused; }
+
+@keyframes marquee{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(calc(-1 * var(--marquee-distance, 600px))); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .marquee__track{ animation:none; }
+}
+
+/* Recommend */
+.course-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+}
+.course-head-left{ min-width:0; }
+.course-head-right{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+}
+
+.segmented{ display:flex; gap:10px; }
+.seg-btn{
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid #d9d9d9;
+  background:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+.seg-btn.active{
+  border-color:#5b8cff;
+  background:#eaf0ff;
+  color:#2f5fff;
+}
+
+.citybar{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.city-btn{
+  height:38px;
+  padding:0 14px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  font-weight:900;
+  color:#374151;
+  cursor:pointer;
+}
+.city-btn.active{
+  background:rgba(47,111,237,.12);
+  border-color:rgba(47,111,237,.30);
+  color:var(--primary);
+}
+
+/* Recommend Slider */
+.recommend-wrap{
+  position:relative;
+  margin-top:24px;
+}
+
+#recommendCards{
+  margin-top:0;
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding:6px 20px;
+  scroll-snap-type:x mandatory;
+  position:relative;
+}
+
+#recommendCards::-webkit-scrollbar{ display:none; }
+#recommendCards{ -ms-overflow-style:none; scrollbar-width:none; }
+
+#recommendCards .post-card{
+  flex:0 0 calc((100% - 32px) / 3);
+  scroll-snap-align:start;
+}
+
+.arrow-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid rgba(0,0,0,.18);
+  background:#fff;
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  cursor:pointer;
+  z-index:30;
+  
+  background:#fff;
+
+  color:#111;               /* ✅ SVG가 currentColor라서 이것이 없으면 흰색으로 사라짐 */
+  -webkit-appearance:none;
+  appearance:none;
+}
+.arrow-btn svg{ display:block; margin:0; }
+.arrow-left svg{ transform:translateX(-2.5px); }
+.arrow-right svg{ transform:translateX(2px); }
+.arrow-left{ left:0; }
+.arrow-right{ right:0; }
+.arrow-btn:hover{ filter:brightness(.98); }
+.arrow-btn:active{ transform:translateY(-50%) scale(.96); }
+
+/* Floating CS */
+.cs-fab{
+  position:fixed;
+  right:26px;
+  bottom:26px;
+  z-index:9999;
+  height:56px;
+  min-width:78px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(47,111,237,.92);
+  backdrop-filter:blur(6px);
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid rgba(255,255,255,.18);
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.cs-fab__icon{
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  background:#fff;
+  color:#2f6fed;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:18px;
+  flex:0 0 auto;
+}
+.cs-fab__label{
+  color:#fff;
+  font-weight:900;
+  font-size:14px;
+  letter-spacing:-.2px;
+  max-width:0;
+  opacity:0;
+  transform:translateX(6px);
+  overflow:hidden;
+  white-space:nowrap;
+  transition:max-width .22s ease, opacity .18s ease, transform .22s ease;
+}
+.cs-fab:hover{
+  background:rgba(47,111,237,1);
+  transform:translateY(-2px);
+  box-shadow:0 22px 50px rgba(0,0,0,.22);
+}
+.cs-fab:hover .cs-fab__label{
+  max-width:140px;
+  opacity:1;
+  transform:translateX(0);
+}
+.cs-fab:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 4px rgba(47,111,237,.25), 0 22px 50px rgba(0,0,0,.22);
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  .cards{ grid-template-columns:repeat(2, 1fr); }
+  .sheet{ border-radius:38px 38px 0 0; }
+  #recommendCards .post-card{ flex:0 0 calc((100% - 16px) / 2); }
+}
+
+@media (max-width: 768px){
+  .course-head{ flex-direction:column; align-items:stretch; }
+  .course-head-right{ justify-content:flex-start; }
+}
+
+/* [추가] Header 모바일 최적화 - 작은 화면에서는 상단 nav를 숨기고 햄버거 메뉴 중심으로 */
+@media (max-width: 860px){
+  .header-inner{
+    grid-template-columns: 1fr auto;
+  }
+  .nav{ display:none; }
+  .brand-top{ width:auto; }
+  .hamburger-menu{ width:min(92vw, 320px); }
+}
+
+@media (max-width: 520px){
+  .cards{ grid-template-columns:1fr; }
+  .hero{
+    min-height:560px;
+    height:calc(100vh - 64px); /* 유지 */
+  }
+  /* [수정] 모바일에서는 검색바를 세로 스택(터치하기 편하게) */
+  .searchbar{
+   top:var(--heroSearchTop);
+    border-radius:22px;
+    padding:12px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+  .sb-item{ border-radius:16px; }
+  .sb-item + .sb-item{ border-left:0; border-top:1px solid rgba(0,0,0,.06); }
+  .sb-btn{ width:100%; }
+
+  /* [추가] 모바일에서는 '내 예약' 텍스트 버튼은 공간 차지 -> 숨김 */
+  .header-link{ display:none; }
+  #recommendCards .post-card{ flex:0 0 100%; }
+  .block-title{ font-size:22px; }
+}
+
+
+
+

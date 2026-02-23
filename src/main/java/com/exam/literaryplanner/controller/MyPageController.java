@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Review;
+import com.exam.literaryplanner.domain.Community;
 import com.exam.literaryplanner.repository.LiteraryRepository;
-import com.exam.literaryplanner.repository.ReviewRepository;
+import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.MemberDeleteService;
 
 import jakarta.servlet.http.HttpSession;
@@ -26,11 +26,11 @@ public class MyPageController {
 
     private final PasswordEncoder passwordEncoder;
     private final LiteraryRepository literaryRepository;
-    private final ReviewRepository reviewRepository;
+    private final CommunityRepository reviewRepository;
     private final MemberDeleteService memberDeleteService;
 
     public MyPageController(LiteraryRepository literaryRepository,
-                            ReviewRepository reviewRepository,
+                            CommunityRepository reviewRepository,
                             PasswordEncoder passwordEncoder,
                             MemberDeleteService memberDeleteService) {
         this.literaryRepository = literaryRepository;
@@ -165,7 +165,7 @@ public class MyPageController {
             return "redirect:/members/login";
         }
 
-        List<Review> reviews;
+        List<Community> reviews;
         if (keyword != null && !keyword.isBlank()) {
             reviews = reviewRepository.findByMIdxAndRvTitleContainingOrderByRvIdxDesc(
                     loginMember.getMIdx(),

@@ -1,0 +1,109 @@
+/* =========================
+   Wizard Only (Step UI)
+   ========================= */
+
+/* 스텝 숨김/활성 */
+.pt-step{ display:none; }
+.pt-step.is-active{ display:block; }
+
+/* 상단 위저드 바 */
+.pt-wizard-top{
+  position: sticky;
+  top: 12px;
+  z-index: 50;
+  margin: 0 0 12px;
+  padding: 14px 14px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(15, 27, 47, .75);
+  backdrop-filter: blur(10px);
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+}
+
+.pt-wizard-left{
+  flex:1;
+  min-width: 200px;
+}
+
+.pt-wizard-title{
+  font-weight: 900;
+  font-size: 14px;
+  color: rgba(229,231,235,.95);
+}
+
+.pt-wizard-sub{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(156,163,175,.90);
+  line-height: 1.4;
+}
+
+/* 진행 바 */
+.pt-wizard-bar{
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+
+#ptWizardBarFill{
+  height:100%;
+  width:0%;
+  border-radius: 999px;
+  background: rgba(96,165,250,.60);
+  transition: width .25s ease;
+}
+
+/* 버튼 영역 */
+.pt-wizard-nav{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.pt-btn{
+  cursor:pointer;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  color: rgba(229,231,235,.95);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.pt-btn:hover{ background: rgba(255,255,255,.08); }
+
+.pt-btn.primary{
+  border-color: rgba(96,165,250,.50);
+  background: rgba(96,165,250,.18);
+}
+
+.pt-btn:disabled{
+  opacity: .55;
+  cursor:not-allowed;
+}
+
+/* 경고(필수 입력 안내) */
+.pt-warn{
+  display:none;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(248,113,113,.28);
+  background: rgba(248,113,113,.12);
+  color: rgba(254,202,202,.95);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.pt-warn.show{ display:block; }
+
+/* 저장 버튼은 마지막 스텝에서만 보여주기 */
+.pt-submit-wrap{ display:none; }
+.pt-submit-wrap.is-active{ display:block; }
