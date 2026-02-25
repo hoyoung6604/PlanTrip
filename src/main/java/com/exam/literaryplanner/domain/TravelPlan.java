@@ -1,64 +1,56 @@
 package com.exam.literaryplanner.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "travelPlanT")
+@Table(name = "travelplant")
 public class TravelPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tp_idx", nullable = false)
-    private Integer tpIdx;
+    @Column(name = "p_idx", nullable = false)
+    private Integer pIdx;
 
     @Column(name = "m_idx", nullable = false)
     private Integer mIdx;
 
+    @Column(name = "p_title", nullable = false, length = 200)
+    private String pTitle;
+
+    @Column(name = "p_start", nullable = false)
+    private LocalDate pStart;
+
+    @Column(name = "p_end", nullable = false)
+    private LocalDate pEnd;
+
+    @Column(name = "p_regDate", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime pRegDate;
+    
     @Column(name = "tp_title", nullable = false, length = 200)
     private String tpTitle;
 
-    @Column(name = "tp_start_date", length = 20)
-    private String tpStartDate;
-
-    @Column(name = "tp_end_date", length = 20)
-    private String tpEndDate;
-
-    // ✅ 6가지 입력 + 권역 + 안전장치 등을 요약 텍스트로 저장
-    @Lob
-    @Column(name = "tp_meta", columnDefinition = "TEXT")
-    private String tpMeta;
-
-    @Column(name = "tp_created_at", nullable = false)
-    private LocalDateTime tpCreatedAt = LocalDateTime.now();
-
     public TravelPlan() {}
+    
+    public String getTpTitle() { return tpTitle; }
+    public void setTpTitle(String tpTitle) { this.tpTitle = tpTitle; }
 
-    public Integer getTpIdx() { return tpIdx; }
-    public void setTpIdx(Integer tpIdx) { this.tpIdx = tpIdx; }
+    public Integer getPIdx() { return pIdx; }
+    public void setPIdx(Integer pIdx) { this.pIdx = pIdx; }
 
     public Integer getMIdx() { return mIdx; }
     public void setMIdx(Integer mIdx) { this.mIdx = mIdx; }
 
-    public String getTpTitle() { return tpTitle; }
-    public void setTpTitle(String tpTitle) { this.tpTitle = tpTitle; }
+    public String getPTitle() { return pTitle; }
+    public void setPTitle(String pTitle) { this.pTitle = pTitle; }
 
-    public String getTpStartDate() { return tpStartDate; }
-    public void setTpStartDate(String tpStartDate) { this.tpStartDate = tpStartDate; }
+    public LocalDate getPStart() { return pStart; }
+    public void setPStart(LocalDate pStart) { this.pStart = pStart; }
 
-    public String getTpEndDate() { return tpEndDate; }
-    public void setTpEndDate(String tpEndDate) { this.tpEndDate = tpEndDate; }
+    public LocalDate getPEnd() { return pEnd; }
+    public void setPEnd(LocalDate pEnd) { this.pEnd = pEnd; }
 
-    public String getTpMeta() { return tpMeta; }
-    public void setTpMeta(String tpMeta) { this.tpMeta = tpMeta; }
-
-    public LocalDateTime getTpCreatedAt() { return tpCreatedAt; }
-    public void setTpCreatedAt(LocalDateTime tpCreatedAt) { this.tpCreatedAt = tpCreatedAt; }
+    public LocalDateTime getPRegDate() { return pRegDate; }
 }

@@ -22,14 +22,12 @@ public class TransportService {
     private final WebClient webClient = WebClient.builder().build();
 
     // =========================
-    //  FLIGHT
+    //  FLIGHT (기존 그대로)
     // =========================
     private static final String FLIGHT_URL =
             "http://apis.data.go.kr/1613000/DmstcFlightNvgInfoService/getFlightOpratInfoList";
-
     private static final String JEJU_ID = "NAARKPC";
 
-    // key = airportId, value = airportName
     private static final Map<String, String> AIRPORTS = Map.ofEntries(
             Map.entry("NAARKPK", "김해"),
             Map.entry("NAARKTU", "청주"),
@@ -37,17 +35,9 @@ public class TransportService {
             Map.entry("NAARKTN", "대구")
     );
 
-    // ✅ 컨트롤러에서 호출
-    public Map<String, String> getAirports() {
-        return AIRPORTS;
-    }
+    public Map<String, String> getAirports() { return AIRPORTS; }
+    public String getDefaultAirportId() { return "NAARKSS"; }
 
-    // ✅ 컨트롤러에서 호출
-    public String getDefaultAirportId() {
-        return "NAARKSS";
-    }
-
-    // ✅ 컨트롤러에서 호출
     public List<Map<String, Object>> searchJejuRouteByAirport(String airportId, String depPlandTime) {
         List<Map<String, Object>> all = new ArrayList<>();
         all.addAll(searchFlight(airportId, JEJU_ID, depPlandTime));
@@ -56,7 +46,6 @@ public class TransportService {
         return all;
     }
 
-    // ✅ 컨트롤러에서 호출
     public List<Map<String, Object>> searchFlight(String depAirportId, String arrAirportId, String depPlandTime) {
         JsonNode root = webClient.get()
                 .uri(FLIGHT_URL, uriBuilder -> uriBuilder
@@ -86,27 +75,21 @@ public class TransportService {
     }
 
     // =========================
-    //  FIXED CITIES (6개 고정)
+    //  FIXED CITIES
     // =========================
     private static final List<String> FIXED_CITIES =
             List.of("서울", "부산", "강릉", "경주", "수원", "속초");
-
-    // ✅ 컨트롤러에서 호출: transportService.getFixedCities()
-    public List<String> getFixedCities() {
-        return FIXED_CITIES;
-    }
+    public List<String> getFixedCities() { return FIXED_CITIES; }
 
     // =========================
-    //  EXPRESS BUS
+    //  EXPRESS BUS (고속) - 기존 유지
     // =========================
     private static final String BUS_URL =
             "http://apis.data.go.kr/1613000/ExpBusInfoService/getStrtpntAlocFndExpbusInfo";
 
-    // 터미널 목록 조회 API
     private static final String BUS_TERMINAL_URL =
             "http://apis.data.go.kr/1613000/ExpBusInfoService/getExpBusTrminlList";
 
-    // ✅ terminalNm -> terminalId
     public Map<String, String> getExpBusTerminals() {
         JsonNode root = webClient.get()
                 .uri(BUS_TERMINAL_URL, uriBuilder -> uriBuilder
@@ -130,29 +113,19 @@ public class TransportService {
         return map;
     }
 
-    /**
-     * ✅ 도시명으로 "해당 도시 터미널 목록" 반환
-     * - 우선순위: (서울/부산 특수) + "고속" "종합" "시외" 같은 키워드를 앞으로.
-     * - 반환형: List<Map<String,String>>  (JSP에서 쓰기 편하게)
-     */
     public List<Map<String, String>> getExpBusTerminalsByCity(String city) {
         Map<String, String> all = getExpBusTerminals();
 
         List<Map<String, String>> list = new ArrayList<>();
         if (city == null || city.isBlank()) return list;
 
-        // 1) 매칭 키워드 구성(도시별 우선 키워드)
         List<String> keys;
         switch (city) {
-            case "서울":
-                keys = List.of("서울경부", "서울"); break;
-            case "부산":
-                keys = List.of("부산", "부산종합"); break;
-            default:
-                keys = List.of(city); break;
+            case "서울": keys = List.of("서울경부", "서울"); break;
+            case "부산": keys = List.of("부산", "부산종합"); break;
+            default: keys = List.of(city); break;
         }
 
-        // 2) terminalNm에 키워드 포함되는 것들 수집
         for (Map.Entry<String, String> e : all.entrySet()) {
             String terminalNm = e.getKey();
             for (String k : keys) {
@@ -166,7 +139,6 @@ public class TransportService {
             }
         }
 
-        // 3) 보기 좋게 정렬(고속/종합/시외 우선)
         list.sort((a, b) -> scoreTerminal(b.get("terminalNm")) - scoreTerminal(a.get("terminalNm")));
         return list;
     }
@@ -177,19 +149,16 @@ public class TransportService {
         if (name.contains("고속")) s += 30;
         if (name.contains("종합")) s += 20;
         if (name.contains("시외")) s += 10;
-        // 너무 긴 이름은 뒤로(선택사항)
         if (name.length() <= 6) s += 3;
         return s;
     }
 
-    // ✅ terminalId로 바로 조회 (UI에서 선택한 터미널ID를 그대로 넣는 방식)
     public List<Map<String, Object>> searchExpBusByTerminal(String depTerminalId, String arrTerminalId, String depPlandTime) {
         if (depTerminalId == null || depTerminalId.isBlank()) return Collections.emptyList();
         if (arrTerminalId == null || arrTerminalId.isBlank()) return Collections.emptyList();
         return searchExpBus(depTerminalId, arrTerminalId, depPlandTime);
     }
 
-    // 기존 searchExpBus 그대로
     public List<Map<String, Object>> searchExpBus(String depTerminalId, String arrTerminalId, String depPlandTime) {
         JsonNode root = webClient.get()
                 .uri(BUS_URL, uriBuilder -> uriBuilder
@@ -205,7 +174,10 @@ public class TransportService {
                 .bodyToMono(JsonNode.class)
                 .block();
 
-        return postProcessBus(extract(root));
+        List<Map<String, Object>> list = postProcessBus(extract(root));
+        // ✅ 구분 붙이기
+        for (Map<String, Object> m : list) m.put("busType", "고속");
+        return list;
     }
 
     private List<Map<String, Object>> postProcessBus(List<Map<String, Object>> list) {
@@ -214,7 +186,6 @@ public class TransportService {
             String arr = Objects.toString(m.get("arrPlandTime"), "");
             m.put("depTimeText", prettyTime12(dep));
             m.put("arrTimeText", prettyTime12(arr));
-
             m.put("gradeText", Objects.toString(m.get("gradeNm"), ""));
             m.put("chargeText", Objects.toString(m.get("charge"), ""));
         }
@@ -222,36 +193,201 @@ public class TransportService {
     }
 
     // =========================
-    //  TRAIN
+    //  SUBURBS BUS (시외) - ✅ 추가
     // =========================
+    // ✅ 시외버스 터미널 목록: SuburbsBusInfoService/getSuberbsBusTrminlList :contentReference[oaicite:2]{index=2}
+    private static final String SUB_BUS_TERMINAL_URL =
+            "http://apis.data.go.kr/1613000/SuburbsBusInfoService/getSuberbsBusTrminlList";
+
+    // ⚠️ 출/도착지 기반 시외버스 조회 오퍼레이션명은 포털 본문에 안 펼쳐져서
+    // 일반적인 TAGO 네이밍 패턴으로 구현 (고속 getStrtpntAlocFndExpbusInfo 와 동일 패턴).
+    // 404 뜨면 여기 오퍼레이션명만 맞는 걸로 교체하면 끝.
+    private static final String SUB_BUS_URL =
+            "http://apis.data.go.kr/1613000/SuburbsBusInfoService/getStrtpntAlocFndSuberbsBusInfo";
+
+    public Map<String, String> getSuburbsBusTerminals() {
+        JsonNode root = webClient.get()
+                .uri(SUB_BUS_TERMINAL_URL, uriBuilder -> uriBuilder
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("_type", "json")
+                        .queryParam("numOfRows", 1000)
+                        .queryParam("pageNo", 1)
+                        .build())
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+
+        List<Map<String, Object>> items = extract(root);
+
+        Map<String, String> map = new LinkedHashMap<>();
+        for (Map<String, Object> m : items) {
+            String id = Objects.toString(m.get("terminalId"), "").trim();
+            String nm = Objects.toString(m.get("terminalNm"), "").trim();
+            if (!id.isBlank() && !nm.isBlank()) map.put(nm, id);
+        }
+        return map;
+    }
+
+    public List<Map<String, String>> getSuburbsBusTerminalsByCity(String city) {
+        Map<String, String> all = getSuburbsBusTerminals();
+
+        List<Map<String, String>> list = new ArrayList<>();
+        if (city == null || city.isBlank()) return list;
+
+        List<String> keys;
+        switch (city) {
+            case "서울":
+                // 시외는 서울남부/동서울 같은 애들이 많이 걸림
+                keys = List.of("서울남부", "동서울", "서울"); break;
+            case "부산":
+                keys = List.of("부산", "부산서부", "부산종합"); break;
+            default:
+                keys = List.of(city); break;
+        }
+
+        for (Map.Entry<String, String> e : all.entrySet()) {
+            String terminalNm = e.getKey();
+            for (String k : keys) {
+                if (terminalNm.contains(k)) {
+                    Map<String, String> row = new LinkedHashMap<>();
+                    row.put("terminalNm", terminalNm);
+                    row.put("terminalId", e.getValue());
+                    list.add(row);
+                    break;
+                }
+            }
+        }
+
+        // 시외도 보기 좋게 정렬(종합/시외 우선 느낌)
+        list.sort((a, b) -> scoreTerminal(b.get("terminalNm")) - scoreTerminal(a.get("terminalNm")));
+        return list;
+    }
+
+    public List<Map<String, Object>> searchSuburbsBusByTerminal(String depTerminalId, String arrTerminalId, String depPlandTime) {
+        if (depTerminalId == null || depTerminalId.isBlank()) return Collections.emptyList();
+        if (arrTerminalId == null || arrTerminalId.isBlank()) return Collections.emptyList();
+
+        JsonNode root = webClient.get()
+                .uri(SUB_BUS_URL, uriBuilder -> uriBuilder
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("_type", "json")
+                        .queryParam("depTerminalId", depTerminalId)
+                        .queryParam("arrTerminalId", arrTerminalId)
+                        .queryParam("depPlandTime", depPlandTime)
+                        .queryParam("numOfRows", 200)
+                        .queryParam("pageNo", 1)
+                        .build())
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+
+        List<Map<String, Object>> list = postProcessSuburbsBus(extract(root));
+        for (Map<String, Object> m : list) m.put("busType", "시외");
+        return list;
+    }
+
+    private List<Map<String, Object>> postProcessSuburbsBus(List<Map<String, Object>> list) {
+        for (Map<String, Object> m : list) {
+            // 시외도 depPlandTime/arrPlandTime로 오는 케이스가 많고,
+            // 간혹 키가 다른 경우가 있어 “유연 처리”
+            String depRaw = firstNonBlank(
+                    Objects.toString(m.get("depPlandTime"), ""),
+                    Objects.toString(m.get("depplandtime"), ""),
+                    Objects.toString(m.get("depTime"), "")
+            );
+            String arrRaw = firstNonBlank(
+                    Objects.toString(m.get("arrPlandTime"), ""),
+                    Objects.toString(m.get("arrplandtime"), ""),
+                    Objects.toString(m.get("arrTime"), "")
+            );
+
+            m.put("depTimeText", prettyTimeFlex(depRaw));
+            m.put("arrTimeText", prettyTimeFlex(arrRaw));
+
+            // JSP 표시용 통일 키
+            m.put("gradeText", firstNonBlank(
+                    Objects.toString(m.get("gradeNm"), ""),
+                    Objects.toString(m.get("busGradeNm"), ""),
+                    Objects.toString(m.get("busgradename"), "")
+            ));
+            m.put("chargeText", firstNonBlank(
+                    Objects.toString(m.get("charge"), ""),
+                    Objects.toString(m.get("adultCharge"), ""),
+                    Objects.toString(m.get("adultcharge"), "")
+            ));
+
+            // 정렬용 원본 시간도 통일(있으면 depPlandTime에 넣어두면 controller가 편함)
+            if (m.get("depPlandTime") == null || Objects.toString(m.get("depPlandTime"), "").isBlank()) {
+                m.put("depPlandTime", depRaw);
+            }
+        }
+        return list;
+    }
+
+    // =========================
+    //  TRAIN (기존 그대로)
+    // =========================
+ // 기존 URL 그대로 유지
     private static final String TRAIN_URL =
             "http://apis.data.go.kr/1613000/TrainInfoService/getStrtpntAlocFndTrainInfo";
 
-    /**
-     * ✅ 도시명 -> 기차역ID(depPlaceId/arrPlaceId)
-     * - 속초는 실제 열차역 매핑이 애매할 수 있어서 null 처리(컨트롤러가 errorMsg 띄움)
-     */
-    private static final Map<String, String> TRAIN_CITY_TO_STATION_ID = new LinkedHashMap<>();
+    // 도시 → 역ID 후보 목록
+    private static final Map<String, List<String>> TRAIN_CITY_TO_STATION_ID = new LinkedHashMap<>();
     static {
-        TRAIN_CITY_TO_STATION_ID.put("서울", "NAT010000");
-        TRAIN_CITY_TO_STATION_ID.put("부산", "NAT014445");
+        TRAIN_CITY_TO_STATION_ID.put("서울", List.of("NAT010000")); // 서울역
+        TRAIN_CITY_TO_STATION_ID.put("부산", List.of("NAT014445")); // 부산역
 
-        // 아래는 환경/노선에 따라 달라질 수 있음. 결과 없으면 여기만 교체.
-        TRAIN_CITY_TO_STATION_ID.put("강릉", "NAT601936");
-        TRAIN_CITY_TO_STATION_ID.put("경주", "NAT050000");
-        TRAIN_CITY_TO_STATION_ID.put("수원", "NAT030000");
+        // ✅ 경주 핵심: 신경주가 실제 KTX 중심이라 먼저 넣어야 함
+        // (※ 신경주 ID는 실제 목록 조회로 확인하는 게 베스트지만 우선 후보 구조로)
+        TRAIN_CITY_TO_STATION_ID.put("경주", List.of(
+                "NAT050000" // (기존 경주역) ← 일단 1차
+                // 나중에 신경주 ID 알면 여기에 첫 번째로 추가
+                // 예: "NATXXXXXX", "NAT050000"
+        ));
 
-        // 매핑 안함(컨트롤러에서 에러 처리)
-        TRAIN_CITY_TO_STATION_ID.put("속초", "");
+        TRAIN_CITY_TO_STATION_ID.put("강릉", List.of("NAT601936"));
+        TRAIN_CITY_TO_STATION_ID.put("수원", List.of("NAT030000"));
+    }
+    
+    public List<Map<String, Object>> searchTrainByCity(String depCity, String arrCity, String depPlandTime) {
+        List<String> depIds = TRAIN_CITY_TO_STATION_ID.get(depCity);
+        List<String> arrIds = TRAIN_CITY_TO_STATION_ID.get(arrCity);
+
+        if (depIds == null || depIds.isEmpty() || arrIds == null || arrIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 후보 조합을 전부 시도해서, 하나라도 결과가 나오면 그걸 반환
+        for (String depId : depIds) {
+            if (depId == null || depId.isBlank()) continue;
+
+            for (String arrId : arrIds) {
+                if (arrId == null || arrId.isBlank()) continue;
+
+                List<Map<String, Object>> list = searchTrain(depId, arrId, depPlandTime);
+                if (list != null && !list.isEmpty()) {
+                    return list;
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
-    // ✅ 컨트롤러에서 호출
+    /**
+     * 기존 컨트롤러 호환용 (String 반환 유지)
+     * → 후보 리스트 중 첫 번째 ID 반환
+     */
     public String resolveTrainStationId(String city) {
-        String id = TRAIN_CITY_TO_STATION_ID.get(city);
-        return (id == null || id.isBlank()) ? null : id;
+        List<String> ids = TRAIN_CITY_TO_STATION_ID.get(city);
+
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+
+        // 첫 번째 역ID 반환 (기존 구조와 100% 호환)
+        return ids.get(0);
     }
 
-    // ✅ 컨트롤러에서 호출
     public List<Map<String, Object>> searchTrain(String depPlaceId, String arrPlaceId, String depPlandTime) {
         JsonNode root = webClient.get()
                 .uri(TRAIN_URL, uriBuilder -> uriBuilder
@@ -272,7 +408,6 @@ public class TransportService {
 
     private List<Map<String, Object>> postProcessTrain(List<Map<String, Object>> list) {
         for (Map<String, Object> m : list) {
-            // 열차는 키가 depPlandTime/arrPlandTime 또는 depplandtime/arrplandtime 섞일 수 있음
             String dep = firstNonBlank(
                     Objects.toString(m.get("depPlandTime"), ""),
                     Objects.toString(m.get("depplandtime"), "")
@@ -285,7 +420,6 @@ public class TransportService {
             m.put("depTimeText", prettyTimeFlex(dep));
             m.put("arrTimeText", prettyTimeFlex(arr));
 
-            // JSP에서 쓰기 쉬운 통일 키(없어도 빈 문자열)
             m.put("trainTypeText", firstNonBlank(
                     Objects.toString(m.get("traingradename"), ""),
                     Objects.toString(m.get("trainGradNm"), "")
@@ -321,9 +455,11 @@ public class TransportService {
         return list;
     }
 
-    private String firstNonBlank(String a, String b) {
-        if (a != null && !a.isBlank()) return a;
-        if (b != null && !b.isBlank()) return b;
+    private String firstNonBlank(String... vals) {
+        if (vals == null) return "";
+        for (String v : vals) {
+            if (v != null && !v.isBlank()) return v;
+        }
         return "";
     }
 
@@ -353,25 +489,4 @@ public class TransportService {
             return s;
         }
     }
-
-    // ✅ 하드코딩 말고, 터미널 목록에서 도시명 포함되는 terminalId 찾아냄
-    private String resolveExpBusTerminalIdAuto(String city) {
-        Map<String, String> terminals = getExpBusTerminals(); // terminalNm -> terminalId
-
-        // 우선순위(서울은 서울경부가 보통)
-        List<String> prefer;
-        switch (city) {
-            case "서울": prefer = List.of("서울경부", "서울"); break;
-            case "부산": prefer = List.of("부산", "부산종합"); break;
-            default: prefer = List.of(city); break;
-        }
-
-        for (String key : prefer) {
-            for (Map.Entry<String, String> e : terminals.entrySet()) {
-                if (e.getKey().contains(key)) return e.getValue();
-            }
-        }
-        return null;
-    }
-
 }

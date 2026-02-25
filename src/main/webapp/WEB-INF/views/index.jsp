@@ -41,7 +41,7 @@
 
     <nav class="nav">
 <a href="${pageContext.request.contextPath}/spots/spot" >추천 여행지 목록</a>
-      <a href="/plan">여행 계획</a>
+      <a href="${pageContext.request.contextPath}/plans/planRoute">여행 계획</a>
       <a href="/community">커뮤니티</a>
       <a href="/maps">지도</a>
 	  

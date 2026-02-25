@@ -38,5 +38,11 @@ public interface SpotRepository extends JpaRepository<Spot, Integer> { // ✅ In
         where s.id = :id
     """)
     Optional<Spot> findDetail(@Param("id") Integer id);
+    
+    Optional<Spot> findFirstByCity_IdOrderByIdAsc(Integer cityId);
+    
+    List<Spot> findByCity_IdAndCatCodeInOrderByNameAsc(Integer cityId, List<String> catCodes);
+
+    List<Spot> findByIdIn(List<Integer> id);
 
 }

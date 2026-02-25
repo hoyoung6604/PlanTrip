@@ -1,87 +1,88 @@
 package com.exam.literaryplanner.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "planDetailT")
+@Table(name="planDetailT")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class PlanDetail {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pd_idx", nullable = false)
-    private Integer pdIdx;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name="pd_idx")
+  private Integer pdIdx;
 
-    @Column(name = "tp_idx", nullable = false)
-    private Integer tpIdx; // TravelPlan FK 역할(숫자로만)
+  @Column(name="p_idx", nullable=false)
+  private Integer pIdx;
 
-    @Column(name = "day_no", nullable = false)
-    private Integer dayNo; // 1일차, 2일차...
+  @Column(name="s_idx", nullable=false)
+  private Integer sIdx;
 
-    @Column(name = "order_no", nullable = false)
-    private Integer orderNo; // 그날 순서
+  @Column(name="p_day", nullable=false)
+  private Integer pDay;
 
-    @Column(name = "s_idx")
-    private Integer sIdx; // Spot FK 역할 (없으면 null 가능)
+  @Column(name="p_seq", nullable=false)
+  private Integer pSeq;
 
-    @Lob
-    @Column(name = "memo", columnDefinition = "TEXT")
-    private String memo;
+  @Column(name="p_memo")
+  private String pMemo;
 
-    public PlanDetail() {}
+  public Integer getPdIdx() {
+	return pdIdx;
+  }
 
-    // ===== getters / setters =====
+  public void setPdIdx(Integer pdIdx) {
+	this.pdIdx = pdIdx;
+  }
 
-    public Integer getPdIdx() {
-        return pdIdx;
-    }
+  public Integer getpIdx() {
+	return pIdx;
+  }
 
-    public void setPdIdx(Integer pdIdx) {
-        this.pdIdx = pdIdx;
-    }
+  public void setpIdx(Integer pIdx) {
+	this.pIdx = pIdx;
+  }
 
-    public Integer getTpIdx() {
-        return tpIdx;
-    }
+  public Integer getsIdx() {
+	return sIdx;
+  }
 
-    public void setTpIdx(Integer tpIdx) {
-        this.tpIdx = tpIdx;
-    }
+  public void setsIdx(Integer sIdx) {
+	this.sIdx = sIdx;
+  }
 
-    public Integer getDayNo() {
-        return dayNo;
-    }
+  public Integer getpDay() {
+	return pDay;
+  }
 
-    public void setDayNo(Integer dayNo) {
-        this.dayNo = dayNo;
-    }
+  public void setpDay(Integer pDay) {
+	this.pDay = pDay;
+  }
 
-    public Integer getOrderNo() {
-        return orderNo;
-    }
+  public Integer getpSeq() {
+	return pSeq;
+  }
 
-    public void setOrderNo(Integer orderNo) {
-        this.orderNo = orderNo;
-    }
+  public void setpSeq(Integer pSeq) {
+	this.pSeq = pSeq;
+  }
 
-    public Integer getSIdx() {
-        return sIdx;
-    }
+  public String getpMemo() {
+	return pMemo;
+  }
 
-    public void setSIdx(Integer sIdx) {
-        this.sIdx = sIdx;
-    }
+  public void setpMemo(String pMemo) {
+	this.pMemo = pMemo;
+  }
 
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
-    }
 }

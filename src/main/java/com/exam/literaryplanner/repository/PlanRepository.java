@@ -10,6 +10,6 @@ import com.exam.literaryplanner.domain.TravelPlan;
 
 public interface PlanRepository extends JpaRepository<TravelPlan, Integer> {
 
-    @Query("SELECT p FROM TravelPlan p WHERE p.mIdx = :mIdx ORDER BY p.tpIdx DESC")
+    @Query("SELECT p FROM TravelPlan p WHERE p.mIdx = :mIdx ORDER BY p.pIdx DESC")
     List<TravelPlan> findByMIdxLatest(@Param("mIdx") Integer mIdx);
 }

@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -101,16 +102,20 @@ public class TransportController {
         return "transport/flight";
     }
 
-    // =========================
-    //  고속버스: 도시 → 터미널 선택 → 조회
-    // =========================
     @GetMapping("/expbus")
     public String expbus(
             @RequestParam(required = false) String depPlandTime,
             @RequestParam(required = false) String depCity,
             @RequestParam(required = false) String arrCity,
+
+            // ✅ 고속 터미널
             @RequestParam(required = false) String depTerminalId,
             @RequestParam(required = false) String arrTerminalId,
+
+            // ✅ 시외 터미널 (추가)
+            @RequestParam(required = false) String depSubTerminalId,
+            @RequestParam(required = false) String arrSubTerminalId,
+
             @RequestParam(defaultValue = "1") int page,
             Model model
     ) {
@@ -131,31 +136,54 @@ public class TransportController {
         model.addAttribute("depPlandTimeIso",
                 LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE).format(DateTimeFormatter.ISO_LOCAL_DATE));
 
-        // ✅ 도시별 터미널 목록 내려주기
+        // =========================
+        // 터미널 목록 내려주기
+        // =========================
+        // 고속
         List<Map<String, String>> depTerminals = transportService.getExpBusTerminalsByCity(dep);
         List<Map<String, String>> arrTerminals = transportService.getExpBusTerminalsByCity(arr);
-
         model.addAttribute("depTerminals", depTerminals);
         model.addAttribute("arrTerminals", arrTerminals);
 
-        // ✅ 선택된 terminalId 유지
+        // 시외 (추가)
+        List<Map<String, String>> depSubTerminals = transportService.getSuburbsBusTerminalsByCity(dep);
+        List<Map<String, String>> arrSubTerminals = transportService.getSuburbsBusTerminalsByCity(arr);
+        model.addAttribute("depSubTerminals", depSubTerminals);
+        model.addAttribute("arrSubTerminals", arrSubTerminals);
+
+        // 선택값 유지
         model.addAttribute("depTerminalId", depTerminalId);
         model.addAttribute("arrTerminalId", arrTerminalId);
+        model.addAttribute("depSubTerminalId", depSubTerminalId);
+        model.addAttribute("arrSubTerminalId", arrSubTerminalId);
 
-        // ✅ 둘 다 선택된 경우에만 조회
-        List<Map<String, Object>> all = Collections.emptyList();
-        if (depTerminalId != null && !depTerminalId.isBlank()
-                && arrTerminalId != null && !arrTerminalId.isBlank()) {
-            all = transportService.searchExpBusByTerminal(depTerminalId, arrTerminalId, date);
+        // =========================
+        // 조회(고속 + 시외) → 합치기
+        // =========================
+        List<Map<String, Object>> merged = new ArrayList<>();
+
+        boolean hasExp = depTerminalId != null && !depTerminalId.isBlank()
+                && arrTerminalId != null && !arrTerminalId.isBlank();
+        boolean hasSub = depSubTerminalId != null && !depSubTerminalId.isBlank()
+                && arrSubTerminalId != null && !arrSubTerminalId.isBlank();
+
+        if (hasExp) {
+            merged.addAll(transportService.searchExpBusByTerminal(depTerminalId, arrTerminalId, date));
+        }
+        if (hasSub) {
+            merged.addAll(transportService.searchSuburbsBusByTerminal(depSubTerminalId, arrSubTerminalId, date));
         }
 
-        if ((depTerminalId != null && !depTerminalId.isBlank())
-                && (arrTerminalId != null && !arrTerminalId.isBlank())
-                && all.isEmpty()) {
-            model.addAttribute("errorMsg", "조회 결과가 없습니다. (선택한 터미널 조합에 고속버스 운행이 없을 수 있어요)");
+        // 정렬(출발시간 기준)
+        merged.sort(Comparator.comparing(m -> Objects.toString(m.get("depPlandTime"), "")));
+
+        // 에러 메시지
+        if ((hasExp || hasSub) && merged.isEmpty()) {
+            model.addAttribute("errorMsg",
+                    "조회 결과가 없습니다. (선택한 터미널 조합에 운행이 없을 수 있어요)");
         }
 
-        addPaging(model, all, page, 10);
+        addPaging(model, merged, page, 10);
         return "transport/expbus";
     }
 
