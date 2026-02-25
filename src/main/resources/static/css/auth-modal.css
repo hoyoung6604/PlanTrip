@@ -25,7 +25,7 @@ body.is-modal-open{ overflow: hidden; }
   --wave-c:    rgba(2,132,199,.10);
 }
 
-:root[data-theme="dark"]{
+:root[data-theme="dark_disabled"]{
   --modal-overlay: rgba(0,0,0,.62);
 
   /* 다크 모달 */
@@ -48,7 +48,7 @@ body.is-modal-open{ overflow: hidden; }
   line-height: 1.5;
   color: rgba(15,23,42,.68);
 }
-:root[data-theme="dark"] .auth-modal .helper{ color: rgba(255,255,255,.70); }
+:root[data-theme="dark_disabled"] .auth-modal .helper{ color: rgba(255,255,255,.70); }
 
 /* 모달 루트 */
 .auth-modal{
@@ -136,7 +136,7 @@ body.is-modal-open{ overflow: hidden; }
   opacity: .9;
   transition: opacity .15s ease, transform .15s ease;
 }
-:root:not([data-theme="dark"]) .auth-modal__close{ color: rgba(15,23,42,.88); }
+:root:not([data-theme="dark_disabled"]) .auth-modal__close{ color: rgba(15,23,42,.88); }
 .auth-modal__close:hover{ opacity: 1; transform: scale(1.04); }
 .auth-modal__close:active{ transform: scale(.96); }
 
@@ -403,7 +403,7 @@ body.is-modal-open{ overflow: hidden; }
   font-family: var(--font);
 }
 
-:root[data-theme="dark"] .auth-modal{
+:root[data-theme="dark_disabled"] .auth-modal{
   --bg: #0b1220;
   --text: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.72);
@@ -447,7 +447,7 @@ body.is-modal-open{ overflow: hidden; }
   color:#fff;
   font-weight: 900;
 }
-:root[data-theme="dark"] .auth-modal .brand .logo{ background:#fff; color:#111; }
+:root[data-theme="dark_disabled"] .auth-modal .brand .logo{ background:#fff; color:#111; }
 
 .auth-modal .brand .title{
   font-size: 28px;
@@ -483,7 +483,7 @@ body.is-modal-open{ overflow: hidden; }
   border-color: rgba(47,111,237,.55);
   box-shadow: 0 0 0 4px rgba(47,111,237,.12);
 }
-:root[data-theme="dark"] .auth-modal .input{
+:root[data-theme="dark_disabled"] .auth-modal .input{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
@@ -514,7 +514,7 @@ body.is-modal-open{ overflow: hidden; }
   cursor:pointer;
 }
 .auth-modal .primary-btn:hover{ filter: brightness(1.05); }
-:root[data-theme="dark"] .auth-modal .primary-btn{
+:root[data-theme="dark_disabled"] .auth-modal .primary-btn{
   background:#fff;
   color:#111;
 }
@@ -536,7 +536,7 @@ body.is-modal-open{ overflow: hidden; }
   color: var(--text);
 }
 .auth-modal .social-btn:hover{ background:#f3f4f6; }
-:root[data-theme="dark"] .auth-modal .social-btn{
+:root[data-theme="dark_disabled"] .auth-modal .social-btn{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
@@ -573,7 +573,7 @@ body.is-modal-open{ overflow: hidden; }
   font-size: 14px;
 }
 
-:root[data-theme="dark"] .auth-modal .form-error{
+:root[data-theme="dark_disabled"] .auth-modal .form-error{
   background: rgba(153,27,27,.18);
   border-color: rgba(248,113,113,.28);
   color: rgba(254,202,202,1);
@@ -657,11 +657,11 @@ body.is-modal-open{ overflow: hidden; }
 }
 
 /* 다크/라이트에 따라 물방울 톤 */
-html[data-theme="dark"] .auth-wrap--split .auth-right{
+html[data-theme="dark_disabled"] .auth-wrap--split .auth-right{
   background: transparent;
   border: none;
 }
-html[data-theme="dark"] .auth-right .auth-blob{
+html[data-theme="dark_disabled"] .auth-right .auth-blob{
   background:
     radial-gradient(220px 220px at 30% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
     radial-gradient(320px 320px at 70% 60%, rgba(70,140,255,.30), rgba(0,0,0,0) 65%),
@@ -765,7 +765,7 @@ html[data-theme="dark"] .auth-right .auth-blob{
   margin-bottom: 10px;
 }
 
-:root[data-theme="dark"] .lr-icon{
+:root[data-theme="dark_disabled"] .lr-icon{
   background: rgba(120,180,255,.14);
   color: rgba(180,210,255,.95);
 }
@@ -805,7 +805,7 @@ html[data-theme="dark"] .auth-right .auth-blob{
   box-shadow: inset 0 0 0 1px rgba(15,23,42,.12);
 }
 
-:root[data-theme="dark"] .lr-btn.ghost{
+:root[data-theme="dark_disabled"] .lr-btn.ghost{
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
 }
 

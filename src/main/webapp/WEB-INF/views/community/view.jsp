@@ -10,8 +10,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>후기 상세</title>
 
-  <!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
-  <link rel="stylesheet" href="/css/theme-sky.css" />
+  
+    <link rel="stylesheet" href="/css/header.css" />
+<!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css" />
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
@@ -22,8 +23,11 @@
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/auth-modal.js"></script>
   <script defer src="/js/auth-guard.js"></script>
+    <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="cm-shell">
 
   <!-- 좌측 사이드바는 커뮤니티 목록과 동일 구조로 유지 (통일감) -->

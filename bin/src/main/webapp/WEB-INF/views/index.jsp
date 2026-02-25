@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
 
-   <link rel="stylesheet" href="/css/theme-sky.css" />
   <!--welcome to the PlanTrip 폰트임-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

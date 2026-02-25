@@ -21,7 +21,7 @@
   margin-bottom:18px;
 }
 
-:root[data-theme="dark"] .trip-review-head{
+:root[data-theme="dark_disabled"] .trip-review-head{
   background: rgba(15,23,42,.35);
   border-color: rgba(148,163,184,.22);
 }
@@ -40,7 +40,7 @@
   flex:0 0 auto;
 }
 
-:root[data-theme="dark"] .trip-avatar{
+:root[data-theme="dark_disabled"] .trip-avatar{
   color: rgba(226,232,240,.95);
   background: linear-gradient(180deg, rgba(59,130,246,.18), rgba(14,165,233,.10));
   border-color: rgba(59,130,246,.18);
@@ -62,7 +62,7 @@
   border:1px solid rgba(59,130,246,.18);
   color: rgba(30,64,175,.95);
 }
-:root[data-theme="dark"] .trip-badge{
+:root[data-theme="dark_disabled"] .trip-badge{
   background: rgba(59,130,246,.12);
   border-color: rgba(59,130,246,.18);
   color: rgba(191,219,254,.95);
@@ -99,9 +99,9 @@
   transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
 }
 
-:root[data-theme="dark"] .cm-field input[type="text"],
-:root[data-theme="dark"] .cm-field textarea,
-:root[data-theme="dark"] .cm-field select{
+:root[data-theme="dark_disabled"] .cm-field input[type="text"],
+:root[data-theme="dark_disabled"] .cm-field textarea,
+:root[data-theme="dark_disabled"] .cm-field select{
   background: rgba(15,23,42,.22);
   border-color: rgba(148,163,184,.22);
   color: rgba(226,232,240,.95);
@@ -130,7 +130,7 @@
   border-radius: 999px;
   pointer-events:none;
 }
-:root[data-theme="dark"] .rv-cont-counter{
+:root[data-theme="dark_disabled"] .rv-cont-counter{
   background: rgba(15,23,42,.38);
   border-color: rgba(148,163,184,.20);
 }
@@ -143,9 +143,9 @@
   background: rgba(255,255,255,.92);
 }
 
-:root[data-theme="dark"] .cm-field input[type="text"]:focus,
-:root[data-theme="dark"] .cm-field textarea:focus,
-:root[data-theme="dark"] .cm-field select:focus{
+:root[data-theme="dark_disabled"] .cm-field input[type="text"]:focus,
+:root[data-theme="dark_disabled"] .cm-field textarea:focus,
+:root[data-theme="dark_disabled"] .cm-field select:focus{
   background: rgba(15,23,42,.30);
   box-shadow: 0 0 0 4px rgba(59,130,246,.18);
 }
@@ -161,7 +161,7 @@
   background: rgba(255,255,255,.80);
 }
 
-:root[data-theme="dark"] .trip-stars{
+:root[data-theme="dark_disabled"] .trip-stars{
   background: rgba(15,23,42,.22);
   border-color: rgba(148,163,184,.22);
 }
@@ -216,7 +216,7 @@
   background: rgba(255,255,255,.55);
 }
 
-:root[data-theme="dark"] .cm-field input[type="file"]{
+:root[data-theme="dark_disabled"] .cm-field input[type="file"]{
   border-color: rgba(148,163,184,.30);
   background: rgba(15,23,42,.18);
 }
@@ -258,7 +258,7 @@
   margin: 0 0 8px;
 }
 
-:root[data-theme="dark"] .cm-two-item .cm-sub-label{
+:root[data-theme="dark_disabled"] .cm-two-item .cm-sub-label{
   color: rgba(226,232,240,.80);
 }
 

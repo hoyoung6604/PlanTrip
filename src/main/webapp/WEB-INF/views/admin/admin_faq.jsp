@@ -36,11 +36,11 @@
             <c:otherwise>ADMIN</c:otherwise>
           </c:choose>
         </span>
-        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+        <%-- <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
           <span class="tt-icon" aria-hidden="true">☀️</span>
           <span class="tt-icon" aria-hidden="true">🌙</span>
           <span class="tt-indicator" aria-hidden="true"></span>
-        </button>
+        </button> --%>
         <a class="admin-btn" href="${pageContext.request.contextPath}/admin/faqs">목록</a>
       </div>
     </div>

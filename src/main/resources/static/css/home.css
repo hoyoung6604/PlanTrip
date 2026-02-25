@@ -27,7 +27,7 @@
 
   /* 라이트 모드 */
   :root[data-theme="light"]{
-    --hero-bg: url("/img/main_light.jpg"); /* 주간 이미지 파일명은 네가 맞춰서 */
+    --hero-bg: url("/img/main_light.jpg");
     --page-text: #111;
     --page-muted: #6b7280;
 
@@ -58,6 +58,7 @@ html{
   - JS: /js/scrollbar-auto.js 에서 html.show-scrollbar 토글
   - 레이아웃 흔들림(스크롤바 너비로 인한 좌우 이동) 최소화
 */
+
 html:not(.show-scrollbar){
   scrollbar-width: none;
 }
@@ -72,6 +73,7 @@ html::-webkit-scrollbar{
 html.show-scrollbar::-webkit-scrollbar{
   width:10px;
 }
+
 html::-webkit-scrollbar-track{ background: transparent; }
 html::-webkit-scrollbar-thumb{
   background: rgba(0,0,0,.28);
@@ -1007,6 +1009,7 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   font-weight:900;
   color:#374151;
   cursor:pointer;
+  
 }
 .city-btn.active{
   background:rgba(47,111,237,.12);
@@ -1175,7 +1178,5 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   #recommendCards .post-card{ flex:0 0 100%; }
   .block-title{ font-size:22px; }
 }
-
-
 
 

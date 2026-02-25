@@ -10,7 +10,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>공지사항 | 고객센터</title>
 
-  <link rel="stylesheet" href="/css/theme-sky.css" />
   <link rel="stylesheet" href="/css/home.css" />
   <link rel="stylesheet" href="/css/support-console.css" />
   <link rel="stylesheet" href="/css/auth-modal.css" />

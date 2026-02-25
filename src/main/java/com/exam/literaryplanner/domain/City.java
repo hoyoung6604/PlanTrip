@@ -37,44 +37,4 @@ public class City {
 
     @Column(name = "c_lng", precision = 15, scale = 10)
     private BigDecimal lng;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getAreaCode() {
-		return areaCode;
-	}
-
-	public void setAreaCode(String areaCode) {
-		this.areaCode = areaCode;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public BigDecimal getLat() {
-		return lat;
-	}
-
-	public void setLat(BigDecimal lat) {
-		this.lat = lat;
-	}
-
-	public BigDecimal getLng() {
-		return lng;
-	}
-
-	public void setLng(BigDecimal lng) {
-		this.lng = lng;
-	}
 }

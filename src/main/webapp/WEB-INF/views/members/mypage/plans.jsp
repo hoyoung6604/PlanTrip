@@ -7,8 +7,10 @@
   <meta charset="UTF-8">
   <title>내 여행 계획</title>
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
+
+    <link rel="stylesheet" href="/css/header.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+<link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
@@ -17,9 +19,12 @@
   <script defer src="/js/auth-modal.js"></script>
   <script defer src="/js/auth-guard.js"></script>
 
+    <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
 
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <c:set var="displayName" value="사용자" />
 <c:choose>
   <c:when test="${not empty sessionScope.loginUserName}">
@@ -199,7 +204,9 @@
 </div>
 
 
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
+  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+  <%@ include ...
 
 </body>
 </html>

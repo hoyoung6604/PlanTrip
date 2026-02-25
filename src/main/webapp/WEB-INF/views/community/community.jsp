@@ -9,8 +9,10 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>커뮤니티</title>
-	<link rel="stylesheet" href="/css/theme-sky.css" />
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+	
+    <link rel="stylesheet" href="/css/header.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+<link rel="stylesheet" href="/css/redesign.css" />
 	<link rel="stylesheet" href="/css/auth-modal.css" />
 	<link rel="stylesheet" href="/css/ui-toast.css" />
 
@@ -19,11 +21,14 @@
 	<script defer src="/js/auth-modal.js"></script>
 	<script defer src="/js/auth-guard.js"></script>
 
+    <script defer src="/js/nav-wave.js"></script>
 </head>
 
-<body>
+<body class="page-solid">
 
-	<div class="cm-shell">
+	
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
+<div class="cm-shell">
 
 		<!-- 좌측 사이드바는 마이페이지와 동일한 구조로 유지 -->
 		<aside class="mp-side">
@@ -243,7 +248,9 @@
 		</main>
 
 	</div>
-	<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 
 </html>

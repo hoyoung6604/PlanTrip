@@ -1,0 +1,206 @@
+:root{
+  --pt-bg: #f6f8fc;
+  --pt-card: #ffffff;
+  --pt-text: #111827;
+  --pt-muted: #6b7280;
+  --pt-line: #e6ebf3;
+  --pt-primary: #2f6fed;
+  --pt-primary-weak: rgba(47,111,237,.12);
+  --pt-radius: 18px;
+  --pt-radius-sm: 12px;
+  --pt-shadow: 0 10px 30px rgba(16,24,40,.06);
+  --pt-shadow-sm: 0 6px 18px rgba(16,24,40,.05);
+}
+
+/* ===== Base ===== */
+html,body{height:100%;}
+body{
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+  color: var(--pt-text);
+  background: var(--pt-bg);
+  line-height: 1.55;
+  letter-spacing: -.2px;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+
+/* iOS/Windows font rendering */
+body{-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+
+/* ===== Generic containers ===== */
+/*
+  NOTE
+  - support/cm 은 단일 메인 레이아웃이라 1240 고정이 안정적.
+  - mypage 는 3열(grid) 구조(좌/메인/우)라 1240으로 잡으면 칼럼이 눌리면서
+    화면이 한쪽으로 쏠려 보이는 현상이 생길 수 있음.
+    → mp-shell은 별도 규격으로 분리.
+*/
+.support-shell,
+.cm-shell{
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 22px 20px 80px;
+}
+
+/* mypage(3열) 전용 컨테이너: 화면 쏠림 방지 */
+.mp-shell{
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 22px 26px 26px;
+}
+
+@media (max-width: 960px){
+  .support-shell,
+  .cm-shell{padding: 18px 16px 70px;}
+  .mp-shell{padding: 18px 16px 26px;}
+}
+
+/* mypage 반응형: 우측 패널 숨김 → 2열 → 1열 */
+@media (max-width: 1280px){
+  .mp-shell{grid-template-columns: 260px 1fr;}
+  .mp-right{display:none;}
+}
+
+@media (max-width: 960px){
+  .mp-shell{grid-template-columns: 1fr;}
+  .mp-side{order: 2;}
+  .mp-main{order: 1;}
+}
+
+/* ===== Cards / Panels ===== */
+.support-card,
+.mp-card,
+.cm-card,
+.support-main,
+.mp-main,
+.cm-main{
+  border-radius: var(--pt-radius);
+}
+
+.support-card,
+.mp-card,
+.cm-card{
+  background: var(--pt-card);
+  border: 1px solid var(--pt-line);
+  box-shadow: var(--pt-shadow-sm);
+}
+
+/* ===== Tabs ===== */
+.support-tabs{
+  background: rgba(17,24,39,.03);
+  border: 1px solid var(--pt-line);
+  border-radius: 999px;
+  padding: 6px;
+  gap: 6px;
+}
+.support-tab{
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: var(--pt-muted);
+  text-decoration: none;
+}
+.support-tab.is-active{
+  background: var(--pt-card);
+  color: var(--pt-text);
+  box-shadow: 0 6px 14px rgba(16,24,40,.06);
+}
+
+/* ===== Buttons ===== */
+.btn,
+.support-actions .btn,
+.cm-actions .rv-btn,
+.mp-actions .mp-btn{
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+.btn.solid,
+.rv-btn-primary{
+  background: var(--pt-primary);
+  border-color: var(--pt-primary);
+}
+.btn.solid:hover,
+.rv-btn-primary:hover{filter: brightness(.97);}
+
+/* ===== Tables ===== */
+.support-table,
+.cm-table,
+.mp-table{
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.support-table thead th,
+.cm-table thead th,
+.mp-table thead th{
+  font-size: 13px;
+  color: var(--pt-muted);
+  font-weight: 700;
+  background: rgba(47,111,237,.06);
+  border-bottom: 1px solid var(--pt-line);
+}
+.support-table tbody td,
+.cm-table tbody td,
+.mp-table tbody td{
+  border-bottom: 1px solid var(--pt-line);
+}
+
+/* ===== Sidebar polish (support/community/mypage) ===== */
+.support-sidebar,
+.cm-sidebar,
+.mp-sidebar{
+  background: rgba(255,255,255,.75);
+  border: 1px solid var(--pt-line);
+  box-shadow: var(--pt-shadow-sm);
+  border-radius: var(--pt-radius);
+  backdrop-filter: blur(10px);
+}
+
+.support-menu a,
+.cm-menu a,
+.mp-menu a{
+  border-radius: 12px;
+}
+
+/* ===== Footer ===== */
+.pt-footer{
+  margin-top: 60px;
+  border-top: 1px solid var(--pt-line);
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(10px);
+}
+.pt-footer__inner{
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 26px 20px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.2fr;
+  gap: 18px;
+  align-items: start;
+}
+.pt-footer__logo{font-weight: 900; letter-spacing: -.6px; font-size: 18px;}
+.pt-footer__desc{color: var(--pt-muted); font-size: 13px; margin-top: 4px;}
+.pt-footer__nav{display:flex; gap: 12px; flex-wrap: wrap; justify-content:center;}
+.pt-footer__nav a{color: var(--pt-muted); text-decoration:none; font-weight: 700; font-size: 13px;}
+.pt-footer__nav a:hover{color: var(--pt-text);}
+.pt-footer__meta{text-align:right;}
+.pt-footer__copy{font-weight: 800; font-size: 13px;}
+.pt-footer__small{color: var(--pt-muted); font-size: 12px; margin-top: 4px;}
+
+@media (max-width: 900px){
+  .pt-footer__inner{grid-template-columns: 1fr; text-align:left;}
+  .pt-footer__nav{justify-content:flex-start;}
+  .pt-footer__meta{text-align:left;}
+}
+
+/* ===== Community: list/search row spacing fixes ===== */
+.cm-toolbar,
+.cm-actions,
+.cm-filters{gap: 10px;}
+.cm-search input,
+.cm-search .cm-input{line-height: 1.2;}
+
+/* ===== Mypage cards: prevent crowded text ===== */
+.mp-card .mp-card__title,
+.mp-card h2{line-height: 1.25;}
+.mp-card p{color: var(--pt-muted);}

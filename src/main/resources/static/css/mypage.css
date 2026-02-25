@@ -115,7 +115,8 @@ html, body{ height:100%; }
 body{
   margin:0;
   color: var(--text);
-  background: transparent;
+  /* theme-sky.css 제거 후에도 화면이 하얗게/투명하게 비치지 않도록 기본 배경을 토큰(--bg)으로 고정 */
+  background: var(--bg);
 }
 
 /* Layout shell */

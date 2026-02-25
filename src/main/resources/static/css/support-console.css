@@ -19,10 +19,14 @@
   --sp-shadow: 0 10px 24px rgba(17,24,39,.06);
   --sp-shadow-soft: 0 8px 18px rgba(17,24,39,.08);
   --sp-radius: 14px;
+
+  /* header.css 고정 헤더 높이(72px)와 고객센터 상단 여백 */
+  --sp-headerH: 72px;
+  --sp-shellGap: 18px;
 }
 
-/* 다크 모드(프로젝트 공통 방식: :root[data-theme="dark"]) */
-:root[data-theme="dark"]{
+/* 다크 모드(프로젝트 공통 방식: :root[data-theme="dark_disabled"]) */
+:root[data-theme="dark_disabled"]{
   --sp-bg: #0b1220;
   --sp-sidebg: #0f172a;
   --sp-topbg:  #111827;
@@ -53,6 +57,9 @@ body{
 .support-shell{
   min-height: 100vh;
   display:flex;
+
+  /* ✅ 고정 헤더와 고객센터 화면을 시각적으로 분리(첫 화면부터 적용) */
+  padding-top: var(--sp-shellGap);
 }
 
 /* 좌측 사이드바 */
@@ -64,8 +71,10 @@ body{
   border-right: 1px solid var(--sp-border);
   padding: 18px 16px;
   position: sticky;
-  top: 0;
-  height: 100vh;
+  /* ✅ 고정 헤더(72px) 아래로 정확히 내려오도록 */
+  top: calc(var(--sp-headerH) + var(--sp-shellGap));
+  /* ✅ 헤더 공간을 제외한 높이만 차지(스크롤 시 A 영역 고정 유지) */
+  height: calc(100vh - (var(--sp-headerH) + var(--sp-shellGap)));
   overflow: auto;
   backdrop-filter: blur(10px);
   display:flex;
@@ -324,7 +333,7 @@ body{
   padding: 12px 12px;
 }
 
-:root[data-theme="dark"] .support-table thead th{
+:root[data-theme="dark_disabled"] .support-table thead th{
   background: rgba(255,255,255,.03);
 }
 
@@ -396,7 +405,7 @@ body{
   background: rgba(0,0,0,.02);
 }
 
-:root[data-theme="dark"] .support-article{ background: rgba(255,255,255,.03); }
+:root[data-theme="dark_disabled"] .support-article{ background: rgba(255,255,255,.03); }
 
 .support-article__title{ font-weight: 900; font-size: 18px; letter-spacing: -.2px; }
 .support-article__meta{ color: var(--sp-muted); font-size: 12px; margin-top: 6px; }
@@ -432,7 +441,7 @@ body{
   border-radius: 12px;
   background: rgba(0,0,0,.02);
 }
-:root[data-theme="dark"] .support-faq__q{ background: rgba(255,255,255,.03); }
+:root[data-theme="dark_disabled"] .support-faq__q{ background: rgba(255,255,255,.03); }
 .support-faq__qText{ font-weight: 900; }
 .support-faq__meta{ color: var(--sp-muted); font-size: 12px; }
 .support-faq__a{

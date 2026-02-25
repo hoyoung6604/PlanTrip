@@ -8,8 +8,10 @@
 	  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 	  <title>여행 후기</title>
 
-	  <link rel="stylesheet" href="/css/theme-sky.css" />
-	  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+	  
+    <link rel="stylesheet" href="/css/header.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+<link rel="stylesheet" href="/css/redesign.css" />
 	  <!-- Trip.com 스타일 참고한 후기 상세 전용 -->
 	  <link rel="stylesheet" href="/css/community-review-view.css" />
 
@@ -20,9 +22,12 @@
 	  <script defer src="/js/theme.js"></script>
 	  <script defer src="/js/auth-modal.js"></script>
 	  <script defer src="/js/auth-guard.js"></script>
-	</head>
-	<body>
+	    <script defer src="/js/nav-wave.js"></script>
+</head>
+	<body class="page-solid">
 
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="cm-shell">
 
   <aside class="mp-side">
@@ -212,6 +217,10 @@
   </main>
 
 </div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>

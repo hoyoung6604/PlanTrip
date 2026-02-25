@@ -139,7 +139,7 @@
 - `css/support-console.css`
 - `css/support-hub.css`
 - `js/theme-init.js`
-- `css/theme-sky.css`
+- (삭제) `css/theme-sky.css`
 - `js/theme.js`
 - `css/ui-toast.css`
 - `js/ui-toast.js`
@@ -164,7 +164,7 @@
 - 관리자 전용 스타일: `admin-*.css` 추가
 - 모달/인증 UI: `auth-modal.css`, `auth-modal.js`, `auth-guard.js` 등 추가
 - 페이지 단위 스크립트 분리: `js/pages/*` 구조 추가(index/login/register/maps)
-- 테마 관련: `theme-init.js`, `theme.js`, `theme-sky.css`, 테마 이미지(day/night) 추가
+- 테마 관련: `theme-init.js`, `theme.js`, (삭제) `theme-sky.css` (배경 스킨 제거)
 - 기존 `support.css/support.js` 대신 `support-console.css`, `support-hub.css` 형태로 재구성된 상태
 
 ---

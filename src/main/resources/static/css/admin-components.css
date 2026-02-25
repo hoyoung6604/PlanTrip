@@ -15,7 +15,7 @@
   --admin-surface: rgba(255,255,255,.92);
 }
 
-:root[data-theme="dark"]{
+:root[data-theme="dark_disabled"]{
   --admin-text: rgba(255,255,255,.92);
   --admin-muted: rgba(255,255,255,.70);
   --admin-line: rgba(255,255,255,.12);
@@ -47,7 +47,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-:root[data-theme="dark"] .admin-userchip{
+:root[data-theme="dark_disabled"] .admin-userchip{
   background: rgba(2,6,23,.40);
 }
 
@@ -82,7 +82,7 @@
     inset 0 1px 0 rgba(255,255,255,.16);
 }
 
-:root[data-theme="dark"] .theme-toggle.theme-toggle--pill{
+:root[data-theme="dark_disabled"] .theme-toggle.theme-toggle--pill{
   background: rgba(2,6,23,.45);
   box-shadow:
     0 10px 22px rgba(0,0,0,.25),
@@ -116,11 +116,11 @@
   transition: transform .22s ease;
 }
 
-:root[data-theme="dark"] .theme-toggle.theme-toggle--pill .tt-indicator{
+:root[data-theme="dark_disabled"] .theme-toggle.theme-toggle--pill .tt-indicator{
   background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(25,80,160,.92));
 }
 
-html[data-theme="dark"] .theme-toggle.theme-toggle--pill .tt-indicator{
+html[data-theme="dark_disabled"] .theme-toggle.theme-toggle--pill .tt-indicator{
   transform: translateX(var(--tt-shift));
 }
 
@@ -140,7 +140,7 @@ html[data-theme="dark"] .theme-toggle.theme-toggle--pill .tt-indicator{
   text-decoration:none;
   cursor:pointer;
 }
-:root[data-theme="dark"] .admin-btn{
+:root[data-theme="dark_disabled"] .admin-btn{
   background: rgba(2,6,23,.45);
 }
 
@@ -170,9 +170,9 @@ html[data-theme="dark"] .theme-toggle.theme-toggle--pill .tt-indicator{
   color: var(--admin-text);
   outline: none;
 }
-:root[data-theme="dark"] .admin-input,
-:root[data-theme="dark"] .admin-textarea,
-:root[data-theme="dark"] .admin-select{
+:root[data-theme="dark_disabled"] .admin-input,
+:root[data-theme="dark_disabled"] .admin-textarea,
+:root[data-theme="dark_disabled"] .admin-select{
   background: rgba(2,6,23,.45);
 }
 

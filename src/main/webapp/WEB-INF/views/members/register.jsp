@@ -9,7 +9,6 @@
   <title>PlanTrip | 회원가입</title>
 
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
 <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 

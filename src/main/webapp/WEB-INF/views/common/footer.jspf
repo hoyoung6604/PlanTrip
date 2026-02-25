@@ -1,0 +1,22 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<footer class="pt-footer" role="contentinfo">
+  <div class="pt-footer__inner">
+    <div class="pt-footer__brand">
+      <div class="pt-footer__logo">PlanTrip</div>
+      <div class="pt-footer__desc">여행을 계획하고 기록하는 여행 플래너</div>
+    </div>
+
+    <nav class="pt-footer__nav" aria-label="푸터 링크">
+      <a href="${pageContext.request.contextPath}/support">고객센터</a>
+      <a href="${pageContext.request.contextPath}/community">커뮤니티</a>
+      <a href="${pageContext.request.contextPath}/plan">여행 계획</a>
+      <a href="${pageContext.request.contextPath}/maps">지도</a>
+    </nav>
+
+    <div class="pt-footer__meta">
+      <div class="pt-footer__copy">© PlanTrip. All rights reserved.</div>
+      <div class="pt-footer__small">본 서비스는 학습/프로젝트 용도로 제작되었습니다.</div>
+    </div>
+  </div>
+</footer>

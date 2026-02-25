@@ -9,7 +9,6 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>커뮤니티</title>
-	<link rel="stylesheet" href="/css/theme-sky.css" />
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
 	<link rel="stylesheet" href="/css/auth-modal.css" />
 	<link rel="stylesheet" href="/css/ui-toast.css" />

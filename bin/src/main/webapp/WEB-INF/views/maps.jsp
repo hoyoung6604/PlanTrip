@@ -7,7 +7,6 @@
 	 <meta charset="UTF-8">
 	    <title>여행 지도</title>
 	    
-	  <link rel="stylesheet" href="/css/theme-sky.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	    <!-- 공통 CSS -->

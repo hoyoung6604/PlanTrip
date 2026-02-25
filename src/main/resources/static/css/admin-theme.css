@@ -137,29 +137,29 @@ body.admin-page a{
 }
 
 /* 관리자 다크 모드 가독성 보정 */
-:root[data-theme="dark"] body.admin-page{
+:root[data-theme="dark_disabled"] body.admin-page{
   color: rgba(255,255,255,.92);
 }
-:root[data-theme="dark"] body.admin-page .card,
-:root[data-theme="dark"] body.admin-page .panel,
-:root[data-theme="dark"] body.admin-page .table-wrap,
-:root[data-theme="dark"] body.admin-page .content,
-:root[data-theme="dark"] body.admin-page .admin-container{
+:root[data-theme="dark_disabled"] body.admin-page .card,
+:root[data-theme="dark_disabled"] body.admin-page .panel,
+:root[data-theme="dark_disabled"] body.admin-page .table-wrap,
+:root[data-theme="dark_disabled"] body.admin-page .content,
+:root[data-theme="dark_disabled"] body.admin-page .admin-container{
   background: rgba(15,23,42,.88);
   border: 1px solid rgba(255,255,255,.10);
 }
-:root[data-theme="dark"] body.admin-page table,
-:root[data-theme="dark"] body.admin-page th,
-:root[data-theme="dark"] body.admin-page td{
+:root[data-theme="dark_disabled"] body.admin-page table,
+:root[data-theme="dark_disabled"] body.admin-page th,
+:root[data-theme="dark_disabled"] body.admin-page td{
   color: rgba(255,255,255,.92);
 }
-:root[data-theme="dark"] body.admin-page input,
-:root[data-theme="dark"] body.admin-page select{
+:root[data-theme="dark_disabled"] body.admin-page input,
+:root[data-theme="dark_disabled"] body.admin-page select{
   background: rgba(2,6,23,.55);
   border: 1px solid rgba(255,255,255,.14);
   color: rgba(255,255,255,.92);
 }
-:root[data-theme="dark"] body.admin-page .btn,
-:root[data-theme="dark"] body.admin-page button{
+:root[data-theme="dark_disabled"] body.admin-page .btn,
+:root[data-theme="dark_disabled"] body.admin-page button{
   color: rgba(255,255,255,.92);
 }

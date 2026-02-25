@@ -16,7 +16,7 @@
 }
 
 /* ===== Dark theme override (auth pages) ===== */
-:root[data-theme="dark"]{
+:root[data-theme="dark_disabled"]{
   --bg: #0b1220;
   --text: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.62);
@@ -24,23 +24,23 @@
   --darkBtn: #ffffff;
 }
 
-:root[data-theme="dark"] body{
+:root[data-theme="dark_disabled"] body{
   background: var(--bg);
   color: var(--text);
 }
 
-:root[data-theme="dark"] .input{
+:root[data-theme="dark_disabled"] .input{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
 }
 
-:root[data-theme="dark"] .primary-btn{
+:root[data-theme="dark_disabled"] .primary-btn{
   background: #fff;
   color: #111;
 }
 
-:root[data-theme="dark"] .social-btn{
+:root[data-theme="dark_disabled"] .social-btn{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
@@ -251,7 +251,7 @@ a{ color: inherit; text-decoration:none; }
   transform: translateY(0);
 }
 
-:root[data-theme="dark"] .toast{
+:root[data-theme="dark_disabled"] .toast{
   background: rgba(255,255,255,.92);
   color: #111;
 }

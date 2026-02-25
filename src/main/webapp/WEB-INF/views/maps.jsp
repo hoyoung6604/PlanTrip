@@ -7,12 +7,12 @@
 	 <meta charset="UTF-8">
 	    <title>여행 지도</title>
 	    
-	  <link rel="stylesheet" href="/css/theme-sky.css" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <link rel="stylesheet" href="/css/header.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	    <!-- 공통 CSS -->
-	    <link rel="stylesheet" href="/css/home.css">
-	    <link rel="stylesheet" href="/css/maps.css">
+<link rel="stylesheet" href="/css/maps.css">
 
 
     <!-- ✅ 카카오 지도 API (autoload=false로 바꿔서, load() 안에서 초기화) -->
@@ -55,34 +55,14 @@
             font-size: 14px;
         }
     </style>
+    <script defer src="/js/nav-wave.js"></script>
 </head>
 
 <!-- ✅ 지도 페이지 전용 클래스 -->
-<body class="maps-page">
+<body class="maps-page page-solid">
 
-<header class="header">
-  <div class="header-inner container">
-    <a href="/" class="brand-top">
-      <img src="/img/PlanTriplog.png" alt="여행 플래너" class="brand-logo-img">
-    </a>
 
-    <nav class="nav">
-      <a href="/plan" class="header-link">여행 계획</a>
-      <a href="/maps" class="header-link active">지도</a>
-
-      <div class="hamburger">
-        <button class="hamburger-btn" type="button"
-                onclick="document.getElementById('hm').classList.toggle('open')">
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="hamburger-menu" id="hm">
-          <!-- 기존 c:if 그대로 유지 -->
-        </div>
-      </div>
-    </nav>
-  </div>
-</header>
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="map-search">
     <input type="text" id="keyword" placeholder="지역 또는 장소 검색 (예: 강남, 부산, 카페)">

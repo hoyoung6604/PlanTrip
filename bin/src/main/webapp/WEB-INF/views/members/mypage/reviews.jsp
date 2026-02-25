@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <title>내 여행 후기</title>
     
-  <link rel="stylesheet" href="/css/theme-sky.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />

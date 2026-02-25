@@ -31,7 +31,7 @@
   transform: translateY(0);
 }
 
-:root[data-theme="dark"] .ui-toast{
+:root[data-theme="dark_disabled"] .ui-toast{
   background: rgba(255,255,255,.92);
   color: #111;
 }

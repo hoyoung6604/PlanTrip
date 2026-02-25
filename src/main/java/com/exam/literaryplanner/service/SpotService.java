@@ -22,11 +22,6 @@ public class SpotService {
 
 	private final SpotRepository spotRepository;
 	private final SpotStatsRepository spotStatsRepository;
-	
-//	public SpotService(SpotRepository spotRepository, SpotStatsRepository spotStatsRepository) {
-//		this.spotRepository = spotRepository;
-//		this.spotStatsRepository = spotStatsRepository;
-//	}
 
 	public Spot findById(Integer id) {
         return spotRepository.findById(id)
@@ -60,9 +55,5 @@ public class SpotService {
 		spotStatsRepository.save(stats);
 
 		return spot;
-	}
-	
-	public Spot findFirstByCityId(Integer cityId) {
-	    return spotRepository.findFirstByCity_IdOrderByIdAsc(cityId).orElse(null);
 	}
 }

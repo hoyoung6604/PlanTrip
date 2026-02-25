@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>재설정 링크 오류 | 여행 플래너</title>
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
 <link rel="stylesheet" href="/css/login.css">
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />

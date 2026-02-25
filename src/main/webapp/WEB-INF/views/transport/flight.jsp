@@ -8,9 +8,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>항공권 시간 조회</title>
-  <link rel="stylesheet" href="/css/home.css"/>
+
+    <link rel="stylesheet" href="/css/header.css" />
+    <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="container" style="padding:24px 0;">
   <h1 style="margin:0 0 14px;">제주 ↔ 국내 전 공항 운항편</h1>
   <a href="${pageContext.request.contextPath}/"

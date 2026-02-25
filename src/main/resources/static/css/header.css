@@ -1,0 +1,209 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
+
+:root{
+  --maxW: 1200px;
+  --font: "Pretendard","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --text:#111;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --card:#fff;
+  --shadow: 0 12px 30px rgba(0,0,0,.10);
+}
+
+*{ box-sizing:border-box; }
+a{ color:inherit; text-decoration:none; }
+.header, .header *{ font-family:var(--font); }
+button,input,select,textarea{ font-family:var(--font); }
+
+/* ✅ 공통: 고정 헤더 공간 확보 */
+body{ padding-top:72px; }
+
+/* container */
+.container{
+  width:min(var(--maxW), calc(100% - 48px));
+  margin:0 auto;
+}
+
+/* =========================
+   Header (항상 투명 / 글씨 검정)
+   ========================= */
+.header{
+  position:fixed;
+  top:0; left:0; right:0;
+  height:72px;
+  background:transparent;
+  border-bottom:1px solid transparent;
+  z-index:99999;
+}
+
+.header-inner{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.brand-logo-img{
+  height:34px;
+  display:block;
+}
+
+/* nav */
+.pt-nav{
+  display:flex;
+  align-items:center;
+  gap:26px;
+}
+
+.pt-nav a,
+.nav-drop-btn,
+.header-auth,
+.header-link{
+  color:var(--text);
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:-.2px;
+}
+
+.pt-wave{ position:relative; }
+
+/* transport dropdown */
+.nav-dropdown{ position:relative; }
+.nav-drop-btn{
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:10px;
+}
+.chev{ font-size:12px; color:var(--muted); }
+
+.nav-drop-menu{
+  position:absolute;
+  top:54px;
+  left:0;
+  min-width:140px;
+  background:var(--card);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:8px;
+  display:none;
+  z-index:100000;
+}
+#transportWrap.open .nav-drop-menu{ display:block; }
+.nav-drop-menu a{
+  display:block;
+  padding:10px 10px;
+  border-radius:10px;
+  color:var(--text);
+  font-weight:600;
+}
+.nav-drop-menu a:hover{
+  background:rgba(17,17,17,.06);
+}
+
+/* right */
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* hamburger */
+.hamburger{ position:relative; }
+.hamburger-btn{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.10);
+  background:rgba(255,255,255,.70);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+  padding:0 10px;
+}
+.hamburger-btn span{
+  display:block;
+  height:2px;
+  background:var(--text);
+  border-radius:2px;
+}
+
+/* 메뉴: 기본 숨김 → open 시 표시 */
+.hamburger-menu{
+  position:absolute;
+  top:54px;
+  right:0;
+  min-width:180px;
+  background:var(--card);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:8px;
+  display:none;
+  z-index:100000;
+}
+#hm.open{ display:block; }
+
+/* ✅ 햄버거 아래에 이름/역할(글씨) 튀어나오는 문제: 완전 숨김 */
+.hm-title{ display:none !important; }
+
+.hamburger-menu .menu-item{
+  display:block;
+  padding:10px 10px;
+  border-radius:10px;
+  color:var(--text);
+  font-weight:700;
+}
+.hamburger-menu .menu-item:hover{ background:rgba(17,17,17,.06); }
+
+.hamburger-menu .menu-btn{
+  width:100%;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  text-align:left;
+  padding:10px 10px;
+  border-radius:10px;
+  font-weight:800;
+  color:var(--text);
+}
+.hamburger-menu .menu-btn:hover{ background:rgba(17,17,17,.06); }
+
+/* responsive */
+@media (max-width: 920px){
+  .pt-nav{ gap:14px; }
+  .pt-nav a{ font-size:14px; }
+}
+
+
+/* ===== Support(고객센터) 전용: 헤더에서 로고/로그인영역 숨김 (레이아웃은 유지) ===== */
+.header.is-support .brand-top{
+  visibility: hidden;
+  pointer-events: none;
+}
+.header.is-support .header-right{
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ===== 현재 페이지 밑줄(Underline) - 레이아웃 영향 없음 ===== */
+.pt-nav .pt-wave{ position: relative; }
+.pt-nav a.pt-wave.active::after,
+.pt-nav .nav-drop-btn.pt-wave.active::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}

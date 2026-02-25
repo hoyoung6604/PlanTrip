@@ -8,8 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>후기 작성</title>
 
-  <link rel="stylesheet" href="/css/theme-sky.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+  
+    <link rel="stylesheet" href="/css/header.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
+<link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
@@ -18,9 +20,12 @@
   <script defer src="/js/auth-modal.js"></script>
   <script defer src="/js/auth-guard.js"></script>
   <script defer src="/js/pages/community-write.js"></script>
+    <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
 
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="cm-shell">
 
   <aside class="mp-side">
@@ -281,6 +286,10 @@
 
 
 <!-- 사진/별점 UI 동작은 /js/pages/community-write.js에서 처리 -->
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>

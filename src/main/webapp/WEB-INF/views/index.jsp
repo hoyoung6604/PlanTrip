@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
 
-   <link rel="stylesheet" href="/css/theme-sky.css" />
+
+   
   <!--welcome to the PlanTrip 폰트임-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,10 +40,11 @@
     </div>
 
     <nav class="nav">
-<a href="${pageContext.request.contextPath}/spots/list" >추천 여행지 목록</a>
+<a href="${pageContext.request.contextPath}/spots/spot" >추천 여행지 목록</a>
       <a href="/plan">여행 계획</a>
       <a href="/community">커뮤니티</a>
       <a href="/maps">지도</a>
+	  
 	  <div class="nav-dropdown" id="transportWrap">
 	      <button class="nav-drop-btn" type="button" id="transportBtn" aria-haspopup="true" aria-expanded="false">
 	        교통수단 <span class="chev" aria-hidden="true">▾</span>
@@ -85,13 +87,14 @@
 		                  <j:if test="${sessionScope.loginMember.MRole != 9}">(회원)</j:if>
 		                </span>
 		              </div>
+		              <j:if test="${sessionScope.loginMember.MRole == 9}">
+		                <a class="menu-item" href="/admin">관리자</a>
+		              </j:if>
+		              
 		              <a class="menu-item" href="/members/mypage">마이페이지</a>
 		              <a class="menu-item" href="/plan">내 여행 계획</a>
 
 		              
-		              <j:if test="${sessionScope.loginMember.MRole == 9}">
-		                <a class="menu-item" href="/admin">관리자</a>
-		              </j:if>
 
 		              <div class="hm-divider"></div>
 
@@ -101,7 +104,7 @@
 		            </div>
 		          </div>
 		        </j:if>
-		  		  <button type="button" class="theme-toggle" id="themeToggle">🌙</button>
+		  		  <%-- <button type="button" class="theme-toggle" id="themeToggle">🌙</button> --%>
 		      </div>
 		    </div>
 </header>
@@ -115,30 +118,14 @@
     </div>
 
     <!-- ✅ searchbar 내부에 다른 div 넣지 말기(레이아웃 밀림 방지) -->
-    <div class="searchbar">
-      <div class="sb-item">
-        <div class="sb-icon"></div>
-        <input type="text" placeholder="목적지를 입력해주세요" />
-      </div>
+	<div class="searchbar">
+	  <div class="sb-item">
+	    <div class="sb-icon"></div>
+	    <input type="text" id="mainSearchInput" placeholder="목적지를 입력해주세요" />
+	  </div>
 
-      <div class="sb-item">
-        <div class="sb-icon"></div>
-        <input type="date" placeholder="연도-월-일" />
-      </div>
-
-      <div class="sb-item sb-select">
-        <div class="sb-icon"></div>
-        <select aria-label="인원" name="people" required>
-          <option value="" selected disabled>인원</option>
-          <option value="1">1인</option>
-          <option value="2">2인</option>
-          <option value="3">3인</option>
-          <option value="4+">4인 이상</option>
-        </select>
-      </div>
-
-      <button class="sb-btn" type="button">검색</button>
-    </div>
+	  <button class="sb-btn" type="button" onclick="executeSearch()">검색</button>
+	</div>
 
     <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
   </section>

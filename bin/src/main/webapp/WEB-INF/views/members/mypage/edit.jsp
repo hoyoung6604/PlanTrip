@@ -8,7 +8,6 @@
   <meta charset="UTF-8">
   <title>회원정보 수정</title>
   
-  <link rel="stylesheet" href="/css/theme-sky.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />

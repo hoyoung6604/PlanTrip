@@ -11,7 +11,6 @@
   <title>후기 상세</title>
 
   <!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
-  <link rel="stylesheet" href="/css/theme-sky.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css" />
   <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
