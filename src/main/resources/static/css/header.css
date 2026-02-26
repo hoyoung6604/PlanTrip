@@ -145,30 +145,82 @@ body{ padding-top:72px; }
 /* 메뉴: 기본 숨김 → open 시 표시 */
 .hamburger-menu{
   position:absolute;
-  top:54px;
+  top:46px;
   right:0;
-  min-width:180px;
-  background:var(--card);
-  border:1px solid rgba(0,0,0,.06);
-  border-radius:14px;
-  box-shadow:var(--shadow);
-  padding:8px;
-  display:none;
-  z-index:100000;
-}
-#hm.open{ display:block; }
+  width:280px;
 
-/* ✅ 햄버거 아래에 이름/역할(글씨) 튀어나오는 문제: 완전 숨김 */
-.hm-title{ display:none !important; }
+  background:rgba(10,16,26,.62);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:16px;
+  box-shadow:0 18px 44px rgba(0,0,0,.32);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  padding:12px;
+  z-index:100000;
+
+  opacity:0;
+  transform: translateY(10px) scale(.98);
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s linear .18s;
+}
+
+/* 말풍선 꼬리 */
+.hamburger-menu::before{
+  content:"";
+  position:absolute;
+  top:-8px;
+  right:18px;
+  border-style:solid;
+  border-width:0 8px 8px 8px;
+  border-color:transparent transparent rgba(255,255,255,.22) transparent;
+}
+
+/* 열림 상태: JS가 #hm에 open 클래스 부여 */
+#hm.open{
+  opacity:1;
+  transform: translateY(0) scale(1);
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility 0s;
+}
+
+.hm-title{
+  font-weight:800;
+  color:#fff;
+  padding:10px 10px 8px;
+  border-radius:12px;
+}
+.hm-role{
+  margin-left:6px;
+  font-weight:700;
+  font-size:12px;
+  color:rgba(255,255,255,.75);
+}
+
+.hm-divider{
+  height:1px;
+  background:rgba(255,255,255,.14);
+  margin:10px 6px;
+}
 
 .hamburger-menu .menu-item{
   display:block;
   padding:10px 10px;
-  border-radius:10px;
-  color:var(--text);
-  font-weight:700;
+  border-radius:12px;
+  color:#fff;
+  font-weight:800;
 }
-.hamburger-menu .menu-item:hover{ background:rgba(17,17,17,.06); }
+.hamburger-menu .menu-item:hover{
+  background:rgba(255,255,255,.10);
+}
 
 .hamburger-menu .menu-btn{
   width:100%;
@@ -177,11 +229,13 @@ body{ padding-top:72px; }
   cursor:pointer;
   text-align:left;
   padding:10px 10px;
-  border-radius:10px;
-  font-weight:800;
-  color:var(--text);
+  border-radius:12px;
+  font-weight:900;
+  color:#fff;
 }
-.hamburger-menu .menu-btn:hover{ background:rgba(17,17,17,.06); }
+.hamburger-menu .menu-btn:hover{
+  background:rgba(255,255,255,.10);
+}
 
 /* responsive */
 @media (max-width: 920px){

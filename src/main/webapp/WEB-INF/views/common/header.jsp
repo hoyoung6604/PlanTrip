@@ -50,7 +50,7 @@
             <span></span><span></span><span></span>
           </button>
 
-          <div class="hamburger-menu" id="hm">
+          <div class="hamburger-menu" id="hm" role="menu" aria-label="메뉴">
             <div class="hm-title">
               ${sessionScope.loginMember.MName}님
               <span class="hm-role">
@@ -60,12 +60,18 @@
                 </j:choose>
               </span>
             </div>
-            <a class="menu-item" href="${pageContext.request.contextPath}/profile">프로필</a>
+            <j:if test="${sessionScope.loginMember.MRole == 9}">
+              <a class="menu-item" href="${pageContext.request.contextPath}/admin">관리자</a>
+            </j:if>
             <a class="menu-item" href="${pageContext.request.contextPath}/members/mypage">마이페이지</a>
+            <a class="menu-item" href="${pageContext.request.contextPath}/plan">내 여행 계획</a>
+
+            <div class="hm-divider"></div>
+
             <form action="${pageContext.request.contextPath}/members/logout" method="post" style="margin:0;">
               <button class="menu-btn" type="submit">로그아웃</button>
             </form>
-          </div>
+          </div></div>
         </div>
       </j:if>
 

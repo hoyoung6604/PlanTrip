@@ -48,7 +48,20 @@
         .info-box { padding: 25px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .spot-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #333; }
         .spot-addr { font-size: 15px; color: #777; margin-bottom: 10px; }
-        .spot-price { font-size: 16px; color: #3264ff; font-weight: bold; }
+		.spot-price { 
+		          font-size: 16px; 
+		          color: #3264ff; 
+		          font-weight: bold; 
+		          display: flex; 
+		          align-items: center; 
+		          gap: 4px; /* 별과 숫자 사이 간격 */
+		      }
+
+		      /* 추가: 별 아이콘만 노란색으로 설정 */
+		      .star-yellow {
+		          color: #ffc107; /* 노란색/금색 */
+		          font-size: 18px; /* 별 크기 살짝 조정 (취향껏) */
+		      }
         
         .btn-detail { 
             position: absolute; right: 25px; bottom: 25px;
@@ -122,7 +135,10 @@
                         <div class="info-box">
                             <div class="spot-title">${s.name}</div>
                             <div class="spot-addr">${s.addr}</div>
-                            <div class="spot-price">★ ${not empty s.price ? s.price : '0.0'}</div>
+							<div class="spot-price">
+							                                         <span class="star-yellow">★</span> 
+							                                         ${not empty s.price ? s.price : '0.0'}
+							                                     </div>
                             <div class="btn-detail">상세보기</div>
                         </div>
                     </a>

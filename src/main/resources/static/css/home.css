@@ -27,7 +27,7 @@
 
   /* 라이트 모드 */
   :root[data-theme="light"]{
-    --hero-bg: url("/img/main.jpg"); 
+    --hero-bg: url("/img/main_light.jpg"); 
     --page-text: #111;
     --page-muted: #6b7280;
 
