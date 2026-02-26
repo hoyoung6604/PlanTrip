@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
   <title>Plan</title>
+  <link rel="stylesheet" href="/css/header.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
   <style>
     .spot-card { border:1px solid #ddd; padding:12px; border-radius:10px; margin:10px 0; }
     .spot-title { font-weight:700; font-size:16px; margin-bottom:6px; }
@@ -15,6 +19,8 @@
   </style>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <h2>여행 계획</h2>
 
@@ -116,6 +122,8 @@
   setActiveCatButton(selectedCat);
   loadSpots();
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

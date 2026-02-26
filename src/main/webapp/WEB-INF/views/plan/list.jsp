@@ -7,9 +7,15 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>여행지 목록</title>
+  <link rel="stylesheet" href="/css/header.css"/>
   <link rel="stylesheet" href="/css/home.css"/>
+
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="container" style="padding:24px 0;">
   <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px;">
@@ -70,6 +76,8 @@
     </div>
   </j:if>
 </div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

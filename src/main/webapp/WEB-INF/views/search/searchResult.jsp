@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>검색 결과 - ${param.keyword}</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+    <script src="${pageContext.request.contextPath}/js/theme.js"></script>
+    <script defer src="${pageContext.request.contextPath}/js/nav-wave.js"></script>
     
 	<style>
 		body { 
@@ -113,6 +117,8 @@
 	</style>
 
 	<body>
+
+	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	    <div class="hero-background-wrapper">
 	        <img src="${pageContext.request.contextPath}/img/main.jpg">
 	    </div>
@@ -174,11 +180,12 @@
         container.innerHTML = html;
     }
 
-    // 초기 실행
-    window.onload = () => {
-        renderCategory('attractionList', '관광지');
-        renderCategory('foodList', '맛집');
-    };
+	// 초기 실행
+	window.onload = () => {
+	  renderCategory('attractionList', '관광지');
+	  renderCategory('foodList', '맛집');
+	};
+
 	// 지도 보기 버튼 클릭 시 (예: 모달창 띄우기)
 	function showMap() {
 	    alert('여기에 지도 모달이나 카카오맵 화면을 띄울 예정입니다!');
@@ -192,10 +199,9 @@
 	    if (direction === 'left') container.scrollLeft -= scrollAmount;
 	    else container.scrollLeft += scrollAmount;
 	}
-
-	window.onload = () => {
-	    // spot.jsp 스타일 카드 렌더링 호출
-	    renderCategory('attractionList', '관광지');
-	};
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+</body>
 </html>

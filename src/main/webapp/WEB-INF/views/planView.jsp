@@ -1,13 +1,19 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
   <title>상세 일정</title>
+  <link rel="stylesheet" href="/css/header.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
   <link rel="stylesheet" href="<c:url value='/css/plan.css'/>" />
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
   <div style="margin-bottom:14px;">
     <a href="${pageContext.request.contextPath}/plans">← 내 일정 목록</a>
@@ -249,6 +255,8 @@
       });
     })();
   </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

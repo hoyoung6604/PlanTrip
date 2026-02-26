@@ -1,10 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>여행 계획 만들기</title>
+
+  <link rel="stylesheet" href="/css/header.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
 
   <style>
     .wrap { max-width: 920px; margin: 28px auto; padding: 0 12px; }
@@ -27,6 +32,9 @@
   </style>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
+
 <div class="wrap">
 
   <h2>여행 계획 만들기</h2>
@@ -138,6 +146,8 @@
     if (!checked.length) { e.preventDefault(); alert('여행 목적을 최소 1개 선택해줘!'); return; }
   });
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

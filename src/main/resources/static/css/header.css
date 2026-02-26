@@ -34,6 +34,12 @@ body{ padding-top:72px; }
   background:transparent;
   border-bottom:1px solid transparent;
   z-index:99999;
+  transition: transform .22s ease;
+}
+
+/* 스크롤 내릴 때 숨김(요구사항: 아래로 스크롤하면 사라지고, 위로/맨 위로 오면 다시 표시) */
+.header.is-hidden{
+  transform: translateY(-110%);
 }
 
 .header-inner{

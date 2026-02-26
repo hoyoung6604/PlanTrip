@@ -266,6 +266,8 @@
 })();
 </script>
 
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
 	<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>

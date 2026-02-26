@@ -1,14 +1,20 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>내 일정 목록</title>
+  <link rel="stylesheet" href="/css/header.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
   <link rel="stylesheet" href="<c:url value='/css/plan.css'/>" />
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="container">
   <div class="header">
@@ -80,6 +86,8 @@
     history.replaceState({}, "", newUrl);
   })();
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

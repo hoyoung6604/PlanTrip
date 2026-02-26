@@ -1,10 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>${city.name} - 전체보기</title>
+    <link rel="stylesheet" href="/css/header.css" />
+    <script src="/js/theme.js"></script>
+    <script defer src="/js/nav-wave.js"></script>
     <style>
         body { font-family: 'Pretendard', sans-serif; background-color: #f8f9fa; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
@@ -13,7 +17,7 @@
         .main-layout { display: flex; gap: 30px; align-items: flex-start; }
         
         /* 왼쪽 사이드바 스타일 */
-        .sidebar { width: 240px; position: sticky; top: 20px; flex-shrink: 0; }
+        .sidebar { width: 240px; position: sticky; top: 92px; flex-shrink: 0; }
         .category-menu { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .menu-title { font-size: 16px; font-weight: bold; color: #888; margin-bottom: 15px; padding-left: 10px; }
         .menu-list { list-style: none; padding: 0; margin: 0; }
@@ -54,6 +58,8 @@
     </style>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 	<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
 		    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
 		        
@@ -132,6 +138,8 @@
         
     </div>
 </div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

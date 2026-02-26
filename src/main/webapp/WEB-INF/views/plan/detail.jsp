@@ -7,13 +7,19 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>${spot.name} | 관광지</title>
+  <link rel="stylesheet" href="/css/header.css"/>
   <link rel="stylesheet" href="/css/home.css"/>
+
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
 
   <!-- Leaflet (지도) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="container" style="padding:24px 0;">
   <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px;">
@@ -224,6 +230,8 @@
     L.marker([lat, lng]).addTo(map).bindPopup("${spot.name}").openPopup();
   })();
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

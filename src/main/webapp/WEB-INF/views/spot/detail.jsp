@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-	<%@ taglib prefix="j" uri="jakarta.tags.core" %>
+		<%@ taglib prefix="j" uri="jakarta.tags.core" %>
+		<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 		<!DOCTYPE html>
 		<html>
 
 		<head>
 			<meta charset="UTF-8">
 			<title>${spot.name} - 상세 정보</title>
+				<link rel="stylesheet" href="/css/header.css" />
+				<script src="/js/theme.js"></script>
+				<script defer src="/js/nav-wave.js"></script>
 			<style>
 				body {
 					font-family: 'Pretendard', sans-serif;
@@ -121,6 +125,8 @@
 		</head>
 
 		<body>
+			
+			<jsp:include page="/WEB-INF/views/common/header.jsp" />
 			<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
 				    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
 				        
@@ -239,6 +245,8 @@
 								</aside>
 					</div>
 			</div>
+
+			<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 		</body>
 

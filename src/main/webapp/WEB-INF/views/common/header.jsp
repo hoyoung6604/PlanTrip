@@ -13,7 +13,7 @@
 
     <nav class="nav pt-nav">
       <a href="${pageContext.request.contextPath}/spots/spot" class="pt-wave">추천 여행지 목록</a>
-      <a href="${pageContext.request.contextPath}/plan" class="pt-wave">여행 계획</a>
+      <a href="${pageContext.request.contextPath}/plans/planRoute" class="pt-wave">여행 계획</a>
       <a href="${pageContext.request.contextPath}/community" class="pt-wave">커뮤니티</a>
       <a href="${pageContext.request.contextPath}/maps" class="pt-wave">지도</a>
 
@@ -25,7 +25,7 @@
 
         <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
           <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-          <a href="${pageContext.request.contextPath}/transport/bus">버스</a>
+          <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
           <a href="${pageContext.request.contextPath}/transport/train">기차</a>
         </div>
       </div>
@@ -166,3 +166,6 @@
     }
   });
 </script>
+
+<!-- 공통: 스크롤 시 헤더 숨김/표시 -->
+<script src="${pageContext.request.contextPath}/js/header-scroll.js"></script>

@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>경로 선택</title>
+  <link rel="stylesheet" href="/css/header.css" />
+  <script src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
   <style>
     .wrap{display:flex; gap:16px;}
     #map{width:70%; height:720px; border-radius:10px; border:1px solid #ddd;}
@@ -28,6 +32,10 @@
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24${kakaoJsKey}&libraries=services&autoload=false"></script>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <h2>장소 선택 & 경로 계산</h2>
 <p class="muted">도시/목적 조건에 맞는 장소를 선택하면 지도에 표시하고, “경로 계산”으로 시간/거리를 구해줘.</p>
@@ -426,6 +434,8 @@
     }
   }
 </script>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

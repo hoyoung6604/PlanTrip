@@ -26,6 +26,7 @@
     <script defer src="/js/auth-guard.js"></script>
     <script defer src="/js/pages/index.js"></script>
     <script defer src="/js/scrollbar-auto.js"></script>
+    <script defer src="/js/header-scroll.js"></script>
 
 	</head>
 
@@ -52,7 +53,7 @@
 
 	      <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
 	        <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-	        <a href="${pageContext.request.contextPath}/transport/bus">버스</a>
+	        <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
 	        <a href="${pageContext.request.contextPath}/transport/train">기차</a>
 	      </div>
 	    </div>
@@ -230,11 +231,10 @@
 		  </section>
 		</main>
 		
-		<!-- Floating 고객센터 -->
-		<a class="cs-fab" href="/support" aria-label="고객센터">
-		  <span class="cs-fab__icon" aria-hidden="true">?</span>
-		  <span class="cs-fab__label">고객센터</span>
-		</a>
+		<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+			
+		
+		
 
 		<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 

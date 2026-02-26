@@ -27,7 +27,7 @@
 
   /* 라이트 모드 */
   :root[data-theme="light"]{
-    --hero-bg: url("/img/main_light.jpg");
+    --hero-bg: url("/img/main.jpg"); 
     --page-text: #111;
     --page-muted: #6b7280;
 
@@ -58,7 +58,6 @@ html{
   - JS: /js/scrollbar-auto.js 에서 html.show-scrollbar 토글
   - 레이아웃 흔들림(스크롤바 너비로 인한 좌우 이동) 최소화
 */
-
 html:not(.show-scrollbar){
   scrollbar-width: none;
 }
@@ -73,7 +72,6 @@ html::-webkit-scrollbar{
 html.show-scrollbar::-webkit-scrollbar{
   width:10px;
 }
-
 html::-webkit-scrollbar-track{ background: transparent; }
 html::-webkit-scrollbar-thumb{
   background: rgba(0,0,0,.28);
@@ -142,7 +140,12 @@ input,button,select,textarea{ font-family:inherit; }
   top:0;
   pointer-events:auto;
   z-index: 99999;
-  transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease;
+  transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease, transform .22s ease;
+}
+
+/* 스크롤 내릴 때 숨김(요구사항) */
+.header.is-hidden{
+  transform: translateY(-110%);
 }
 
 /* [추가] 시트가 헤더 아래로 올라오면 흰색(기존 헤더 스타일) */
@@ -831,11 +834,13 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   background:#fff;
   border-radius:56px 56px 0 0;
   box-shadow:0 -22px 60px rgba(0,0,0,.10);
-  padding:72px 0 64px;
+  padding:72px 0 50px; /* 수정 부분 */
   border-top:1px solid rgba(0,0,0,.06);
   transform:translateY(calc(-1px * var(--sheetLift, 0)));
-  will-change:transform;
+  will-change:0; /* JH수정*/
 }
+
+
 
 /* sheet 아래로는 항상 흰 배경 유지 (배경 튀어나오는 현상 방지) */
 .sheet::after{
@@ -843,11 +848,12 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   position:absolute;
   left:0;
   right:0;
-  bottom:-200vh;
-  height:200vh;
+  bottom:-300px; /* 수정 */
+  height:300px;
   background:#fff;
   z-index:-1;
 }
+
 
 .block{ padding:14px 0 28px; }
 .block + .block{
@@ -889,7 +895,7 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   overflow:hidden;
   border:1px solid rgba(0,0,0,.06);
   background:#fff;
-  box-shadow:0 14px 30px rgba(0,0,0,.06);
+  box-shadow:0 14px 30px rgba(0,0,0,.04);
   display:flex;
   flex-direction:column;
   min-height:340px;
@@ -1009,7 +1015,6 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   font-weight:900;
   color:#374151;
   cursor:pointer;
-  
 }
 .city-btn.active{
   background:rgba(47,111,237,.12);
@@ -1029,7 +1034,7 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   gap:16px;
   overflow-x:auto;
   scroll-behavior:smooth;
-  padding:6px 20px;
+  padding:6px 20px 20px; /* 수정 */
   scroll-snap-type:x mandatory;
   position:relative;
 }
@@ -1178,5 +1183,3 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   #recommendCards .post-card{ flex:0 0 100%; }
   .block-title{ font-size:22px; }
 }
-
-
