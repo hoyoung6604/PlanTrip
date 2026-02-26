@@ -1,6 +1,7 @@
 package com.exam.literaryplanner.controller;
 
 import java.util.Map;
+import java.net.URI;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -48,7 +49,8 @@ public class MembersController {
     public String login(@RequestParam String id,
                         @RequestParam String password,
                         HttpSession session,
-                        Model model) {
+                        Model model,
+                        HttpServletRequest request) {
 
         Optional<Member> loginMemberOpt = literaryService.login(id, password);
 
@@ -59,11 +61,8 @@ public class MembersController {
 
         Member member = loginMemberOpt.get();
         session.setAttribute("loginMember", member);
-
-        if (member.getMRole() != null && member.getMRole() == 9) {
-            return "redirect:/admin";
-        }
-        return "redirect:/";
+        String redirectTo = safeRedirectPath(request);
+        return "redirect:" + redirectTo;
     }
 
     /* =====================
@@ -73,7 +72,8 @@ public class MembersController {
     @ResponseBody
     public ResponseEntity<?> loginAjax(@RequestParam String id,
                                        @RequestParam String password,
-                                       HttpSession session) {
+                                       HttpSession session,
+                                       HttpServletRequest request) {
 
         Optional<Member> loginMemberOpt = literaryService.login(id, password);
 
@@ -87,12 +87,51 @@ public class MembersController {
         Member member = loginMemberOpt.get();
         session.setAttribute("loginMember", member);
 
-        String redirectTo = (member.getMRole() != null && member.getMRole() == 9) ? "/admin" : "/";
+        String redirectTo = safeRedirectPath(request);
 
         return ResponseEntity.ok(Map.of(
                 "ok", true,
                 "redirectTo", redirectTo
         ));
+    }
+
+    /* =====================
+       로그인 성공 후 이동 경로(현재 페이지 유지)
+       - 모달 로그인이라도 서버가 / 또는 /admin으로 강제 이동시키면 UX가 깨짐
+       - Referer를 기준으로 현재 보고 있던 페이지로 되돌리되,
+         외부 URL/로그인 페이지/회원가입 페이지 등은 차단하고 안전하게 fallback 처리
+       ===================== */
+    private String safeRedirectPath(HttpServletRequest request) {
+        String contextPath = (request.getContextPath() != null ? request.getContextPath() : "");
+        String referer = request.getHeader("Referer");
+
+        if (referer == null || referer.isBlank()) {
+            return contextPath + "/";
+        }
+
+        try {
+            URI uri = URI.create(referer);
+            String path = (uri.getPath() != null ? uri.getPath() : "");
+            String query = (uri.getQuery() != null && !uri.getQuery().isBlank()) ? ("?" + uri.getQuery()) : "";
+
+            // 앱 내부 경로만 허용 (contextPath로 시작해야 함)
+            if (!path.startsWith(contextPath + "/") && !path.equals(contextPath)) {
+                return contextPath + "/";
+            }
+
+            // 로그인/회원가입/비번찾기 같은 인증 페이지로 돌아가는 건 막기
+            String noCtxPath = contextPath.isEmpty() ? path : path.substring(contextPath.length());
+            if (noCtxPath.startsWith("/members/login")
+                    || noCtxPath.startsWith("/members/register")
+                    || noCtxPath.startsWith("/members/find")
+                    || noCtxPath.startsWith("/members/password")) {
+                return contextPath + "/";
+            }
+
+            return path + query;
+        } catch (Exception e) {
+            return contextPath + "/";
+        }
     }
 
     /* =====================

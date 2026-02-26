@@ -13,13 +13,10 @@
     <link rel="stylesheet" href="/css/header.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
 <link rel="stylesheet" href="/css/redesign.css" />
-	<link rel="stylesheet" href="/css/auth-modal.css" />
 	<link rel="stylesheet" href="/css/ui-toast.css" />
 
 	<script defer src="/js/ui-toast.js"></script>
 	<script defer src="/js/theme.js"></script>
-	<script defer src="/js/auth-modal.js"></script>
-	<script defer src="/js/auth-guard.js"></script>
 
     <script defer src="/js/nav-wave.js"></script>
 </head>
@@ -31,77 +28,7 @@
 <div class="cm-shell">
 
 		<!-- 좌측 사이드바는 마이페이지와 동일한 구조로 유지 -->
-		<aside class="mp-side">
-			<div class="mp-brand">
-				<div class="mp-logo"></div>
-				<div class="mp-brand-name">Community</div>
-			</div>
-
-			<div class="sec">
-				<div class="sec-title">MENU</div>
-				<nav class="mp-nav">
-					<a class="active" href="${pageContext.request.contextPath}/community">
-						<span class="mp-ico" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M4 6h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-								<path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-								<path d="M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-							</svg>
-						</span>
-						여행 후기 목록
-					</a>
-
-					<a href="${pageContext.request.contextPath}/community/write">
-						<span class="mp-ico" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M12 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-								<path d="M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-							</svg>
-						</span>
-						후기 작성
-					</a>
-
-					<a href="${pageContext.request.contextPath}/community/my-reviews">
-						<span class="mp-ico" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M4 7h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-								<path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-								<path d="M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-							</svg>
-						</span>
-						내 여행 후기
-					</a>
-				</nav>
-			</div>
-
-			<div class="sec sec-bottom">
-				<div class="sec-title">SETTINGS</div>
-				<nav class="mp-nav">
-					<a href="${pageContext.request.contextPath}/members/mypage">
-						<span class="mp-ico" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z"
-									stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-							</svg>
-						</span>
-						마이페이지로
-					</a>
-
-					<button class="menu-btn" type="button"
-						onclick="location.href='${pageContext.request.contextPath}/'">
-						<span class="mp-ico" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z"
-									stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-							</svg>
-						</span>
-						메인으로
-					</button>
-				</nav>
-			</div>
-		</aside>
-
-		<!-- 가운데 콘텐츠 -->
+<!-- 가운데 콘텐츠 -->
 		<main class="cm-main">
 
 			<section class="mp-card">
@@ -121,8 +48,7 @@
 				<div class="mp-card-body">
 
 					<!-- 검색/필터는 컨트롤러 파라미터 이름과 동일하게 맞춤 -->
-					<form action="${pageContext.request.contextPath}/community" method="get"
-						style="margin-bottom:12px;">
+					<form action="${pageContext.request.contextPath}/community" method="get">
 						<div class="cm-toolbar">
 
 							<div class="mp-search cm-search">
@@ -131,19 +57,24 @@
 							</div>
 
 							<div class="cm-filters">
-								
+								<div class="cm-filter-row">
+									<select class="cm-select" name="sort">
+										<option value="latest" <c:if test="${sort == 'latest'}">selected
+											</c:if>>최신순</option>
+										<option value="star" <c:if test="${sort == 'star'}">selected</c:if>
+											>별점순</option>
+									</select>
 
-								<select class="cm-select" name="sort">
-									<option value="latest" <c:if test="${sort == 'latest'}">selected
-										</c:if>>최신순</option>
-									<option value="star" <c:if test="${sort == 'star'}">selected</c:if>
-										>별점순</option>
-								</select>
-
-								<button class="mp-btn" type="submit" style="padding:10px 14px;">적용</button>
+									<button class="mp-btn" type="submit" style="padding:10px 14px;">적용</button>
+								</div>
 							</div>
 						</div>
 					</form>
+
+					<!-- ✅ 후기 작성: 버튼 느낌 제거 + B영역(실선 아래)로 이동 -->
+					<div class="cm-write-row">
+						<a class="cm-write-link" href="${pageContext.request.contextPath}/community/write">후기 작성</a>
+					</div>
 
 					<!-- 목록 -->
 					<c:choose>
@@ -250,7 +181,6 @@
 	</div>
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
-<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 
 </html>

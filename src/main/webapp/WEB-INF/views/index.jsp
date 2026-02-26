@@ -17,13 +17,10 @@
 
 
     <link rel="stylesheet" href="/css/home.css" />
-    <link rel="stylesheet" href="/css/auth-modal.css" />
     <link rel="stylesheet" href="/css/ui-toast.css" />
 
     <script defer src="/js/ui-toast.js"></script>
     <script defer src="/js/theme.js"></script>
-    <script defer src="/js/auth-modal.js"></script>
-    <script defer src="/js/auth-guard.js"></script>
     <script defer src="/js/pages/index.js"></script>
     <script defer src="/js/scrollbar-auto.js"></script>
     <script defer src="/js/header-scroll.js"></script>
@@ -66,8 +63,8 @@
     <div class="header-right">
 		<!-- 비로그인: 글자 링크만 -->
 		 <j:if test="${empty sessionScope.loginMember}">
-		   <a class="header-auth" href="/members/login" data-auth-open="login">로그인</a>
-		   <a class="header-auth" href="/members/register" data-auth-open="signup">회원가입</a>
+		   <a class="header-auth" href="#" data-auth-open="login">로그인</a>
+		   <a class="header-auth" href="#" data-auth-open="signup">회원가입</a>
 		 </j:if>
 
 		  <!--로그인: 내 예약 + 햄버거--> 
@@ -236,7 +233,6 @@
 		
 		
 
-		<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

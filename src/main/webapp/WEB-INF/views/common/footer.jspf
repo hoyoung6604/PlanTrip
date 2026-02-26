@@ -348,3 +348,13 @@
     if(el) el.textContent = new Date().getFullYear();
   })();
 </script>
+
+<!-- ✅ Toast UI : 전 페이지 공통 (로그인/저장/안내 메시지) -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/ui-toast.css" />
+<script defer src="${pageContext.request.contextPath}/js/ui-toast.js"></script>
+
+<!-- ✅ Auth Modal (Login/Signup) : 전 페이지 공통 -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth-modal.css" />
+<script defer src="${pageContext.request.contextPath}/js/auth-modal.js"></script>
+<script defer src="${pageContext.request.contextPath}/js/auth-guard.js"></script>
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>

@@ -9,13 +9,10 @@
   <title>후기 수정</title>
 
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css">
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 </head>
 <body>
 
@@ -188,6 +185,5 @@
 
 </div>
 
-<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 </html>

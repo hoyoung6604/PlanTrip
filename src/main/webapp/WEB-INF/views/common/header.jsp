@@ -37,8 +37,8 @@
 
     <div class="header-right">
       <j:if test="${empty sessionScope.loginMember}">
-        <a class="header-auth" href="${pageContext.request.contextPath}/members/login">로그인</a>
-        <a class="header-auth" href="${pageContext.request.contextPath}/members/register">회원가입</a>
+        <a class="header-auth" href="#" data-auth-open="login">로그인</a>
+        <a class="header-auth" href="#" data-auth-open="signup">회원가입</a>
       </j:if>
 
       <j:if test="${not empty sessionScope.loginMember}">

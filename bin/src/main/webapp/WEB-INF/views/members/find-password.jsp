@@ -9,13 +9,10 @@
   <title>비밀번호 재설정 | 여행 플래너</title>
   
 <link rel="stylesheet" href="/css/login.css">
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 
 </head>
 <body>
@@ -71,7 +68,6 @@
   </c:if>
 
 
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

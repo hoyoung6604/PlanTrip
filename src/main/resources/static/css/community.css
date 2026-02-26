@@ -1,52 +1,30 @@
 @import url("/css/mypage.css");
 
-/* 커뮤니티는 우측 패널 없이 2열 구성으로 고정 */
+/* 커뮤니티: 헤더 공통 적용 후 사이드바 제거(단일 컬럼) */
 .cm-shell{
   width: 100%;
   min-height: 100vh;
-  /* ✅ 사이드바는 고정, 메인만 스크롤되도록 */
-  height: 100vh;
-  overflow: hidden;
+  background: #f7fafc;
   /* ✅ 하단 우측 Floating 버튼이 겹치지 않도록 여유 */
-  padding: 22px 26px 35px;
-  display: grid;
-  /* ✅ 사이드바(A) / 메인(B) 비율+대칭 조정 */
-  grid-template-columns: 300px 1fr;
-  /* ✅ A/B 간격을 더 띄워서 답답함 줄이기 */
-  gap: 34px;
-  align-items: stretch;
-  /* ✅ 전체를 가운데 정렬해서 좌/우 여백 대칭 */
-  /* 마이페이지(.mp-shell)와 동일한 최대폭을 사용해 화면을 더 꽉 채움 */
-  max-width: 1560px;
+  padding: 22px 20px 120px;
+  /* ✅ 단일 컬럼 + 가운데 정렬 */
+  display: block;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
+/* 메인 영역은 페이지 스크롤(footer가 자연스럽게 붙도록) */
 .cm-main{
   display:flex;
   flex-direction:column;
   gap: 16px;
-  height: calc(100vh - 44px);
-  overflow: auto;
-  min-height: 0;
 }
 
-/* ✅ 사이드바 고정(스크롤은 메인 영역만) */
-.cm-side{
-  position: sticky;
-  top: 22px;
-  align-self: start;
-  height: calc(100vh - 44px);
-  overflow: auto;
-}
+/* 사이드바 제거로 미사용(호환 유지용) */
+.cm-side{ display:none; }
 
-/* ✅ write.jsp는 aside가 .mp-side를 사용함(사이드바 고정) */
-.cm-shell .mp-side{
-  position: sticky;
-  top: 22px;
-  align-self: start;
-  height: calc(100vh - 44px);
-  overflow: auto;
-}
+/* (정리) 커뮤니티 페이지에서는 .mp-side 사용 안 함 */
+.cm-shell .mp-side{ display:none; }
 
 /* 메인 카드가 화면 높이를 더 많이 차지하도록(글씨/요소 크기는 그대로) */
 .cm-main > .mp-card{
@@ -55,13 +33,7 @@
   flex-direction:column;
   min-height: 0;
 }
-.cm-main > .mp-card > .mp-card-body{
-  flex: 1 1 auto;
-  display:flex;
-  flex-direction:column;
-  min-height: 0;
-  overflow: auto;
-}
+.cm-main > .mp-card > .mp-card-body{ overflow: visible; }
 
 /* 헤더 우측 "총 n건" 표기 */
 .cm-count{
@@ -104,10 +76,56 @@
 }
 
 .cm-filters{
+  /* ✅ 정렬/적용만 우측에 배치 (후기 작성은 실선 아래로 분리) */
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cm-filter-row{
   display:flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items:center;
+  justify-content:flex-end;
+}
+
+/* ✅ 후기 작성: 버튼 느낌 제거 + 실선 아래(B영역) 우측 정렬 */
+.cm-write-row{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  /* ✅ 요청: 후기 작성은 A영역이 아니라 실선 아래(B영역)에 위치 */
+  /* ✅ A영역(검색/정렬)과 B영역(테이블) 사이 공백이 커 보여서 살짝 끌어올림 */
+  margin-top: -20px;
+  margin-bottom: 10px;
+  margin-right: 22px; 
+}
+
+.cm-write-link{
+  /* ✅ 요청: 버튼처럼 보이지 않게 '글씨 링크'로 */
+  display:inline;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  text-decoration: none;
+  /* ✅ 테이블 헤더/필터 텍스트와 톤 맞춤 */
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.1px;
+  line-height: 1.2;
+  padding: 0;
+  border-radius: 0;
+  color: rgba(255,255,255,.92);
+}
+.cm-write-link:hover{
+  text-decoration: underline;
+}
+
+:root[data-theme="light"] .cm-write-link{
+  color: rgba(15,23,42,.72);
 }
 
 /* 검색바(커뮤니티 전용): 돋보기 제거 + 폭 조정 */
@@ -173,6 +191,8 @@
   font-size: 13px;
   color: rgba(255,255,255,.86);
   white-space: nowrap;
+  /* ✅ 컬럼 텍스트가 양쪽으로 쏠려 보이는 현상 방지 */
+  text-align: center;
 }
 .cm-table th{
   font-size: 12px;
@@ -180,6 +200,12 @@
   color: rgba(255,255,255,.78);
   background: rgba(255,255,255,.10);
   border-bottom: 1px solid rgba(255,255,255,.14);
+  text-align: center;
+}
+
+/* 제목은 가독성을 위해 왼쪽 정렬 유지 */
+.cm-table th:nth-child(2),
+.cm-table td:nth-child(2){
   text-align: left;
 }
 .cm-table tr + tr td{
@@ -634,25 +660,19 @@ body[data-theme="dark_disabled"] .rv-tip-sub{ color: rgba(226,232,240,.70); }
    ※ 가로폭/구성/고객센터 버튼(.cs-fab) 등은 건드리지 않음
    ========================================================= */
 
-/* 3) 표 정렬 복구: mypage.css의 "가운데" 느낌을 커뮤니티에서도 유지 */
-.cm-table th,
-.cm-table td{
-  text-align: center;
-}
+
 
 /* 1) A/B 영역을 화면 높이에 맞춰 세로로 더 채우기 */
 .cm-shell{
   min-height: 100svh;
 }
 
-/* cm-shell의 두 컬럼(사이드바/메인)이 같이 길어 보이도록 */
-.cm-shell > *{
-  min-height: calc(100svh - 22px - 120px); /* cm-shell padding-top(22) / bottom(120) 기준 */
+.cm-shell{
+  min-height: 100vh;
 }
 
-/* 메인 카드도 동일하게(행이 적어도 카드가 아래까지) */
 .cm-main > .mp-card{
-  min-height: calc(100svh - 22px - 120px);
+  min-height: auto;
 }
 
 /* 2) C 페이지네이션은 카드 하단 */

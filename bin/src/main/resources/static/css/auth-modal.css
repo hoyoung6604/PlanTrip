@@ -79,7 +79,8 @@ body.is-modal-open{ overflow: hidden; }
   left: 50%;
   top: 50%;
   width: min(1040px, calc(100vw - 40px));
-  max-height: min(84vh, 860px);
+  height: clamp(520px, 72vh, 640px);
+  max-height: calc(100vh - 120px);
   transform: translate(-50%,-50%);
   border-radius: 24px;
   overflow: hidden;
@@ -292,6 +293,8 @@ body.is-modal-open{ overflow: hidden; }
 /* 반응형: 모바일은 1컬럼 */
 @media (max-width: 860px){
   .auth-modal__dialog{ width: min(720px, calc(100vw - 24px)); }
+  height: clamp(520px, 72vh, 640px);
+  max-height: calc(100vh - 120px);
   .auth-modal .auth-wrap{ grid-template-columns: 1fr; min-height: auto; }
   .auth-modal .auth-right{ display:none; }
 }

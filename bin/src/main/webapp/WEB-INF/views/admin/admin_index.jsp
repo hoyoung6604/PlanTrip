@@ -15,7 +15,6 @@
   <link rel="stylesheet" href="/css/admin-components.css" />
 
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 
 </head>
 

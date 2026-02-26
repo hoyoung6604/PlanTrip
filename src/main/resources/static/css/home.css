@@ -1,6 +1,8 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 
 :root{
+  --headerH: 72px;
+  --logoH: 150px;
   --bg:#fff;
   --text:#111;
   --muted:#6b7280;
@@ -88,6 +90,10 @@ body{
   background:var(--bg);
 }
 
+/* home.css (index만) */
+body{ padding-top:0 !important; }
+
+
 /* [유지] 페이지 전체 배경을 고정으로 깔기 */
 body::before{
   content:"";
@@ -136,8 +142,9 @@ input,button,select,textarea{ font-family:inherit; }
   background:transparent;              /* 변경 */
   backdrop-filter:blur(0);             /* 변경 */
   border-bottom:1px solid transparent; /* 변경 */
-  position:sticky;
-  top:0;
+  position:fixed;
+  top:0; left:0; right:0;
+  height:var(--headerH);
   pointer-events:auto;
   z-index: 99999;
   transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease, transform .22s ease;
@@ -250,7 +257,7 @@ input,button,select,textarea{ font-family:inherit; }
   
 /* [유지] 헤더 내부 레이아웃 */
 .header-inner{
-  height:64px;
+  height:var(--headerH);
   display:grid;
   grid-template-columns:200px 1fr auto;
   align-items:center;
@@ -261,14 +268,21 @@ input,button,select,textarea{ font-family:inherit; }
   align-items:center;
   gap:10px;
   width:200px;
+
+  height:var(--headerH);
+  overflow:visible;
 }
 .brand-top:hover{ cursor:pointer; }
 
 .brand-logo-img{
-  height:40px;
+  height:var(--logoH);
   width:auto;
   display:block;
   object-fit:contain;
+
+  position:relative;
+
+  transform: translateY(calc((var(--headerH) - var(--logoH)) / 2 + var(--logoOffsetY)));
 }
 
 /* Nav */
@@ -626,10 +640,10 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   --heroSearchTop:44%;      /* A: 검색바 위치(아래로 내리기) */
   --heroArrowBottom:70px;   /* C: 화살표 위치(아래로 내리기) */
 
-  height:calc(100vh - 64px);
+  height:100vh;
   min-height:680px;
   position:relative;
-  padding-top:64px;
+  padding-top:var(--headerH);
   overflow:hidden;
 }
 
@@ -1163,7 +1177,7 @@ html[data-page="support"][data-theme="light"] body [style*="background: #fff"]{
   .cards{ grid-template-columns:1fr; }
   .hero{
     min-height:560px;
-    height:calc(100vh - 64px); /* 유지 */
+    height:calc(100vh - 72px); /* 유지 */
   }
   /* [수정] 모바일에서는 검색바를 세로 스택(터치하기 편하게) */
   .searchbar{

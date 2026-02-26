@@ -14,15 +14,12 @@
     <link rel="stylesheet" href="/css/header.css" />
 <!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css" />
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
   <!-- 상세 전용은 마지막에 로드해서 덮어쓰기 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community-review-view.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
     <script defer src="/js/nav-wave.js"></script>
 </head>
 <body class="page-solid">
@@ -31,77 +28,7 @@
 <div class="cm-shell">
 
   <!-- 좌측 사이드바는 커뮤니티 목록과 동일 구조로 유지 (통일감) -->
-  <aside class="mp-side">
-    <div class="mp-brand">
-      <div class="mp-logo"></div>
-      <div class="mp-brand-name">Community</div>
-    </div>
-
-    <div class="sec">
-      <div class="sec-title">MENU</div>
-      <nav class="mp-nav">
-        <a href="${pageContext.request.contextPath}/community">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 6h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </span>
-          여행 후기 목록
-        </a>
-
-        <a href="${pageContext.request.contextPath}/community/write">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </span>
-          후기 작성
-        </a>
-
-        <a href="${pageContext.request.contextPath}/community/my-reviews">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 7h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </span>
-          내 여행 후기
-        </a>
-      </nav>
-    </div>
-
-    <div class="sec sec-bottom">
-      <div class="sec-title">SETTINGS</div>
-      <nav class="mp-nav">
-        <!-- auth-guard.js가 로그인 여부 확인 후 팝업/이동 처리 -->
-        <a href="${pageContext.request.contextPath}/members/mypage">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z"
-                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-            </svg>
-          </span>
-          마이페이지로
-        </a>
-
-        <a href="${pageContext.request.contextPath}/">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M3 10.5 12 3l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M5 10.5V21h14V10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
-          메인으로
-        </a>
-      </nav>
-    </div>
-  </aside>
-
-  <!-- ✅ 본문 -->
+<!-- ✅ 본문 -->
   <main class="cm-main">
     <div class="rv-card">
 
@@ -268,7 +195,6 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
-	<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

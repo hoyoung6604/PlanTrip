@@ -78,8 +78,12 @@ body.is-modal-open{ overflow: hidden; }
   position: fixed;
   left: 50%;
   top: 50%;
-  width: min(1040px, calc(100vw - 40px));
-  max-height: min(84vh, 860px);
+  /* ✅ 전 페이지 동일 크기(메인 기준): 일부 페이지에서 너무 크게 보이던 문제 해결 */
+  /* - max-width는 920px로 고정하고, 화면이 작아지면 vw 기준으로 자연스럽게 줄어듦 */
+  /* - 양 옆 여백을 충분히 확보해서(100vw - 160px) "풀스크린"처럼 보이지 않게 */
+  width: min(920px, calc(100vw - 160px));
+  height: clamp(520px, 72vh, 640px);
+  max-height: calc(100vh - 120px);
   transform: translate(-50%,-50%);
   border-radius: 24px;
   overflow: hidden;
@@ -292,6 +296,8 @@ body.is-modal-open{ overflow: hidden; }
 /* 반응형: 모바일은 1컬럼 */
 @media (max-width: 860px){
   .auth-modal__dialog{ width: min(720px, calc(100vw - 24px)); }
+  height: clamp(520px, 72vh, 640px);
+  max-height: calc(100vh - 120px);
   .auth-modal .auth-wrap{ grid-template-columns: 1fr; min-height: auto; }
   .auth-modal .auth-right{ display:none; }
 }
@@ -705,7 +711,8 @@ html[data-theme="dark_disabled"] .auth-right .auth-blob{
 .lr-modal{
   position: fixed;
   inset: 0;
-  z-index: 12000;
+  /* ✅ 로그인/회원가입 모달 위에서 항상 보이도록 */
+  z-index: 35000;
   display: none;
   align-items: center;
   justify-content: center;

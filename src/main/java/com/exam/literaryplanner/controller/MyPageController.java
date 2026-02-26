@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Community;
+import com.exam.literaryplanner.domain.Review;
 import com.exam.literaryplanner.repository.LiteraryRepository;
-import com.exam.literaryplanner.repository.CommunityRepository;
+import com.exam.literaryplanner.repository.ReviewRepository;
 import com.exam.literaryplanner.service.MemberDeleteService;
 
 import jakarta.servlet.http.HttpSession;
@@ -26,11 +26,11 @@ public class MyPageController {
 
     private final PasswordEncoder passwordEncoder;
     private final LiteraryRepository literaryRepository;
-    private final CommunityRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
     private final MemberDeleteService memberDeleteService;
 
     public MyPageController(LiteraryRepository literaryRepository,
-                            CommunityRepository reviewRepository,
+                            ReviewRepository reviewRepository,
                             PasswordEncoder passwordEncoder,
                             MemberDeleteService memberDeleteService) {
         this.literaryRepository = literaryRepository;
@@ -165,7 +165,7 @@ public class MyPageController {
             return "redirect:/members/login";
         }
 
-        List<Community> reviews;
+        List<Review> reviews;
         if (keyword != null && !keyword.isBlank()) {
             reviews = reviewRepository.findByMIdxAndRvTitleContainingOrderByRvIdxDesc(
                     loginMember.getMIdx(),
@@ -175,10 +175,12 @@ public class MyPageController {
             reviews = reviewRepository.findByMIdxOrderByRvIdxDesc(loginMember.getMIdx());
         }
 
+        model.addAttribute("myReviews", reviews);
         model.addAttribute("reviews", reviews);
         model.addAttribute("keyword", keyword);
 
-        return "members/mypage/reviews";
+        // ✅ 마이페이지 메뉴에서 커뮤니티 myReview.jsp 그대로 띄움
+        return "community/myReview";
     }
 
     @PostMapping("/withdraw")

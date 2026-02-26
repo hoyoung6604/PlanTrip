@@ -73,20 +73,7 @@
 <body>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
-	<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-		    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
-		        
-		        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
-		            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
-		                 alt="PlanTrip 로고" 
-		                 style="height: 45px; width: auto; object-fit: contain;">
-		        </a>
-
-		        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
-		            </nav>
-		        
-		    </div>
-		</header>
+	<!-- ✅ 공통 헤더(header.jsp) 사용: 중복 헤더 제거(정렬/위치 꼬임 방지) -->
 <div class="container">
     <div class="main-layout">
         

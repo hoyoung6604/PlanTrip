@@ -12,15 +12,12 @@
 
   <!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css" />
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
   <!-- 상세 전용은 마지막에 로드해서 덮어쓰기 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community-review-view.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 </head>
 <body>
 <div class="cm-shell">
@@ -72,7 +69,6 @@
     <div class="sec sec-bottom">
       <div class="sec-title">SETTINGS</div>
       <nav class="mp-nav">
-        <!-- auth-guard.js가 로그인 여부 확인 후 팝업/이동 처리 -->
         <a href="${pageContext.request.contextPath}/members/mypage">
           <span class="mp-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
@@ -261,7 +257,6 @@
 })();
 </script>
 
-	<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

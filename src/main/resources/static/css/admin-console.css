@@ -1,5 +1,7 @@
 @import url("/css/admin-theme.css");
+/* ✅ 관리자도 프로젝트 공통 헤더/로고 크기(var(--pt-logo-h))를 그대로 사용 */
 :root{
+
   --admin-shell-bg: #f3f6fb;
   --admin-side-bg: rgba(15,23,42,.94);
   --admin-side-border: rgba(255,255,255,.10);
@@ -97,7 +99,7 @@ body.admin-page{
 
 .admin-brand__logo{
   /* (요청) 사이드바 로고가 너무 작아서 브랜드 영역에 맞게 확대 */
-  height: 56px;
+  height: var(--pt-logo-h, 54px);
   width: auto;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
   max-width: 220px;

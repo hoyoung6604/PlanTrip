@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,13 +12,10 @@
     <link rel="stylesheet" href="/css/header.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
 <link rel="stylesheet" href="/css/redesign.css" />
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 
     <script defer src="/js/nav-wave.js"></script>
 </head>
@@ -150,22 +148,8 @@
       </div>
 
       <div class="mp-card-body">
-        <form action="${pageContext.request.contextPath}/members/mypage/reviews" method="get" style="margin-bottom:12px;">
-          <div class="mp-search">
-			<span class="sico" aria-hidden="true">
-			  <svg viewBox="0 0 24 24" fill="none">
-			    <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-			    <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-			  </svg>
-			</span>
-
-            <input type="text" name="keyword" value="${keyword}" placeholder="후기 제목 검색">
-            <button class="mp-btn" type="submit" style="padding:10px 14px;">검색</button>
-          </div>
-        </form>
-
         <c:choose>
-			<c:when test="${empty reviews}">
+          <c:when test="${empty myReviews}">
             <div class="mp-row">
               <div>
                 <div class="ttl">등록된 여행 후기가 없습니다.</div>
@@ -179,26 +163,45 @@
               <table class="data-table">
                 <thead>
                 <tr>
+                  <th style="width:90px;">번호</th>
+                  <th style="width:140px;">여행지</th>
                   <th>제목</th>
-                  <th>별점</th>
-                  <th>관리</th>
+                  <th style="width:140px;">등록일</th>
+                  <th style="width:90px;">조회</th>
+                  <th style="width:140px;">관리</th>
                 </tr>
                 </thead>
                 <tbody>
-					<c:forEach var="r" items="${reviews}">
-
+                <c:forEach var="r" items="${myReviews}">
                   <tr>
-                    <td><c:out value="${r.rvTitle}"/></td>
-                    <td><c:out value="${r.rvStar}"/></td>
+                    <td><c:out value="${r.rvIdx}"/></td>
                     <td>
-						<a href="${pageContext.request.contextPath}/community/edit?rvIdx=${r.rvIdx}&from=mypage">수정</a>
+                      <c:choose>
+                        <c:when test="${not empty r.spot and not empty r.spot.city}">
+                          <c:out value="${r.spot.city.name}"/>
+                        </c:when>
+                        <c:otherwise>
+                        <c:out value="${r.rvRegion}"/>
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                    <td class="support-ellipsis">
+                      <a class="support-link" href="${pageContext.request.contextPath}/community/view?rvIdx=${r.rvIdx}">
+                        <c:out value="${r.rvTitle}"/>
+                      </a>
+                    </td>
+                    <td>
+                      <c:out value="${fn:replace(fn:substring(r.rvUpdate,0,10),'-','.') }"/>
+                    </td>
+                    <td><c:out value="${r.rvCount}"/></td>
+                    <td>
+                      <a href="${pageContext.request.contextPath}/community/edit?rvIdx=${r.rvIdx}&from=mypage">수정</a>
                       &nbsp;
-					  <form action="${pageContext.request.contextPath}/community/delete" method="post" style="display:inline;">
-					    <input type="hidden" name="rvIdx" value="${r.rvIdx}">
-					    <input type="hidden" name="from" value="mypage">
-					    <button type="submit" class="link-btn">삭제</button>
-					  </form>
-
+                      <form action="${pageContext.request.contextPath}/community/delete" method="post" style="display:inline;">
+                        <input type="hidden" name="rvIdx" value="${r.rvIdx}">
+                        <input type="hidden" name="from" value="mypage">
+                        <button type="submit" class="link-btn">삭제</button>
+                      </form>
                     </td>
                   </tr>
                 </c:forEach>
@@ -246,7 +249,6 @@
 
   <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

@@ -15,13 +15,10 @@
 	  <!-- Trip.com 스타일 참고한 후기 상세 전용 -->
 	  <link rel="stylesheet" href="/css/community-review-view.css" />
 
-	  <link rel="stylesheet" href="/css/auth-modal.css" />
 	  <link rel="stylesheet" href="/css/ui-toast.css" />
 
 	  <script defer src="/js/ui-toast.js"></script>
 	  <script defer src="/js/theme.js"></script>
-	  <script defer src="/js/auth-modal.js"></script>
-	  <script defer src="/js/auth-guard.js"></script>
 	    <script defer src="/js/nav-wave.js"></script>
 </head>
 	<body class="page-solid">
@@ -29,68 +26,7 @@
 
     <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="cm-shell">
-
-  <aside class="mp-side">
-    <div class="mp-brand">
-      <div class="mp-logo"></div>
-      <div class="mp-brand-name">Community</div>
-    </div>
-
-    <div class="sec">
-      <div class="sec-title">MENU</div>
-      <nav class="mp-nav">
-        <a href="${pageContext.request.contextPath}/community">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 6h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          여행 후기 목록
-        </a>
-
-        <a href="${pageContext.request.contextPath}/community/my-reviews">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 7h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          내 여행 후기
-        </a>
-      </nav>
-    </div>
-
-    <div class="sec sec-bottom">
-      <div class="sec-title">SETTINGS</div>
-      <nav class="mp-nav">
-        <a href="${pageContext.request.contextPath}/members/mypage">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z"
-                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          마이페이지로
-        </a>
-
-        <button class="menu-btn" type="button"
-                onclick="location.href='${pageContext.request.contextPath}/'">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z"
-                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          메인으로
-        </button>
-      </nav>
-    </div>
-  </aside>
-
-  <main class="cm-main">
+<main class="cm-main">
     <section class="mp-card">
       <div class="mp-card-head">
         <div>
@@ -220,6 +156,5 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
-<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>
 </html>

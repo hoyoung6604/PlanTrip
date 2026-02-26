@@ -11,13 +11,10 @@
   <link rel="stylesheet" href="/css/header.css" />
 
   
-<link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
   <script defer src="/js/pages/login-page.js"></script>
   <script defer src="/js/nav-wave.js"></script>
 </head>
@@ -35,7 +32,6 @@
 
   <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
-  <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

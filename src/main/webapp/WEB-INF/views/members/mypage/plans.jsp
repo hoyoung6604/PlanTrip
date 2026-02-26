@@ -11,13 +11,10 @@
     <link rel="stylesheet" href="/css/header.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
 <link rel="stylesheet" href="/css/redesign.css" />
-  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-  <script defer src="/js/auth-modal.js"></script>
-  <script defer src="/js/auth-guard.js"></script>
 
     <script defer src="/js/nav-wave.js"></script>
 </head>

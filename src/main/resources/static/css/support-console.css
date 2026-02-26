@@ -5,7 +5,9 @@
    - 컨트롤러/URL/기능 로직은 건드리지 않고, JSP 클래스명 유지
    ========================================================= */
 
+/* ✅ 고객센터도 프로젝트 공통 헤더/로고 크기(var(--pt-logo-h))를 그대로 사용 */
 :root{
+
   --sp-bg: #f4f6fa;
   --sp-sidebg: #e6ebf3;
   --sp-topbg:  #e6ebf3;
@@ -106,7 +108,7 @@ body{
 }
 
 .support-brand img{
-  height: 40px;
+  height: var(--pt-logo-h, 54px);
   width:auto;
   display:block;
 }

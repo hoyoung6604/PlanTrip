@@ -6,11 +6,31 @@
 */
 
 (function(){
+  if(window.__PT_AUTH_MODAL_INIT) return;
+  window.__PT_AUTH_MODAL_INIT = true;
+
   const q = (sel, el=document) => el.querySelector(sel);
   const qa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
+
+  // ✅ 페이지마다 레이아웃 wrapper에 transform/scale 등이 걸려있으면
+  // position:fixed 모달이 작아보이거나 위치가 달라질 수 있음.
+  // 모달을 document.body 최하단으로 강제 이동해서 "메인 화면과 동일한 크기"로 통일합니다.
+  function ensureModalsOnBody(){
+    try{
+      document.querySelectorAll('.auth-modal').forEach(function(modal){
+        if(modal.parentElement !== document.body){
+          document.body.appendChild(modal);
+        }
+      });
+    }catch(e){}
+  }
+
+  ensureModalsOnBody();
+
   // 스와이프 전환(모달 2개가 잠깐 공존) 시 잔상/겹침 방지용
-  let zCounter = 10000;
+  // ✅ Toast/알림 UI가 항상 더 위에 보이도록 모달 z-index 기준을 올림
+  let zCounter = 30000;
 
   // 전환/애니메이션 충돌 방지용 시퀀스
   // 클릭을 연속으로 해도 이전 애니메이션 콜백이 뒤늦게 실행되며 모달이 꼬이지 않도록 막습니다.
@@ -76,12 +96,50 @@
   }
 
   function toast(msg){
+    // ✅ 브라우저 기본 alert(= "localhost:8700 ..." 팝업) 절대 사용하지 않음
     if(window.UIToast && typeof window.UIToast.show === 'function'){
       window.UIToast.show(msg);
       return;
     }
-    try{ alert(msg); }catch(e){}
+
+    // ui-toast.js가 로드되지 않은 페이지(예외 상황)에서도 화면 내 토스트로만 처리
+    try{
+      var wrap = document.querySelector('.ui-toast-wrap');
+      if(!wrap){
+        wrap = document.createElement('div');
+        wrap.className = 'ui-toast-wrap';
+        wrap.style.zIndex = '40000';
+        document.body.appendChild(wrap);
+      }
+      var t = document.createElement('div');
+      t.className = 'ui-toast is-show';
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(function(){
+        t.classList.remove('is-show');
+        setTimeout(function(){ try{ t.remove(); }catch(e){} }, 260);
+      }, 2200);
+    }catch(e){}
   }
+
+  // ✅ 새로고침/리다이렉트 이후에도 토스트가 보이도록 플래그 처리
+  (function showPendingToast(){
+    try{
+      var raw = sessionStorage.getItem('pt_pending_toast');
+      if(!raw) return;
+      sessionStorage.removeItem('pt_pending_toast');
+
+      var msg = raw;
+      // JSON으로 저장했을 수도 있으니 안전하게 파싱
+      try{
+        var j = JSON.parse(raw);
+        if(j && j.msg) msg = String(j.msg);
+      }catch(_){ }
+
+      // ui-toast.js defer 로딩 타이밍 때문에 한 틱 뒤에 출력
+      setTimeout(function(){ toast(msg); }, 50);
+    }catch(e){}
+  })();
 
   function errorBox(modal){
     if(!modal) return null;
@@ -347,6 +405,7 @@
         nextDialog.classList.remove('is-swipe-in-right','is-swipe-in-left');
         // 포커스는 다음 모달로 이동
         setTimeout(function(){
+
           const focusables = nextDialog ? getFocusable(nextDialog) : [];
           if(focusables[0]) focusables[0].focus();
         }, 0);
@@ -424,14 +483,28 @@
       credentials: 'same-origin',
       body: toParams(form)
     }).then(async function(res){
-      const data = await res.json().catch(function(){ return {}; });
+      const data = await res.json().catch(function(){
+ return {}; });
       if(res.ok && data.ok){
         // 로그인 성공 시에는 authRedirect 값을 사용해야 하므로, 닫을 때 제거하지 않도록 keepRedirect 유지
         closeModalAnimated(modal, { keepRedirect: true });
-        toast('로그인 되었습니다.');
-        location.href = readRedirect(data.redirectTo);
-        return;
+        // ✅ 로그인 성공 토스트는 "현재 페이지 유지"를 위해 새로고침/리다이렉트 이후에 보여줌
+        // (reload 직전에 띄우면 바로 사라져서 "어떤 페이지는 보이고 어떤 페이지는 안 보이는" 현상이 생김)
+        try{
+          sessionStorage.setItem('pt_pending_toast', JSON.stringify({ msg: '로그인이 완료되었습니다.' }));
+        }catch(e){}
+        
+        // ✅ 로그인 후에도 현재 페이지 유지 (관리자/일반 모두 동일)
+        // - 모달 로그인은 페이지 이동 없이 header 상태만 갱신하면 되므로 reload로 처리
+        // - 단, 현재가 로그인 페이지면 redirectTo(또는 "/")로 이동
+        const curPath = (location.pathname || '');
+        if(curPath.startsWith('/members/login') || curPath.startsWith('/members/join') || curPath.startsWith('/members/register')){
+          location.href = readRedirect(data.redirectTo) || '/';
+        }else{
+          location.reload();
+        }
       }
+      return;
 
       if(res.status === 401){
         if(!id){
@@ -442,7 +515,8 @@
         const exists = await fetch('/api/auth/id-exists?id=' + encodeURIComponent(id), { credentials:'same-origin' })
           .then(function(r){ return r.ok ? r.json() : { exists:false }; })
           .then(function(j){ return !!j.exists; })
-          .catch(function(){ return false; });
+          .catch(function(){
+ return false; });
 
         setError(modal, exists ? '비밀번호가 틀렸습니다.' : '존재 하지 않는 아이디 입니다.');
         return;
@@ -450,6 +524,7 @@
 
       setError(modal, data.message || '로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.');
     }).catch(function(){
+
       setError(modal, '로그인에 실패했습니다. 네트워크 상태를 확인해 주세요.');
     });
   }
@@ -467,7 +542,8 @@
       credentials: 'same-origin',
       body: toParams(form)
     }).then(async function(res){
-      const data = await res.json().catch(function(){ return {}; });
+      const data = await res.json().catch(function(){
+ return {}; });
       if(res.ok && data.ok){
         // 회원가입 성공 후에도 동일하게 authRedirect를 사용
         closeModalAnimated(modal, { keepRedirect: true });
@@ -477,6 +553,7 @@
       }
       setError(modal, data.message || '회원가입에 실패했습니다. 입력값을 다시 확인해 주세요.');
     }).catch(function(){
+
       setError(modal, '회원가입에 실패했습니다. 네트워크 상태를 확인해 주세요.');
     });
   }
@@ -514,7 +591,8 @@
         credentials: 'same-origin',
         body: toParams(form)
       }).then(async function(res){
-        const data = await res.json().catch(function(){ return {}; });
+        const data = await res.json().catch(function(){
+ return {}; });
         if(res.ok && data.ok){
           toast(data.message || '재설정 링크를 발송했습니다.');
           setError(modal, data.message || '입력하신 이메일로 재설정 링크를 발송했습니다.');
@@ -522,6 +600,7 @@
         }
         setError(modal, data.message || '요청에 실패했습니다. 이메일을 확인해 주세요.');
       }).catch(function(){
+
         setError(modal, '요청에 실패했습니다. 네트워크 상태를 확인해 주세요.');
       });
       return;
