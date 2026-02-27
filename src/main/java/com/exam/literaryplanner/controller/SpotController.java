@@ -52,24 +52,6 @@ public class SpotController {
         return "spot/spot"; 
     }
     
-	/*
-	 * // 2. 나중에 API 작업을 할 테스트 페이지 주소 미리 생성
-	 * 
-	 * @GetMapping("/spot2") public String getCityDetailTest(
-	 * 
-	 * @RequestParam(value = "cityId", required = false) Integer cityId, HttpSession
-	 * session, Model model) {
-	 * 
-	 * // 위와 동일한 도시 정보 세팅 로직 if (cityId != null)
-	 * session.setAttribute("selectedCityId", cityId); else cityId = (Integer)
-	 * session.getAttribute("selectedCityId"); if (cityId == null) cityId = 1;
-	 * 
-	 * City city = cityRepository.findById(cityId).orElseThrow();
-	 * model.addAttribute("city", city);
-	 * 
-	 * // [수정] 리턴 경로를 spot/spot2로 변경 return "spot/spot2"; }
-	 */
-    
     // ✅ 2. 도시 버튼을 누를 때 데이터만 보내주는 메서드
     @GetMapping("/api/contents")
     @ResponseBody // 페이지 이동 없이 JSON 데이터만 반환
@@ -112,5 +94,47 @@ public class SpotController {
         model.addAttribute("selectedCity", cityId); 
 
         return "spot/all";
+        
     }
+    
+    @GetMapping("/api/recommend")
+    @ResponseBody // 페이지가 아닌 JSON 데이터를 반환합니다.
+    public List<Map<String, Object>> getRecommend(@RequestParam("category") String category) {
+        // 1. 서비스에서 랜덤하게 섞인 장소들을 가져옵니다.
+        List<Spot> spots = spotService.getRandomSpotsByCategory(category);
+        
+        // 2. JSON 변환 시 에러(무한루프) 방지 및 프론트엔드 편의를 위해 Map으로 변환
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        
+        for (Spot s : spots) {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", s.getId());
+            map.put("name", s.getName());
+            map.put("image", s.getImage());
+            // 도시 이름을 바로 접근할 수 있게 cityName으로 따로 담아줍니다.
+            map.put("cityName", (s.getCity() != null) ? s.getCity().getName() : "기타");
+            result.add(map);
+        }
+        
+        return result;
+    }
+    
+	/*
+	 * @GetMapping("/api/contents")
+	 * 
+	 * @ResponseBody public Map<String, Object> getContents(@RequestParam Integer
+	 * cityId, HttpSession session) { Map<String, Object> data = new HashMap<>();
+	 * List<Spot> tourList = spotService.getTourList(cityId); // 관광지 리스트 조회
+	 * 
+	 * // 세션에서 로그인 정보 가져오기 Object loginMember = session.getAttribute("loginMember");
+	 * if (loginMember != null) { Integer mIdx = extractMIdx(loginMember); // 로그인 유저
+	 * ID 추출
+	 * 
+	 * // 리스트를 돌며 찜 여부를 하나씩 체크 for (Spot s : tourList) { boolean hearted =
+	 * wishListService.isHearted(mIdx, s.getId()); s.setIsHearted(hearted); // Spot
+	 * 엔티티의 @Transient 필드에 저장 } }
+	 * 
+	 * data.put("tourList", tourList); // ... 나머지 stayList, foodList 등도 동일하게 처리
+	 * return data; }
+	 */
 }

@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.PlanDetail;
 import com.exam.literaryplanner.domain.Spot;
+import com.exam.literaryplanner.domain.TravelPlan;
 import com.exam.literaryplanner.dto.RouteSpotDto;
 import com.exam.literaryplanner.repository.CityRepository;
 import com.exam.literaryplanner.repository.PlanDetailRepository;
 import com.exam.literaryplanner.repository.SpotRepository;
+import com.exam.literaryplanner.repository.TravelPlanRepository;
 import com.exam.literaryplanner.service.CityService;
 import com.exam.literaryplanner.service.KakaoDirectionsService;
 import com.exam.literaryplanner.service.PlanService;
@@ -43,18 +45,7 @@ public class RouteController {
     private final SpotRepository spotRepository;
     private final PlanDetailRepository planDetailRepository;
     private final KakaoDirectionsService kakaoDirectionsService;
-    
-//    public RouteController(RouteService routeService, CityService cityService, PlanService planService
-//    		,CityRepository cityRepository, SpotRepository spotRepository, PlanDetailRepository planDetailRepository,
-//    		KakaoDirectionsService kakaoDirectionsService) {
-//    	this.routeService = routeService;
-//    	this.cityService = cityService;
-//    	this.planService = planService;
-//    	this.cityRepository = cityRepository;
-//    	this.spotRepository = spotRepository;
-//    	this.planDetailRepository = planDetailRepository;
-//    	this.kakaoDirectionsService = kakaoDirectionsService;
-//    }
+    private final TravelPlanRepository travelPlanRepository;
 
  // 1) 계획 만들기 화면 (도시 목록 뿌리기)
     @GetMapping("/planRoute")
@@ -96,21 +87,27 @@ public class RouteController {
     @GetMapping("/route")
     public String routePage(
         @RequestParam Integer pIdx,
-        @RequestParam Integer cityId,
-        @RequestParam List<String> purpose, // FOOD&TOUR&ACT
+        @RequestParam(required = false) Integer cityId,
+        @RequestParam(required = false) List<String> purpose,
         Model model
     ) {
-      List<Spot> spots = spotRepository.findByCity_IdAndCatCodeInOrderByNameAsc(cityId, purpose);
+        // 저장된 디테일은 무조건 내려줌 (수정 초기값)
+        model.addAttribute("pIdx", pIdx);
+        model.addAttribute("savedDetails",
+            planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx)
+        );
 
-      model.addAttribute("pIdx", pIdx);
-      model.addAttribute("cityId", cityId);
-      model.addAttribute("purpose", purpose);
-      model.addAttribute("spots", spots);
+        // cityId/purpose가 있을 때만 장소목록 로딩
+        List<Spot> spots = List.of();
+        if (cityId != null && purpose != null && !purpose.isEmpty()) {
+            spots = spotRepository.findByCity_IdAndCatCodeInOrderByNameAsc(cityId, purpose);
+        }
 
-      // 기존에 저장된 detail 있으면 불러와서 “선택 목록”으로 미리 보여주고 싶을 때
-      model.addAttribute("savedDetails", planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx));
+        model.addAttribute("cityId", cityId);
+        model.addAttribute("purpose", purpose);
+        model.addAttribute("spots", spots);
 
-      return "plans/route";
+        return "plans/route";
     }
     
     @PostMapping("/route/save")
@@ -190,9 +187,57 @@ public class RouteController {
                 if (v != null) collected.add(v);
             }
         }
-
+        
+        
+        
         // 3) 순서 유지 + 중복 제거
         LinkedHashSet<Integer> set = new LinkedHashSet<>(collected);
         return new ArrayList<>(set);
     }
+    
+    @GetMapping("/edit")
+    public String editPlanForm(@RequestParam Integer pIdx, HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/members/login";
+
+        TravelPlan plan = travelPlanRepository.findMyPlan(pIdx, loginMember.getMIdx())
+                .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
+
+        model.addAttribute("plan", plan);
+        model.addAttribute("cities", cityRepository.findAllByOrderByNameAsc());
+
+        // ⚠️ 지금 DB에 city/purpose 저장이 없으면 여기 두 줄은 일단 빼도 됨
+        // model.addAttribute("selectedCityId", ...);
+        // model.addAttribute("selectedPurposes", ...);
+
+        return "plans/planEdit";
+    }
+    
+    @PostMapping("/edit")
+    public String editPlanSubmit(
+            @RequestParam Integer pIdx,
+            @RequestParam String planName,
+            @RequestParam Integer cId,
+            @RequestParam(name="purposes") List<String> purposes,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            HttpSession session
+    ) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/members/login";
+
+        TravelPlan plan = travelPlanRepository.findMyPlan(pIdx, loginMember.getMIdx())
+                .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
+
+        plan.setPTitle(planName);
+        plan.setPStart(LocalDate.parse(startDate));
+        plan.setPEnd(LocalDate.parse(endDate));
+        travelPlanRepository.save(plan);
+
+        return "redirect:/plans/route?pIdx=" + pIdx
+                + "&cityId=" + cId
+                + "&purpose=" + String.join("&purpose=", purposes);
+    }
+    
+    
 }

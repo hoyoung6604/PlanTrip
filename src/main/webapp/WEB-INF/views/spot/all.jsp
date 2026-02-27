@@ -48,20 +48,21 @@
         .info-box { padding: 25px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .spot-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #333; }
         .spot-addr { font-size: 15px; color: #777; margin-bottom: 10px; }
+		/* 기존 .spot-price는 파란색 유지 */
 		.spot-price { 
-		          font-size: 16px; 
-		          color: #3264ff; 
-		          font-weight: bold; 
-		          display: flex; 
-		          align-items: center; 
-		          gap: 4px; /* 별과 숫자 사이 간격 */
-		      }
+		    font-size: 16px; 
+		    color: #3264ff; 
+		    font-weight: bold; 
+		    display: flex; 
+		    align-items: center; 
+		    gap: 4px; /* 별과 숫자 사이 간격 */
+		}
 
-		      /* 추가: 별 아이콘만 노란색으로 설정 */
-		      .star-yellow {
-		          color: #ffc107; /* 노란색/금색 */
-		          font-size: 18px; /* 별 크기 살짝 조정 (취향껏) */
-		      }
+		/* 추가: 별 아이콘만 노란색으로 설정 */
+		.star-yellow {
+		    color: #ffc107; /* 노란색/금색 */
+		    font-size: 18px; /* 별 크기 살짝 조정 (취향껏) */
+		}
         
         .btn-detail { 
             position: absolute; right: 25px; bottom: 25px;
@@ -73,7 +74,20 @@
 <body>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
-	<!-- ✅ 공통 헤더(header.jsp) 사용: 중복 헤더 제거(정렬/위치 꼬임 방지) -->
+	<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+		    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
+		        
+		        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
+		            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
+		                 alt="PlanTrip 로고" 
+		                 style="height: 45px; width: auto; object-fit: contain;">
+		        </a>
+
+		        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
+		            </nav>
+		        
+		    </div>
+		</header>
 <div class="container">
     <div class="main-layout">
         
@@ -123,9 +137,9 @@
                             <div class="spot-title">${s.name}</div>
                             <div class="spot-addr">${s.addr}</div>
 							<div class="spot-price">
-							                                         <span class="star-yellow">★</span> 
-							                                         ${not empty s.price ? s.price : '0.0'}
-							                                     </div>
+							                    <span class="star-yellow">★</span> 
+							                    ${not empty s.price ? s.price : '0.0'}
+							                </div>
                             <div class="btn-detail">상세보기</div>
                         </div>
                     </a>

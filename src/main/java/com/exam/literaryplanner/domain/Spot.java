@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "spotT")
-@Getter @Setter
+@Getter 
+@Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class Spot {
@@ -58,13 +60,28 @@ public class Spot {
 
     @Column(name = "s_info")
     private String info;      // 특징 및 정보
+    
+    @Column(name = "s_image")
+    private String image;      // 사진정보
 
     @OneToOne(mappedBy = "spot", fetch = FetchType.LAZY)
     @JsonIgnore
-    private SpotStats stats; // ✅ getStats() 자동 생성됨
+    private SpotStats stats;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "c_idx")
     private City city;
+    
+    @Transient // JPA가 이 필드는 DB 컬럼과 매핑하지 않도록 무시하게 합니다.
+    @Builder.Default
+    private boolean isHearted = false;
+    
+    public boolean getIsHearted() {
+        return this.isHearted;
+    }
+
+    public void setIsHearted(boolean isHearted) {
+        this.isHearted = isHearted;
+    }
 
 }

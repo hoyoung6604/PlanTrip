@@ -115,7 +115,6 @@
       <div class="hero-pill hero-title">Wellcome to PlanTrip</div>
     </div>
 
-    <!-- ✅ searchbar 내부에 다른 div 넣지 말기(레이아웃 밀림 방지) -->
 	<div class="searchbar">
 	  <div class="sb-item">
 	    <div class="sb-icon"></div>
@@ -128,104 +127,89 @@
     <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
   </section>
 
+  
   <section class="sheet" id="sheet">
     <div class="container">
-		 <section class="block">
-		        <div class="block-head">
-		          <h2 class="block-title">인기 여행지</h2>
-		          <p class="block-sub">요즘 많이 찾는 여행지로 추천 해드려요 !</p>
-		        </div>
-
-		        <div class="marquee" data-marquee>
-		          <div class="marquee__track" data-marquee-track>
-		            <a class="post-card" href="/spot/sea">
-		              <div class="post-img" style="background-image:url('/img/sea.jpg')"></div>
-		              <div class="post-body">
-		                <div class="post-title">바다 감성 여행</div>
-		                <div class="post-meta">테마 · 인기</div>
-		                <div class="post-tags">
-		                  <span class="tag">#바다</span>
-		                  <span class="tag">#감성</span>
-		                </div>
-		              </div>
-		            </a>
-
-		            <a class="post-card" href="/spot/city">
-		              <div class="post-img" style="background-image:url('/img/hero.jpg')"></div>
-		              <div class="post-body">
-		                <div class="post-title">도심 힐링 코스</div>
-		                <div class="post-meta">테마 · 인기</div>
-		                <div class="post-tags">
-		                  <span class="tag">#힐링</span>
-		                  <span class="tag">#카페</span>
-		                </div>
-		              </div>
-		            </a>
-
-		            <a class="post-card" href="/spot/mountain">
-		              <div class="post-img" style="background-image:url('/img/mountain.jpg')"></div>
-		              <div class="post-body">
-		                <div class="post-title">산/자연 코스</div>
-		                <div class="post-meta">테마 · 인기</div>
-		                <div class="post-tags">
-		                  <span class="tag">#자연</span>
-		                  <span class="tag">#트레킹</span>
-		                </div>
-		              </div>
-		            </a>
-
-		            <a class="post-card" href="/spot/food">
-		              <div class="post-img" style="background-image:url('/img/main.jpg')"></div>
-		              <div class="post-body">
-		                <div class="post-title">맛집 투어</div>
-		                <div class="post-meta">테마 · 인기</div>
-		                <div class="post-tags">
-		                  <span class="tag">#맛집</span>
-		                  <span class="tag">#현지</span>
-		                </div>
-		              </div>
-		            </a>
-		          </div>
-		        </div>
-		      </section>
-
-		      <section class="block block-recommend">
-		        <div class="course-head">
-		          <div class="course-head-left block-head">
-		            <h2 class="block-title">맞춤형 여행 코스</h2>
-		            <p class="block-sub">원하는 지역과, 원하는 도시를 선택해서 본인에 맞는 맞춤형 여행 코스를 추천해드려요!</p>
-		          </div>
-
-		          <div class="course-head-right">
-		            <div class="segmented" role="tablist" aria-label="추천 일정 탭">
-		              <button class="seg-btn active" type="button">국내</button>
-		            </div>
-		          </div>
-		        </div>
-
-		        <div class="citybar" id="domesticBar"></div>
-
-		        <div class="recommend-wrap">
-		          <button class="arrow-btn arrow-left" type="button" aria-label="이전" onclick="scrollRecommend(-1)">
-		            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-		              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		              <polyline points="15 18 9 12 15 6"></polyline>
-		            </svg>
-		          </button>
-
-		          <div class="cards" id="recommendCards"></div>
-
-		          <button class="arrow-btn arrow-right" type="button" aria-label="다음" onclick="scrollRecommend(1)">
-		            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-		              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		              <polyline points="9 18 15 12 9 6"></polyline>
-		            </svg>
-		          </button>
-		        </div>
-		      </section>
-
+		<section class="block">
+		    <div class="block-head">
+		        <h2 class="block-title">오늘의 인기 여행지 </h2>
+		        <p class="block-sub">매일 새로운 6곳의 여행지를 추천해 드립니다.</p>
 		    </div>
-		  </section>
+
+		    <div class="marquee" data-marquee>
+		        <div class="marquee__track" data-marquee-track>
+		            <j:forEach var="s" items="${popularSpots}">
+		                <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+		                    <div class="post-img" style="background-image:url('${s.image}')"></div>
+		                    <div class="post-body">
+		                        <div class="post-title">${s.name}</div>
+		                        <div class="post-meta">${s.city.name} · 인기</div>
+		                        <div class="post-tags">
+		                            <span class="tag">#${s.city.name}</span>
+		                            <span class="tag">#추천</span>
+		                        </div>
+		                    </div>
+		                </a>
+		            </j:forEach>
+		            
+		            <j:forEach var="s" items="${popularSpots}">
+		                <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+		                    <div class="post-img" style="background-image:url('${s.image}')"></div>
+		                    <div class="post-body">
+		                        <div class="post-title">${s.name}</div>
+		                        <div class="post-meta">${s.city.name} · 인기</div>
+		                        <div class="post-tags">
+		                            <span class="tag">#${s.city.name}</span>
+		                            <span class="tag">#추천</span>
+		                        </div>
+		                    </div>
+		                </a>
+		            </j:forEach>
+		        </div>
+		    </div>
+		</section>
+
+		<section class="block block-recommend">
+		  <div class="course-head" style="margin-bottom: 20px;">
+		    <div class="course-head-left block-head">
+		      <h2 class="block-title">맞춤형 여행 추천 </h2>
+		    </div>
+		  </div>
+
+		  <div class="course-head-right" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+		    <div class="segmented" role="tablist">
+		      <button class="seg-btn active" type="button" onclick="loadRecommend('TOUR', this)">관광지</button>
+		      <button class="seg-btn" type="button" onclick="loadRecommend('STAY', this)">숙소</button>
+		      <button class="seg-btn" type="button" onclick="loadRecommend('ACT', this)">문화/액티비티</button>
+		      <button class="seg-btn" type="button" onclick="loadRecommend('FOOD', this)">맛집</button>
+		    </div>
+
+		    <p class="block-sub" style="margin: 0; color: #888; font-size: 14px; font-weight: 400;">
+		      카테고리를 선택하시면 매일 새로운 장소를 추천해드려요!
+		    </p>
+		  </div>
+
+		  <div class="recommend-wrap" style="position: relative; margin-top: 30px; width: 100%;">
+		    <button class="arrow-btn arrow-left" type="button" onclick="scrollRecommend(-1)" 
+		            style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #fff; border-radius: 50%; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+		      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		        <polyline points="15 18 9 12 15 6"></polyline>
+		      </svg>
+		    </button>
+
+		    <div class="cards" id="recommendCards" 
+		         style="display: flex; gap: 24px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0 20px 0; scrollbar-width: none; -ms-overflow-style: none;">
+		        </div>
+
+		    <button class="arrow-btn arrow-right" type="button" onclick="scrollRecommend(1)" 
+		            style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #fff; border-radius: 50%; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+		      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+		        <polyline points="9 18 15 12 9 6"></polyline>
+		      </svg>
+		    </button>
+		  </div>
+		</section>
+
 		</main>
 		
 		<%@ include file="/WEB-INF/views/common/footer.jspf" %>
@@ -233,6 +217,61 @@
 		
 		
 
+		<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
+<script>
+function getCatName(code) {
+    const map = { 'TOUR': '관광지', 'STAY': '숙소', 'ACT': '액티비티', 'FOOD': '맛집' };
+    return map[code] || '추천';
+}
+
+function loadRecommend(catCode, btn) {
+    if (btn) {
+        document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    fetch('/spots/api/recommend?category=' + catCode)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('recommendCards');
+            if (!container) return;
+            container.innerHTML = '';
+
+			data.forEach(spot => {
+			    const card = document.createElement('a');
+			    card.className = 'post-card';
+			    card.href = '/spots/detail/' + spot.id; // 백틱 대신 일반 문자열 결합 사용 (안전함)
+			    card.style.flex = "0 0 calc((100% - 48px) / 3)";
+			    card.style.minWidth = "calc((100% - 48px) / 3)";
+
+			    // innerHTML 내의 변수들도 일반 따옴표 결합 방식으로 작성하여 JSP 에러 방지
+			    card.innerHTML = 
+			        '<div class="post-img" style="background-image:url(\'' + (spot.image || '/img/default.jpg') + '\'); height: 250px; border-radius: 24px 24px 0 0;"></div>' +
+			        '<div class="post-body" style="padding: 24px; background: #fff; border-radius: 0 0 24px 24px;">' +
+			            '<div class="post-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">' + spot.name + '</div>' +
+			            '<div class="post-meta" style="color: #6b7280; font-size: 14px;">' + spot.cityName + ' · 인기 추천</div>' +
+			            '<div class="post-tags" style="margin-top: 15px; display: flex; gap: 8px;">' +
+			                '<span class="tag" style="background: rgba(47,111,237,0.1); color: #2f6fed; padding: 6px 16px; border-radius: 50px; font-size: 12px; font-weight: 600;">#' + getCatName(catCode) + '</span>' +
+			            '</div>' +
+			        '</div>';
+			    container.appendChild(card);
+			});
+            container.scrollLeft = 0;
+        })
+        .catch(err => console.error("Error:", err));
+}
+
+// 스크롤 시 한 페이지(3개 카드)씩 이동
+function scrollRecommend(direction) {
+    const container = document.getElementById('recommendCards');
+    if(container) {
+        const scrollAmount = container.clientWidth + 24; 
+        container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => loadRecommend('TOUR'));
+</script>
 </html>

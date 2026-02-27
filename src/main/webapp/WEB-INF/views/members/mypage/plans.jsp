@@ -11,10 +11,13 @@
     <link rel="stylesheet" href="/css/header.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
 <link rel="stylesheet" href="/css/redesign.css" />
+  <link rel="stylesheet" href="/css/auth-modal.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
+  <script defer src="/js/auth-modal.js"></script>
+  <script defer src="/js/auth-guard.js"></script>
 
     <script defer src="/js/nav-wave.js"></script>
 </head>
@@ -116,48 +119,49 @@
 
 	  <div class="mp-card-body">
 
-	    <table class="data-table">
-	      <thead>
-	        <tr>
-	          <th>여행 제목</th>
-	          <th>여행지</th>
-	          <th>출발일</th>
-	          <th>종료일</th>
-	          <th>관리</th>
-	        </tr>
-	      </thead>
+		<table class="data-table">
+		  <thead>
+		    <tr>
+		      <th style="width:80px;">번호</th>
+		      <th>제목</th>
+		      <th style="width:140px;">작성일</th>
+		      <th style="width:140px;">관리</th>
+		    </tr>
+		  </thead>
 
-	      <tbody>
-	        <c:choose>
-	          <c:when test="${empty plans}">
-	            <tr>
-	              <td colspan="5">등록된 여행 계획이 없습니다.</td>
-	            </tr>
-	          </c:when>
+		  <tbody>
+		    <c:choose>
+		      <c:when test="${empty plans}">
+		        <tr>
+		          <td colspan="4">등록된 여행 계획이 없습니다.</td>
+		        </tr>
+		      </c:when>
 
-	          <c:otherwise>
-	            <c:forEach var="plan" items="${plans}">
-	              <tr>
-	                <td><c:out value="${plan.title}"/></td>
-	                <td><c:out value="${plan.destination}"/></td>
-	                <td><c:out value="${plan.startDate}"/></td>
-	                <td><c:out value="${plan.endDate}"/></td>
-	                <td>
-	                  <button type="button"
-	                          onclick="location.href='${pageContext.request.contextPath}/members/mypage/plans/edit/${plan.id}'">
-	                    수정
-	                  </button>
-	                  <button type="button"
-	                          onclick="if(confirm('삭제하시겠습니까?')) location.href='${pageContext.request.contextPath}/members/mypage/plans/delete/${plan.id}'">
-	                    삭제
-	                  </button>
-	                </td>
-	              </tr>
-	            </c:forEach>
-	          </c:otherwise>
-	        </c:choose>
-	      </tbody>
-	    </table>
+		      <c:otherwise>
+		        <c:forEach var="plan" items="${plans}">
+		          <tr>
+		            <td><c:out value="${plan.no}"/></td>
+
+		            <td>
+		              <a href="${pageContext.request.contextPath}/members/mypage/plans/view?pIdx=${plan.pIdx}">
+		                <c:out value="${plan.title}"/>
+		              </a>
+		            </td>
+
+		            <td><c:out value="${plan.regDate}"/></td>
+
+		            <td>
+		              <button type="button"
+		                onclick="if(confirm('삭제하시겠습니까?')) location.href='${pageContext.request.contextPath}/members/mypage/plans/delete?pIdx=${plan.pIdx}'">
+		                삭제
+		              </button>
+		            </td>
+		          </tr>
+		        </c:forEach>
+		      </c:otherwise>
+		    </c:choose>
+		  </tbody>
+		</table>
 
 	  </div>
 
@@ -201,9 +205,8 @@
 </div>
 
 
-  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
-
-  <%@ include ...
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+<%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 
 </body>
 </html>

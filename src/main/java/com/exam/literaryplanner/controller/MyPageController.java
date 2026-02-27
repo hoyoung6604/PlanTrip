@@ -1,5 +1,7 @@
 package com.exam.literaryplanner.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Review;
+import com.exam.literaryplanner.domain.Spot;
+import com.exam.literaryplanner.domain.TravelPlan;
+import com.exam.literaryplanner.domain.Community;
 import com.exam.literaryplanner.repository.LiteraryRepository;
-import com.exam.literaryplanner.repository.ReviewRepository;
+import com.exam.literaryplanner.repository.PlanDetailRepository;
+import com.exam.literaryplanner.repository.SpotRepository;
+import com.exam.literaryplanner.repository.TravelPlanRepository;
+import com.exam.literaryplanner.repository.CityRepository;
+import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.MemberDeleteService;
+import com.exam.literaryplanner.service.PlanMapService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,17 +36,32 @@ public class MyPageController {
 
     private final PasswordEncoder passwordEncoder;
     private final LiteraryRepository literaryRepository;
-    private final ReviewRepository reviewRepository;
+    private final CommunityRepository reviewRepository;
     private final MemberDeleteService memberDeleteService;
+    private final TravelPlanRepository travelPlanRepository;
+    private final PlanDetailRepository planDetailRepository;
+    private final PlanMapService planMapService;
+    private final SpotRepository spotRepository;
+    private final CityRepository cityRepository;
 
     public MyPageController(LiteraryRepository literaryRepository,
-                            ReviewRepository reviewRepository,
+                            CommunityRepository reviewRepository,
                             PasswordEncoder passwordEncoder,
-                            MemberDeleteService memberDeleteService) {
+                            MemberDeleteService memberDeleteService,
+                            TravelPlanRepository travelPlanRepository,
+                            PlanDetailRepository planDetailRepository,
+                            PlanMapService planMapService,
+                            SpotRepository spotRepository,
+                            CityRepository cityRepository) {
         this.literaryRepository = literaryRepository;
         this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
         this.memberDeleteService = memberDeleteService;
+        this.travelPlanRepository = travelPlanRepository;
+        this.planDetailRepository = planDetailRepository;
+        this.planMapService = planMapService;
+        this.spotRepository = spotRepository;
+        this.cityRepository = cityRepository;
     }
 
     /* ================= 마이페이지 메인 ================= */
@@ -143,14 +168,25 @@ public class MyPageController {
     /* ================= 나의 일정 ================= */
     @GetMapping("/plans")
     public String myPlans(HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/members/login";
 
-        if (session.getAttribute("loginMember") == null) {
-            return "redirect:/members/login";
+        List<TravelPlan> list = travelPlanRepository.findMyPlans(loginMember.getMIdx());
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> plans = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            TravelPlan p = list.get(i);
+            plans.add(Map.of(
+                    "no", i + 1,
+                    "pIdx", p.getPIdx(),
+                    "title", p.getPTitle(),
+                    "regDate", (p.getPRegDate() == null ? "" : p.getPRegDate().format(fmt))
+            ));
         }
 
-        List<Map<String, String>> plans = new ArrayList<>();
         model.addAttribute("plans", plans);
-
         return "members/mypage/plans";
     }
 
@@ -165,7 +201,7 @@ public class MyPageController {
             return "redirect:/members/login";
         }
 
-        List<Review> reviews;
+        List<Community> reviews;
         if (keyword != null && !keyword.isBlank()) {
             reviews = reviewRepository.findByMIdxAndRvTitleContainingOrderByRvIdxDesc(
                     loginMember.getMIdx(),
@@ -183,6 +219,7 @@ public class MyPageController {
         return "community/myReview";
     }
 
+
     @PostMapping("/withdraw")
     public String withdraw(HttpSession session) {
         Member loginMember = (Member) session.getAttribute("loginMember");
@@ -197,6 +234,76 @@ public class MyPageController {
 
         session.invalidate();
         return "redirect:/";
+    }
+    
+    @GetMapping("/plans/view")
+    public String planView(@RequestParam Integer pIdx, HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/members/login";
+
+        var plan = travelPlanRepository.findMyPlanView(pIdx, loginMember.getMIdx())
+        	    .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
+
+        // 좌표 리스트 조회 (native 결과를 PlanPoint로 변환 예시)
+        List<Object[]> rows = planDetailRepository.findPointsNative(pIdx);
+        List<Map<String, Object>> points = new ArrayList<>();
+        for (Object[] r : rows) {
+            points.add(Map.of(
+                    "name", (String) r[0],
+                    "lat", ((Number) r[1]).doubleValue(),
+                    "lng", ((Number) r[2]).doubleValue()
+            ));
+        }
+
+        // JSON 문자열로 내려주기
+        String pointsJson = planMapService.buildPointsJson(pIdx);
+
+        model.addAttribute("plan", plan);
+        
+     // regDateStr도 여기서 만들면 됨
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String regDateStr = plan.getpRegDate() == null ? "" : plan.getpRegDate().format(fmt);
+        model.addAttribute("regDateStr", regDateStr);
+        model.addAttribute("pointsJson", planMapService.buildPointsJson(pIdx));
+        model.addAttribute("spotNames", planMapService.getSpotNames(pIdx));
+        model.addAttribute("spotNamesByDay", planMapService.getSpotNamesByDay(pIdx));
+
+        return "members/mypage/planView";
+    }
+
+    @GetMapping("/plans/delete")
+    public String planDelete(@RequestParam Integer pIdx, HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/members/login";
+
+        travelPlanRepository.deleteMyPlan(pIdx, loginMember.getMIdx());
+        return "redirect:/members/mypage/plans";
+    }
+    
+    @GetMapping("/route")
+    public String routePage(
+        @RequestParam Integer pIdx,
+        @RequestParam(required = false) Integer cityId,
+        @RequestParam(required = false) List<String> purpose,
+        Model model
+    ) {
+        model.addAttribute("pIdx", pIdx);
+
+        // 항상 기존 저장 detail은 내려줌 (편집 초기값)
+        model.addAttribute("savedDetails",
+            planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx)
+        );
+
+        // city/purpose가 있어야 spots 목록을 뿌릴 수 있음
+        List<Spot> spots = List.of();
+        if (cityId != null && purpose != null && !purpose.isEmpty()) {
+            spots = spotRepository.findByCity_IdAndCatCodeInOrderByNameAsc(cityId, purpose);
+        }
+        model.addAttribute("cityId", cityId);
+        model.addAttribute("purpose", purpose);
+        model.addAttribute("spots", spots);
+
+        return "plans/route";
     }
 
 }

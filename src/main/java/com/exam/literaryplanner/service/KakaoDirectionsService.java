@@ -6,13 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 
 import java.util.*;
 
@@ -25,21 +21,21 @@ public class KakaoDirectionsService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final WebClient webClient = buildKakaoClient();
+    // WebClient 대신 RestClient 사용
+    private final RestClient restClient = buildKakaoClient();
 
-    private static WebClient buildKakaoClient() {
+    private static RestClient buildKakaoClient() {
         DefaultUriBuilderFactory factory =
                 new DefaultUriBuilderFactory("https://apis-navi.kakaomobility.com");
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
 
-        return WebClient.builder()
+        return RestClient.builder()
                 .uriBuilderFactory(factory)
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.create().noProxy()))
-                .filter((request, next) -> {
-                    System.out.println("[KAKAO][REAL REQUEST] " + request.method() + " " + request.url());
-                    return next.exchange(request);
-                })
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                .requestInterceptor((request, body, execution) -> {
+                    System.out.println("[KAKAO][REAL REQUEST] " + request.getMethod() + " " + request.getURI());
+                    return execution.execute(request, body);
+                })
                 .build();
     }
 
@@ -61,8 +57,8 @@ public class KakaoDirectionsService {
         RouteSpotDto originSpot = valid.get(0);
         RouteSpotDto destSpot   = valid.get(valid.size() - 1);
 
-        final String origin = originSpot.getLng() + "," + originSpot.getLat();        // lng,lat
-        final String destination = destSpot.getLng() + "," + destSpot.getLat();       // lng,lat
+        final String origin = originSpot.getLng() + "," + originSpot.getLat();
+        final String destination = destSpot.getLng() + "," + destSpot.getLat();
 
         String wpTmp = null;
         if (valid.size() > 2) {
@@ -75,10 +71,10 @@ public class KakaoDirectionsService {
                     .toList());
         }
 
-        // ✅ 람다에서 쓸 “확정값”으로 final 복사
         final String waypoints = wpTmp;
 
-        String json = webClient.get()
+        // WebClient의 체이닝 방식을 RestClient 형식으로 변경
+        String json = restClient.get()
                 .uri(uriBuilder -> {
                     var b = uriBuilder
                             .path("/v1/directions")
@@ -93,15 +89,7 @@ public class KakaoDirectionsService {
                 })
                 .header(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestKey.trim())
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, resp ->
-                        resp.bodyToMono(String.class).flatMap(body ->
-                                Mono.error(new RuntimeException(
-                                        "Kakao Directions error: HTTP " + resp.statusCode() + " / body=" + body
-                                ))
-                        )
-                )
-                .bodyToMono(String.class)
-                .block();
+                .body(String.class); // block() 없이 바로 동기식으로 응답을 받음
 
         try {
             JsonNode root = objectMapper.readTree(json);

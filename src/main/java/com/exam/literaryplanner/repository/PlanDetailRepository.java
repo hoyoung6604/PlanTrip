@@ -17,4 +17,27 @@ public interface PlanDetailRepository extends JpaRepository<PlanDetail, Integer>
   
   @Query("select coalesce(max(d.pSeq), 0) from PlanDetail d where d.pIdx = :pIdx")
   int findMaxSeq(@Param("pIdx") int pIdx);
+  
+  @Query(value = """
+		    SELECT s.s_name AS name, s.s_lat AS lat, s.s_lng AS lng
+		    FROM planDetailT d
+		    JOIN spotT s ON s.s_idx = d.s_idx
+		    WHERE d.p_idx = :pIdx
+		    ORDER BY d.p_day ASC, d.p_seq ASC
+		    """, nativeQuery = true)
+		List<Object[]> findPointsNative(@Param("pIdx") Integer pIdx);
+
+  	@Query(value = """
+  			SELECT
+  				s.s_name AS name,
+  			    s.s_lat  AS lat,
+  			    s.s_lng  AS lng,
+  			    d.p_day  AS day,
+  			    d.p_seq  AS seq
+  			FROM planDetailT d
+  			    JOIN spotT s ON s.s_idx = d.s_idx
+  			    WHERE d.p_idx = :pIdx
+  			    ORDER BY d.p_day ASC, d.p_seq ASC
+  			""", nativeQuery = true)
+  			List<RoutePointView> findRoutePoints(@Param("pIdx") Integer pIdx);
 }
