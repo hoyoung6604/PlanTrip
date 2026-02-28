@@ -745,8 +745,24 @@
 				    })
 				    .then(response => {
 				        if (response.status === 401) {
-				            alert('로그인이 필요한 서비스입니다.');
-				            return;
+				            // ✅ 커뮤니티와 동일: 커스텀 알림 UI → 확인 시 로그인 모달 오픈
+				            try{
+				                sessionStorage.setItem('authRedirect', location.pathname + location.search + location.hash);
+				            }catch(e){}
+
+				            if (window.LoginRequiredPrompt && typeof window.LoginRequiredPrompt.open === 'function') {
+				                window.LoginRequiredPrompt.open({
+				                    message: '로그인이 필요한 서비스입니다.\n계속하려면 로그인해 주세요.',
+				                    onConfirm: function(){
+				                        if (window.AuthModal && typeof window.AuthModal.open === 'function') {
+				                            window.AuthModal.open('login');
+				                        }
+				                    }
+				                });
+				            } else if (window.AuthModal && typeof window.AuthModal.open === 'function') {
+				                window.AuthModal.open('login');
+				            }
+				            return null;
 				        }
 				        return response.json();
 				    })

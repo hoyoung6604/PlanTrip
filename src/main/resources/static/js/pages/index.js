@@ -1,3 +1,19 @@
+
+// scroll-down: 맞춤형 여행 추천 섹션까지 이동
+document.addEventListener("DOMContentLoaded", () => {
+  const arrow = document.querySelector(".scroll-down");
+  const target = document.querySelector("#recommendSection") || document.querySelector("#sheet");
+  if (arrow && target) {
+    arrow.addEventListener("click", (e) => {
+      // hash 기본 이동 대신, 헤더 높이 고려해서 스크롤
+      e.preventDefault();
+      const headerH = 72;
+      const top = target.getBoundingClientRect().top + window.scrollY - headerH - 12;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
+  }
+});
+
 (function(){
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
@@ -36,44 +52,196 @@
     var track = document.querySelector('[data-marquee-track]');
     if(!marquee || !track) return;
 
+    // 접근성: 모션 줄이기 설정이면 애니메이션을 돌리지 않음
+    try{
+      if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        return;
+      }
+    }catch(e){}
+
+    // px/sec : 값이 고정이면 "거리(카드 폭)가 줄어들 때 duration이 자동으로 짧아짐"
     var SPEED = 60;
 
-    function fill(){
+    var state = {
+      distance: 0,
+      x: 0,
+      raf: 0,
+      lastTs: 0,
+      paused: false,
+      ro: null
+    };
+
+    function getGap(){
+      var g = 0;
+      try{
+        var cs = getComputedStyle(track);
+        g = parseFloat(cs.gap || cs.columnGap || '0') || 0;
+      }catch(e){}
+      return g;
+    }
+
+    function getKey(el){
+      if(!el) return "";
+      var href = el.getAttribute && el.getAttribute("href");
+      if(href) return "h:" + href;
+      var title = el.textContent ? el.textContent.trim() : "";
+      return "t:" + title;
+    }
+
+    function isDuplicatedTwoSets(list){
+      // 서버(JSP)에서 2세트를 미리 렌더링하는 경우가 있어, '한 세트'만 기준으로 잡아야 함
+      if(!list || list.length < 4) return false;
+      if(list.length % 2 !== 0) return false;
+      var half = list.length / 2;
+      for(var i=0;i<half;i++){
+        if(getKey(list[i]) !== getKey(list[i+half])) return false;
+      }
+      return true;
+    }
+
+    function getOriginalItems(){
       var children = Array.prototype.slice.call(track.children);
       var originals = children.filter(function(el){ return !el.dataset || !el.dataset.clone; });
+      if(isDuplicatedTwoSets(originals)){
+        return originals.slice(0, originals.length/2);
+      }
+      return originals;
+    }
 
+    function removeClones(){
       var clones = track.querySelectorAll('[data-clone="1"]');
       Array.prototype.forEach.call(clones, function(el){ el.remove(); });
+    }
 
-      var minWidth = marquee.clientWidth * 2.2;
-      var totalWidth = track.scrollWidth;
+    function ensureEnoughWidth(baseItems){
+      // 최소 2세트 이상 + 여유(화면이 커져도 끊김 방지)
+      var minWidth = marquee.clientWidth * 2.5 + state.distance;
+      var safety = 0;
 
-      while(totalWidth < minWidth){
-        originals.forEach(function(node){
+      // 기존에 이미 렌더된 두 번째 세트가 있더라도,
+      // 랜덤/일일 변경으로 카드 폭이 달라지면 부족해질 수 있어 clone을 추가로 붙임
+      while(track.scrollWidth < minWidth && safety < 10){
+        baseItems.forEach(function(node){
           var clone = node.cloneNode(true);
           clone.dataset.clone = "1";
           track.appendChild(clone);
         });
-        totalWidth = track.scrollWidth;
+        safety++;
+      }
+    }
+
+    function measureDistance(baseItems){
+      var gap = getGap();
+      var sum = 0;
+
+      baseItems.forEach(function(el){
+        // offsetWidth가 소수점 점프가 덜함
+        sum += (el.offsetWidth || Math.round(el.getBoundingClientRect().width) || 0);
+      });
+
+      if(!baseItems.length) return 0;
+
+      // ✅ 핵심: 세트 경계에도 gap이 1번 들어가므로 gap * n 이 맞음
+      // (n-1은 내부 gap만 계산해서 루프 지점에서 '툭' 끊김이 생길 수 있음)
+      sum += gap * baseItems.length;
+
+      return Math.max(1, Math.round(sum));
+    }
+
+    function rebuild(){
+      var baseItems = getOriginalItems();
+      if(!baseItems.length) return;
+
+      // JS 루프는 CSS 애니메이션을 끄고 transform만 제어
+      track.classList.add('is-js');
+      // CSS keyframes와 충돌 방지(뚝 끊김 방지)
+      track.style.animation = 'none';
+      track.style.willChange = 'transform';
+
+      // clone은 우리가 필요한 만큼만 붙인다
+      removeClones();
+
+      // 1) 거리 측정(한 세트 기준)
+      var dist = measureDistance(baseItems);
+      state.distance = dist;
+
+      // 2) 충분한 길이 확보(최소 2세트 이상)
+      ensureEnoughWidth(baseItems);
+
+      // 3) 현재 위치를 새 distance 안으로 정규화(리사이즈/카드 폭 변동 시 점프 방지)
+      if(state.distance > 0){
+        // x는 음수 방향으로 흐르므로, [-distance, 0) 범위로 맞춤
+        var mod = state.x % state.distance;
+        state.x = (mod > 0) ? (mod - state.distance) : mod;
+      }else{
+        state.x = 0;
       }
 
-      var oneSetWidth = 0;
-      originals.forEach(function(el){ oneSetWidth += el.getBoundingClientRect().width; });
-      var gap = parseFloat(getComputedStyle(track).gap || "0");
-      oneSetWidth += gap * (originals.length);
-
-      track.style.setProperty('--marquee-distance', oneSetWidth + "px");
-      track.style.setProperty('--marquee-duration', (oneSetWidth / SPEED) + "s");
+      // 첫 프레임에 바로 적용
+      applyTransform();
     }
 
+    function applyTransform(){
+      track.style.transform = 'translate3d(' + state.x.toFixed(2) + 'px,0,0)';
+    }
+
+    function tick(ts){
+      if(!state.lastTs) state.lastTs = ts;
+      var dt = (ts - state.lastTs) / 1000;
+      state.lastTs = ts;
+
+      if(!state.paused && state.distance > 0){
+        state.x -= SPEED * dt;
+        // 루프
+        if(state.x <= -state.distance){
+          // 큰 dt(탭 비활성 후 복귀)에도 안정적으로
+          state.x = state.x % state.distance;
+        }
+        applyTransform();
+      }
+
+      state.raf = requestAnimationFrame(tick);
+    }
+
+    function start(){
+      if(state.raf) cancelAnimationFrame(state.raf);
+      state.lastTs = 0;
+      state.raf = requestAnimationFrame(tick);
+    }
+
+    function stop(){
+      if(state.raf) cancelAnimationFrame(state.raf);
+      state.raf = 0;
+      state.lastTs = 0;
+    }
+
+    // hover 시 일시정지(기존 UX 유지)
+    marquee.addEventListener('mouseenter', function(){ state.paused = true; });
+    marquee.addEventListener('mouseleave', function(){ state.paused = false; });
+
+    // 터치(모바일)에서 스크롤 중엔 잠깐 멈추면 덜 끊겨 보임
+    marquee.addEventListener('touchstart', function(){ state.paused = true; }, { passive:true });
+    marquee.addEventListener('touchend', function(){ state.paused = false; }, { passive:true });
+    marquee.addEventListener('touchcancel', function(){ state.paused = false; }, { passive:true });
+
+    // 리사이즈/폰트 로드/이미지 로드 등으로 폭이 바뀌어도 끊김 없이 distance 재계산
     try{
-      var ro = new ResizeObserver(fill);
-      ro.observe(marquee);
+      state.ro = new ResizeObserver(function(){
+        // 레이아웃 안정화 후 재빌드
+        requestAnimationFrame(rebuild);
+      });
+      state.ro.observe(marquee);
     }catch(e){
-      window.addEventListener('resize', fill);
+      window.addEventListener('resize', function(){ requestAnimationFrame(rebuild); });
     }
 
-    window.addEventListener('load', fill);
+    window.addEventListener('load', function(){
+      rebuild();
+      start();
+    });
+    // DOMContentLoaded 시점에서도 한 번(초기 페인트 전에 세팅)
+    rebuild();
+    start();
   }
 
   function initDomestic(){

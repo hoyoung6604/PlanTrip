@@ -1,6 +1,9 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 
 :root{
+  --headerH:72px;
+  --logoH:150px;
+  --logoOffset: 35px;
   --maxW: 1200px;
   --font: "Pretendard","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --text:#111;
@@ -28,6 +31,7 @@ body{ padding-top:72px; }
    Header (항상 투명 / 글씨 검정)
    ========================= */
 .header{
+  overflow: visible;
   position:fixed;
   top:0; left:0; right:0;
   height:72px;
@@ -50,9 +54,27 @@ body{ padding-top:72px; }
   gap:18px;
 }
 
+
+/* brand-top (로고 짤림 방지) */
+.brand-top{
+  display:flex;
+  align-items:center;
+  height: var(--headerH);
+  overflow: visible;
+}
+.brand-top a.brand-top{
+  display:flex;
+  align-items:center;
+  height: var(--headerH);
+  overflow: visible;
+}
 .brand-logo-img{
-  height:150px;
+  height: var(--logoH);
+  width:auto;
+  object-fit:contain;
   display:block;
+  transform: translateY(calc((var(--headerH) - var(--logoH)) / 2 + var(--logoOffset)));
+  pointer-events:auto;
 }
 
 /* nav */

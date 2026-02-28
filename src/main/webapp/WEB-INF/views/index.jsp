@@ -17,10 +17,13 @@
 
 
     <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/auth-modal.css" />
     <link rel="stylesheet" href="/css/ui-toast.css" />
 
     <script defer src="/js/ui-toast.js"></script>
     <script defer src="/js/theme.js"></script>
+    <script defer src="/js/auth-modal.js"></script>
+    <script defer src="/js/auth-guard.js"></script>
     <script defer src="/js/pages/index.js"></script>
     <script defer src="/js/scrollbar-auto.js"></script>
     <script defer src="/js/header-scroll.js"></script>
@@ -63,8 +66,8 @@
     <div class="header-right">
 		<!-- 비로그인: 글자 링크만 -->
 		 <j:if test="${empty sessionScope.loginMember}">
-		   <a class="header-auth" href="#" data-auth-open="login">로그인</a>
-		   <a class="header-auth" href="#" data-auth-open="signup">회원가입</a>
+		   <a class="header-auth" href="/members/login" data-auth-open="login">로그인</a>
+		   <a class="header-auth" href="/members/register" data-auth-open="signup">회원가입</a>
 		 </j:if>
 
 		  <!--로그인: 내 예약 + 햄버거--> 
@@ -112,7 +115,7 @@
 <main>
   <section class="hero">
     <div class="hero-copy hero-copy--top">
-      <div class="hero-pill hero-title">Wellcome to PlanTrip</div>
+      <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
 
 	<div class="searchbar">
@@ -124,7 +127,7 @@
 	  <button class="sb-btn" type="button" onclick="executeSearch()">검색</button>
 	</div>
 
-    <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
+    <a class="scroll-down" href="#recommendSection" aria-label="아래로 스크롤"></a>
   </section>
 
   
@@ -133,7 +136,7 @@
 		<section class="block">
 		    <div class="block-head">
 		        <h2 class="block-title">오늘의 인기 여행지 </h2>
-		        <p class="block-sub">매일 새로운 6곳의 여행지를 추천해 드립니다.</p>
+		        <p class="block-sub block-sub--hint">매일 새로운 6개의 여행지를 추천해 드립니다!</p>
 		    </div>
 
 		    <div class="marquee" data-marquee>
@@ -169,7 +172,7 @@
 		    </div>
 		</section>
 
-		<section class="block block-recommend">
+		<section class="block block-recommend" id="recommendSection">
 		  <div class="course-head" style="margin-bottom: 20px;">
 		    <div class="course-head-left block-head">
 		      <h2 class="block-title">맞춤형 여행 추천 </h2>
@@ -184,25 +187,19 @@
 		      <button class="seg-btn" type="button" onclick="loadRecommend('FOOD', this)">맛집</button>
 		    </div>
 
-		    <p class="block-sub" style="margin: 0; color: #888; font-size: 14px; font-weight: 400;">
-		      카테고리를 선택하시면 매일 새로운 장소를 추천해드려요!
-		    </p>
+		    <p class="block-sub block-sub--hint">카테고리를 선택하시면 매일 새로운 장소를 추천해드려요!</p>
 		  </div>
 
-		  <div class="recommend-wrap" style="position: relative; margin-top: 30px; width: 100%;">
-		    <button class="arrow-btn arrow-left" type="button" onclick="scrollRecommend(-1)" 
-		            style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #fff; border-radius: 50%; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+		  <div class="recommend-wrap">
+		    <button class="arrow-btn arrow-left" type="button" onclick="scrollRecommend(-1)">
 		      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 		        <polyline points="15 18 9 12 15 6"></polyline>
 		      </svg>
 		    </button>
 
-		    <div class="cards" id="recommendCards" 
-		         style="display: flex; gap: 24px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0 20px 0; scrollbar-width: none; -ms-overflow-style: none;">
-		        </div>
+		    <div class="cards" id="recommendCards"></div>
 
-		    <button class="arrow-btn arrow-right" type="button" onclick="scrollRecommend(1)" 
-		            style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); z-index: 10; background: #fff; border-radius: 50%; box-shadow: var(--shadow); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;">
+		    <button class="arrow-btn arrow-right" type="button" onclick="scrollRecommend(1)">
 		      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 		        <polyline points="9 18 15 12 9 6"></polyline>
 		      </svg>
@@ -243,17 +240,14 @@ function loadRecommend(catCode, btn) {
 			    const card = document.createElement('a');
 			    card.className = 'post-card';
 			    card.href = '/spots/detail/' + spot.id; // 백틱 대신 일반 문자열 결합 사용 (안전함)
-			    card.style.flex = "0 0 calc((100% - 48px) / 3)";
-			    card.style.minWidth = "calc((100% - 48px) / 3)";
-
-			    // innerHTML 내의 변수들도 일반 따옴표 결합 방식으로 작성하여 JSP 에러 방지
+// innerHTML 내의 변수들도 일반 따옴표 결합 방식으로 작성하여 JSP 에러 방지
 			    card.innerHTML = 
 			        '<div class="post-img" style="background-image:url(\'' + (spot.image || '/img/default.jpg') + '\'); height: 250px; border-radius: 24px 24px 0 0;"></div>' +
 			        '<div class="post-body" style="padding: 24px; background: #fff; border-radius: 0 0 24px 24px;">' +
 			            '<div class="post-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">' + spot.name + '</div>' +
 			            '<div class="post-meta" style="color: #6b7280; font-size: 14px;">' + spot.cityName + ' · 인기 추천</div>' +
 			            '<div class="post-tags" style="margin-top: 15px; display: flex; gap: 8px;">' +
-			                '<span class="tag" style="background: rgba(47,111,237,0.1); color: #2f6fed; padding: 6px 16px; border-radius: 50px; font-size: 12px; font-weight: 600;">#' + getCatName(catCode) + '</span>' +
+			                '<span class="tag">#' + getCatName(catCode) + '</span>' +
 			            '</div>' +
 			        '</div>';
 			    container.appendChild(card);
