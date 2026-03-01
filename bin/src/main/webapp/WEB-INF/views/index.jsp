@@ -39,16 +39,8 @@
       <a href="/plan">여행 계획</a>
       <a href="/community">커뮤니티</a>
       <a href="/maps">지도</a>
-	  <div class="nav-dropdown" id="transportWrap">
-	      <button class="nav-drop-btn" type="button" id="transportBtn" aria-haspopup="true" aria-expanded="false">
-	        교통수단 <span class="chev" aria-hidden="true">▾</span>
-	      </button>
 
-	      <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
-	        <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-	        <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
-	        <a href="${pageContext.request.contextPath}/transport/train">기차</a>
-	      </div>
+      <a href="${pageContext.request.contextPath}/transport/flight" class="pt-wave">교통수단</a>
 	    </div>
 
       <j:if test="${not empty sessionScope.loginMember}">

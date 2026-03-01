@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>마이페이지</title>
+  <title>내 찜 목록</title>
   
   <link rel="stylesheet" href="/css/header.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
@@ -16,15 +16,78 @@
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
-  
+
   <style>
-    /* 카드 호버(마우스 오버) 시 살짝 떠오르는 애니메이션 */
-    .wish-card-item {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .wish-filter-wrap {
+      background: #fff;
+      border-radius: 12px;
+      padding: 0 24px 20px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid #eaeaea;
     }
-    .wish-card-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    
+    .city-tabs {
+      display: flex;
+      gap: 32px;
+      border-bottom: 1px solid #f0f0f0;
+      overflow-x: auto;
+      scrollbar-width: none; 
+      padding-top: 20px;
+    }
+    .city-tabs::-webkit-scrollbar { display: none; }
+    
+    .city-tab {
+      font-size: 16px;
+      font-weight: 500;
+      color: #888;
+      cursor: pointer;
+      padding-bottom: 12px;
+      position: relative;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .city-tab:hover { color: #111; }
+    .city-tab.active {
+      color: #111;
+      font-weight: 800;
+    }
+    .city-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #111;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .cat-buttons {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 20px;
+    }
+    .cat-buttons::-webkit-scrollbar { display: none; }
+    
+    .cat-btn {
+      padding: 10px 18px;
+      background: #f4f5f7;
+      color: #555;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .cat-btn:hover { background: #e5e8ec; }
+    .cat-btn.active {
+      background: #111;
+      color: #fff;
     }
   </style>
 </head>
@@ -58,7 +121,7 @@
     <div class="sec">
       <div class="sec-title">OVERVIEW</div>
       <nav class="mp-nav">
-        <a class="active" href="${pageContext.request.contextPath}/members/mypage">
+        <a href="${pageContext.request.contextPath}/members/mypage">
           <span class="mp-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           </span>대시보드
@@ -78,7 +141,7 @@
             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </span>내 여행 후기
         </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/wishlist">
+        <a class="active" href="${pageContext.request.contextPath}/members/mypage/wishlist">
           <span class="mp-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
           </span>내 찜 목록
@@ -107,49 +170,59 @@
   </aside>
 
   <main class="mp-main">
-      <div class="mp-topbar">
-        <div class="mp-search">
-          <span class="sico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <input type="text" placeholder="Search your travel..." />
+    <div class="mp-topbar">
+      <div class="mp-search">
+        <span class="sico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input type="text" placeholder="Search your travel..." />
+      </div>
+    </div>
+
+    <div class="wish-filter-wrap">
+      <div class="city-tabs" id="cityTabs">
+        <div class="city-tab active" data-filter-city="ALL">모든 도시</div>
+      </div>
+      
+      <div class="cat-buttons" id="catButtons">
+        <button class="cat-btn active" data-filter-cat="ALL">전체보기</button>
+        <button class="cat-btn" data-filter-cat="TOUR">관광지</button>
+        <button class="cat-btn" data-filter-cat="STAY">숙소</button>
+        <button class="cat-btn" data-filter-cat="ACT">문화/액티비티</button>
+        <button class="cat-btn" data-filter-cat="FOOD">맛집</button>
+      </div>
+    </div>
+
+    <section class="mp-card mp-grow" style="width: 100%;">
+      <div class="mp-card-head">
+        <div>
+          <div class="mp-card-title">내 찜 목록 전체보기</div>
+          <div class="mp-card-sub">내가 그동안 관심 등록한 모든 장소들입니다.</div>
         </div>
       </div>
 
-      <div class="mp-placeholder"></div>
+      <div class="mp-card-body" style="width: 100%;">
+        <c:if test="${empty allWishList}">
+          <div style="padding: 40px; text-align: center; color: #999;">아직 찜한 장소가 없습니다. 여행지를 둘러보고 찜 기능을 사용해 보세요.</div>
+        </c:if>
 
-      <section class="mp-card mp-grow" style="width: 100%;">
-        <div class="mp-card-head">
-          <div>
-            <div class="mp-card-title">최근 찜한 장소</div>
-            <div class="mp-card-sub">내가 가장 최근에 관심 등록한 6곳입니다.</div>
-          </div>
-        </div>
-
-        <div class="mp-card-body" style="width: 100%;">
-          
-          <c:if test="${empty recentWishList}">
-            <div style="padding: 40px; text-align: center; color: #999;">아직 찜한 장소가 없습니다. 여행지를 둘러보고 찜 기능을 사용해 보세요.</div>
-          </c:if>
-
-          <c:if test="${not empty recentWishList}">
-            <div class="mp-deck" style="display: flex !important; flex-wrap: wrap !important; gap: 16px !important; padding-bottom: 10px;">
+        <c:if test="${not empty allWishList}">
+          <div class="mp-deck" style="display: flex !important; flex-wrap: wrap !important; gap: 16px !important; padding-bottom: 10px;">
+            <c:forEach var="spot" items="${allWishList}">
               
-              <c:forEach var="spot" items="${recentWishList}">
+              <div class="item wish-card-item" 
+                   data-city="${spot.city != null ? spot.city.name : '기타'}" 
+                   data-cat="${spot.catCode}"
+                   style="width: calc(33.333% - 11px); min-width: 220px !important; flex-shrink: 0 !important; margin-bottom: 10px; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                 
-                <a href="${pageContext.request.contextPath}/spots/detail/${spot.id}" 
-                   class="item wish-card-item" 
-                   style="text-decoration: none; color: inherit; width: calc(33.333% - 11px); min-width: 220px !important; flex-shrink: 0 !important; margin-bottom: 10px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; display: block; background: #fff;">
-                  
-                  <c:set var="defaultImg" value="${pageContext.request.contextPath}/img/hero.jpg" />
-                  
+                <a href="${pageContext.request.contextPath}/spots/detail/${spot.id}" style="text-decoration: none; color: inherit; display: block;">
                   <div class="thumb" 
-                       style="background-image: url('${not empty spot.image ? spot.image : defaultImg}'); background-size: cover; background-position: center; height: 160px; width: 100%;">
+                       style="background-image: url('${not empty spot.image ? spot.image : pageContext.request.contextPath += '/img/hero.jpg'}'); 
+                              background-size: cover; background-position: center; height: 160px;">
                   </div>
-                  
                   <div class="meta" style="padding: 15px;">
                     <div style="display: flex; gap: 6px; margin-bottom: 6px;">
                       
@@ -166,17 +239,17 @@
                       </c:choose>
                     </div>
                     
-                    <div class="ttl" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; font-size: 15px;">${spot.name}</div>
-                    <div class="sub" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: #777; margin-top: 5px;">${spot.addr}</div>
+                    <div class="ttl" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">${spot.name}</div>
+                    <div class="sub" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: #777; margin-top: 3px;">${spot.addr}</div>
                   </div>
                 </a>
-                
-              </c:forEach>
-            </div>
-          </c:if>
+              </div>
+            </c:forEach>
+          </div>
+        </c:if>
 
-        </div>
-      </section>
+      </div>
+    </section>
   </main>
 
   <aside class="mp-right">
@@ -185,10 +258,8 @@
         <div class="ttl">내 계정</div>
         <div class="mp-mini"></div>
       </div>
-
       <div class="name"><c:out value="${displayName}"/></div>
       <div class="desc">계정 정보 및 여행 기록을 확인할 수 있어요</div>
-
       <div class="mp-list">
         <div class="mp-row">
           <div class="left">
@@ -217,49 +288,111 @@
             </div>
             <span class="mp-pill">예정</span>
           </div>
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">부산 당일치기</div>
-              <div class="sub">2026-04-01</div>
-            </div>
-            <span class="mp-pill">예정</span>
-          </div>
         </div>
       </div>
     </section>
 
-    <section class="mp-card">
-      <div class="mp-card-head">
-        <div>
-          <div class="mp-card-title">내 여행 후기</div>
-          <div class="mp-card-sub">최근 작성한 후기</div>
-        </div>
-        <button class="mp-btn" onclick="location.href='${pageContext.request.contextPath}/members/mypage/reviews'">전체보기</button>
-      </div>
-      <div class="mp-card-body">
-        <div class="mp-list">
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">제주 여행 후기</div>
-              <div class="sub">작성일: 2026-04-03</div>
-            </div>
-            <span class="mp-pill">완료</span>
-          </div>
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">강릉 여행 후기</div>
-              <div class="sub">작성일: 2026-05-10</div>
-            </div>
-            <span class="mp-pill">완료</span>
-          </div>
-        </div>
-      </div>
-    </section>
   </aside>
 
 </div>
 
-  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    
+	    const cards = document.querySelectorAll('.wish-card-item');
+	    const citySet = new Set();
+	    
+	    cards.forEach(card => {
+	        const city = card.getAttribute('data-city');
+	        if (city && city !== '' && city !== '기타') {
+	            citySet.add(city);
+	        }
+	    });
+
+	    const cityTabsContainer = document.getElementById('cityTabs');
+	    const targetCityOrder = ['서울', '부산', '제주도', '강릉', '경주', '수원', '속초'];
+
+	    targetCityOrder.forEach(city => {
+	        if (citySet.has(city)) {
+	            const tab = document.createElement('div');
+	            tab.className = 'city-tab';
+	            tab.setAttribute('data-filter-city', city);
+	            tab.innerText = city;
+	            cityTabsContainer.appendChild(tab);
+	            citySet.delete(city);
+	        }
+	    });
+
+	    citySet.forEach(city => {
+	        const tab = document.createElement('div');
+	        tab.className = 'city-tab';
+	        tab.setAttribute('data-filter-city', city);
+	        tab.innerText = city;
+	        cityTabsContainer.appendChild(tab);
+	    });
+
+	    const cityTabs = document.querySelectorAll('.city-tab');
+	    const catBtns = document.querySelectorAll('.cat-btn');
+	    let currentCity = 'ALL';
+	    let currentCat = 'ALL';
+
+	    cityTabs.forEach(tab => {
+	        tab.addEventListener('click', () => {
+	            cityTabs.forEach(t => t.classList.remove('active')); 
+	            tab.classList.add('active');                         
+	            currentCity = tab.getAttribute('data-filter-city');
+	            applyFilter();                                       
+	        });
+	    });
+
+	    catBtns.forEach(btn => {
+	        btn.addEventListener('click', () => {
+	            catBtns.forEach(b => b.classList.remove('active'));
+	            btn.classList.add('active');
+	            currentCat = btn.getAttribute('data-filter-cat');
+	            applyFilter();
+	        });
+	    });
+
+	    function applyFilter() {
+	        let visibleCount = 0;
+	        
+	        cards.forEach(card => {
+	            const cardCity = card.getAttribute('data-city');
+	            const cardCat = card.getAttribute('data-cat');
+	            
+	            const matchCity = (currentCity === 'ALL' || currentCity === cardCity);
+	            const matchCat = (currentCat === 'ALL' || currentCat === cardCat);
+
+	            if (matchCity && matchCat) {
+	                card.style.display = ''; 
+	                visibleCount++;
+	            } else {
+	                card.style.display = 'none'; 
+	            }
+	        });
+
+	        let emptyMsg = document.getElementById('emptyFilterMsg');
+	        if (visibleCount === 0 && cards.length > 0) {
+	            if (!emptyMsg) {
+	                const msg = document.createElement('div');
+	                msg.id = 'emptyFilterMsg';
+	                msg.style = 'padding: 40px; text-align: center; color: #999; width: 100%;';
+	                msg.innerText = '해당 조건에 맞는 장소가 없습니다.';
+	                document.querySelector('.mp-deck').appendChild(msg);
+	            } else {
+	                emptyMsg.style.display = 'block';
+	            }
+	        } else {
+	            if (emptyMsg) {
+	                emptyMsg.style.display = 'none';
+	            }
+	        }
+	    }
+	});
+</script>
 
 </body>
 </html>

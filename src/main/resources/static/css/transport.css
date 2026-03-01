@@ -1,0 +1,684 @@
+/* transport.css - PlanTrip 교통수단(항공/버스/기차) 공통 UI
+   - 기존 백엔드/파라미터 로직은 건드리지 않고 JSP 마크업 + CSS로만 '서비스 느낌' 구성
+   - 전역 오염 방지: .tp- prefix로만 스타일 적용
+*/
+
+.tp-page{ background:transparent; }
+.tp-wrap{ max-width: 1120px; margin: 0 auto; padding: 26px 16px 34px; }
+.tp-breadcrumb{ font-size: 13px; color:#6b7280; display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+.tp-breadcrumb a{ color:#6b7280; text-decoration:none; }
+.tp-breadcrumb a:hover{ text-decoration:underline; }
+
+.tp-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.tp-title{ font-size: 28px; line-height:1.2; margin:0; letter-spacing:-0.02em; color:#0f172a; }
+.tp-sub{ margin:6px 0 0; font-size:13px; color:#64748b; }
+
+.tp-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin: 14px 0 14px; }
+.tp-tab{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; border-radius:999px;
+  border:1px solid #e5e7eb; background:#fff; color:#0f172a;
+  text-decoration:none; font-size:14px; font-weight:600;
+}
+.tp-tab:hover{ border-color:#cbd5e1; }
+.tp-tab.is-active{ background:#0c5cff; border-color:#0c5cff; color:#fff; }
+
+.tp-card{
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+
+  position: relative;
+}
+.tp-card + .tp-card{ margin-top:16px; }
+
+.tp-card-h{
+  padding:14px 16px;
+  border-bottom:1px solid #f1f5f9;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.tp-card-title{ font-size:16px; font-weight:800; color:#0f172a; margin:0; }
+.tp-card-tools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+.tp-body{ padding: 28px 0 0; }
+
+.tp-grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; }
+.tp-col-12{ grid-column: span 12; }
+.tp-col-6{ grid-column: span 6; }
+.tp-col-4{ grid-column: span 4; }
+.tp-col-3{ grid-column: span 3; }
+.tp-col-2{ grid-column: span 2; }
+
+@media (max-width: 920px){
+  .tp-col-6,.tp-col-4,.tp-col-3{ grid-column: span 12; }
+  .tp-head{ align-items:flex-start; flex-direction:column; }
+}
+
+.tp-label{ font-size:12px; color:#6b7280; margin:0 0 6px; }
+.tp-input, .tp-select{
+  width:100%;
+  height:44px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  padding:0 12px;
+  font-size:14px;
+  color:#0f172a;
+  outline:none;
+}
+.tp-input:focus, .tp-select:focus{ border-color:#0c5cff; box-shadow:0 0 0 4px rgba(12,92,255,0.12); background:#fff; }
+
+.tp-help{ margin-top:10px; font-size:12px; color:#94a3b8; }
+
+.tp-chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.tp-chip{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:34px; padding:0 12px; border-radius:999px;
+  border:1px solid #e5e7eb; background:#fff;
+  color:#0f172a; text-decoration:none; font-size:13px; font-weight:700;
+}
+.tp-chip:hover{ border-color:#cbd5e1; }
+.tp-chip.is-active{ background:#0c5cff; border-color:#0c5cff; color:#fff; }
+
+.tp-btn-primary{
+  height:44px;
+  border-radius:12px;
+  background:#0c5cff;
+  border:1px solid #0c5cff;
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  padding:0 16px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.tp-btn-primary:hover{ filter:brightness(0.96); }
+.tp-btn-ghost{
+  height:44px;
+  border-radius:12px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  color:#0f172a;
+  font-weight:800;
+  font-size:14px;
+  padding:0 14px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* === Search actions alignment (bus/train) === */
+.tp-search-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-end;
+  gap:10px;
+  padding-top:22px;
+}
+
+@media (max-width: 980px){
+  .tp-search-actions{ padding-top:0; }
+}
+.tp-btn-ghost:hover{ border-color:#cbd5e1; }
+
+.tp-alert{
+  padding:12px 12px;
+  border-radius:12px;
+  border:1px solid #fecaca;
+  background:#fff1f2;
+  color:#b91c1c;
+  font-size:13px;
+}
+
+.tp-empty{
+  padding:18px 12px;
+  border-radius:14px;
+  border:1px dashed #e5e7eb;
+  background:#fbfdff;
+  color:#64748b;
+  font-size:13px;
+}
+
+.tp-table-wrap{ overflow:auto; }
+.tp-table{ width:100%; border-collapse:collapse; min-width: 720px; }
+.tp-table thead th{
+  text-align:left;
+  font-size:12px;
+  color:#64748b;
+  background:#f8fafc;
+  padding:12px 10px;
+  border-bottom:1px solid #e5e7eb;
+  white-space:nowrap;
+}
+.tp-table tbody td{
+  padding:12px 10px;
+  border-top:1px solid #f1f5f9;
+  color:#0f172a;
+  font-size:14px;
+  white-space:nowrap;
+}
+.tp-table tbody tr:hover{ background:#fbfdff; }
+
+.tp-pagination{
+  margin-top:14px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.tp-pagebtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  height:34px;
+  padding:0 10px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  text-decoration:none;
+  color:#0f172a;
+  font-weight:800;
+  font-size:13px;
+}
+.tp-pagebtn:hover{ border-color:#cbd5e1; }
+.tp-pagebtn.is-active{ background:#0c5cff; border-color:#0c5cff; color:#fff; }
+
+
+
+/* ===== v3: 색감/포인트 강화 ===== */
+.tp-card{
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+.tp-body{
+  background: radial-gradient(700px 260px at 10% 0%, rgba(12,92,255,0.06), rgba(12,92,255,0) 60%);
+  border-radius: 0 0 18px 18px;
+}
+
+/* 검색 폼 영역 구분감 */
+.tp-form-panel{
+  background: #f8fbff;
+  border: 1px solid #e8eefb;
+  border-radius: 14px;
+  padding: 18px 12px 12px;
+  margin-top: 28px;
+}
+
+/* 테이블 헤더/구분감 */
+.tp-table thead th{
+  background: linear-gradient(180deg, #f1f6ff 0%, #ffffff 100%);
+  color:#334155;
+  border-bottom: 1px solid #dbe7ff;
+}
+.tp-table tbody tr:nth-child(even){ background:#fbfdff; }
+.tp-table tbody td{ border-top:1px solid #eef2ff; }
+
+/* '종류/등급' 같은 첫 컬럼 포인트용 배지 */
+.tp-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:-0.01em;
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.tp-badge-blue{ background:#eaf2ff; color:#0c5cff; border-color:#cfe2ff; }
+.tp-badge-slate{ background:#f1f5f9; color:#0f172a; border-color:#e2e8f0; }
+.tp-badge-green{ background:#e8fff4; color:#047857; border-color:#bff7df; }
+
+/* ===== v3: 커스텀 달력(인풋 바로 아래) ===== */
+.tp-datewrap{ position:relative; }
+.tp-datebtn{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  height:30px;
+  width:34px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+.tp-datebtn:hover{ border-color:#cbd5e1; }
+.tp-datewrap .tp-input,
+.tp-datewrap .tp-select{
+  padding-right:44px;
+}
+
+.tp-datepicker{
+  position:fixed;
+    width:280px;
+  background:#ffffff;
+  border:1px solid #e6ebf5;
+  border-radius:14px;
+  box-shadow:0 20px 60px rgba(15,23,42,0.18);
+  padding:10px;
+  z-index:9999;
+  display:none;
+}
+.tp-datepicker.is-open{ display:block; }
+.tp-dp-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:2px 2px 8px; }
+.tp-dp-title{ font-size:13px; font-weight:900; color:#0f172a; }
+.tp-dp-nav{
+  width:32px; height:32px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#f8fbff;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:900;
+  color:#0f172a;
+}
+.tp-dp-nav:hover{ border-color:#cbd5e1; }
+.tp-dp-dow{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  padding:6px 0 8px;
+  color:#64748b;
+  font-size:11px;
+  text-align:center;
+}
+.tp-dp-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.tp-dp-cell{
+  height:34px;
+  border-radius:10px;
+  border:1px solid #eef2ff;
+  background:#fff;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:800;
+  color:#0f172a;
+}
+.tp-dp-cell:hover{ background:#f1f6ff; border-color:#dbe7ff; }
+.tp-dp-cell.is-today{ border-color:#60a5fa; }
+.tp-dp-cell.is-selected{ background:#0c5cff; border-color:#0c5cff; color:#fff; }
+.tp-dp-cell.is-empty{ border-color:transparent; background:transparent; cursor:default; }
+
+.tp-dp-foot{ display:flex; justify-content:space-between; gap:8px; padding-top:10px; }
+.tp-dp-foot button{
+  flex:1;
+  height:34px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:900;
+  color:#0f172a;
+}
+.tp-dp-foot button:hover{ border-color:#cbd5e1; }
+.tp-dp-foot .tp-dp-today{ background:#f8fbff; }
+
+
+
+/* === Date input sizing === */
+.tp-datewrap{ max-width:260px; }
+.tp-input-date{ max-width:260px; width:100%; }
+
+/* === Flight grid layout === */
+.tp-grid-flight{
+  grid-template-columns: 260px 1fr 160px;
+  gap:16px;
+  align-items:start;
+}
+.tp-col-date{ grid-column:1; }
+.tp-col-route{ grid-column:2; }
+.tp-col-action{ grid-column:3; display:flex; flex-direction:column; gap:10px; padding-top:22px; }
+
+.tp-routebox{
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+}
+.tp-routegroup{
+  flex:1;
+  min-width: 0;
+}
+.tp-routegroup .tp-label{ margin-bottom:8px; }
+
+.tp-swap{
+  width:40px; height:40px;
+  border-radius:12px;
+  border:1px solid rgba(37,99,235,0.22);
+  background: rgba(37,99,235,0.06);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:900;
+  color:#1d4ed8;
+  flex:0 0 auto;
+  margin-bottom: 6px;
+}
+.tp-swap:hover{ background: rgba(37,99,235,0.10); }
+
+.tp-chip-row-wrap{ flex-wrap:wrap; gap:8px; }
+.tp-chip-row-wrap .tp-chip{ white-space:nowrap; }
+.tp-chip-row-wrap button.tp-chip{ cursor:pointer; border:none; }
+
+@media (max-width: 980px){
+  .tp-grid-flight{ grid-template-columns: 1fr; }
+  .tp-col-date,.tp-col-route,.tp-col-action{ grid-column:auto; }
+  .tp-col-action{ flex-direction:row; align-items:center; padding-top:0; }
+  .tp-routebox{ flex-direction:column; align-items:stretch; }
+  .tp-swap{ align-self:center; margin:0; }
+}
+
+/* === Table visual emphasis === */
+.tp-table thead th{
+  background: linear-gradient(180deg, rgba(12,92,255,0.08), rgba(12,92,255,0.02));
+}
+.tp-table tbody tr:nth-child(odd){ background: rgba(12,92,255,0.015); }
+
+
+/* === v4 refinements: width constraint + stronger accents === */
+.tp-card{
+  max-width: 1120px;
+  margin: 0 auto 16px;
+}
+.tp-card.tp-card--flush{ max-width:none; margin:0; } /* escape hatch */
+
+.tp-card-h{
+  background: linear-gradient(180deg, rgba(37,99,235,0.08), rgba(37,99,235,0.02));
+  border-bottom: 1px solid rgba(37,99,235,0.15);
+}
+.tp-card-title{ font-weight:800; }
+
+.tp-search-grid{
+  background: linear-gradient(180deg, rgba(15,23,42,0.02), rgba(37,99,235,0.04));
+  border: 1px solid rgba(37,99,235,0.18);
+}
+
+.tp-table thead th{
+  background: linear-gradient(180deg, rgba(37,99,235,0.10), rgba(37,99,235,0.04));
+  border-bottom: 1px solid rgba(37,99,235,0.22);
+  color:#0f172a;
+}
+.tp-table tbody tr:nth-child(odd){ background: rgba(37,99,235,0.03); }
+.tp-table tbody tr:hover{ background: rgba(37,99,235,0.06); }
+
+.tp-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  border: 1px solid rgba(15,23,42,0.10);
+  background: rgba(15,23,42,0.04);
+  color:#0f172a;
+  white-space:nowrap;
+}
+.tp-badge-blue{ background: rgba(37,99,235,0.12); border-color: rgba(37,99,235,0.25); color:#1d4ed8; }
+.tp-badge-green{ background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.25); color:#047857; }
+.tp-badge-purple{ background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.25); color:#6d28d9; }
+.tp-badge-orange{ background: rgba(245,158,11,0.14); border-color: rgba(245,158,11,0.28); color:#b45309; }
+
+/* prevent date popover clipping in nested cards */
+.tp-body, .tp-search-grid, .tp-card{ overflow: visible; }
+
+/* table can scroll on small screens without blowing layout */
+.tp-table-wrap{ overflow:auto; max-width:100%; }
+.tp-table{ min-width: 860px; }
+
+
+/* ===== Transport v6 UI tweaks ===== */
+.tp-hidden{ display:none !important; }
+
+.tp-card-tools{ display:none !important; }
+
+.tp-row-between{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.tp-summary{
+  font-size:12px;
+  font-weight:700;
+  color: rgba(15,23,42,0.65);
+  white-space:nowrap;
+}
+
+.tp-chip-row-scroll{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+.tp-chip-row-scroll::-webkit-scrollbar{ height: 6px; }
+.tp-chip-row-scroll::-webkit-scrollbar-thumb{
+  background: rgba(15,23,42,0.18);
+  border-radius: 999px;
+}
+.tp-chip-row-scroll .tp-chip{ flex:0 0 auto; }
+
+/* flight route box: keep groups from wrapping awkwardly */
+.tp-routebox{ gap: 14px; }
+.tp-routegroup{ min-width: 0; }
+
+
+/* ==============================
+   Search Bar (공통) - v7
+   - 참고 디자인(Trip.com / 트리플) 느낌의 상단 검색 바
+   - 출발/도착 + 스왑 + 날짜 + 검색 버튼 한 줄 정렬
+   ============================== */
+.tp-searchbar{
+  display:flex;
+  align-items:stretch;
+  gap:12px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #e8eefb;
+  background: #ffffff;
+}
+.tp-searchbar__loc{
+  flex:1;
+  display:flex;
+  align-items:stretch;
+  gap:10px;
+  min-width: 0;
+}
+.tp-searchbar__date{ width: 260px; }
+.tp-searchbar__action{ width: 150px; display:flex; }
+.tp-searchbar__action .tp-btn-primary{ width:100%; }
+
+.tp-field{
+  flex:1;
+  min-width:0;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  border-radius:12px;
+  padding:10px 12px;
+}
+.tp-field__label{ font-size:12px; color:#6b7280; margin:0 0 6px; font-weight:700; }
+.tp-field__input{
+  width:100%;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:14px;
+  font-weight:800;
+  color:#0f172a;
+}
+
+.tp-swap-btn{
+  flex:0 0 auto;
+  width:40px;
+  border-radius:12px;
+  border:1px solid rgba(37,99,235,0.22);
+  background: rgba(37,99,235,0.06);
+  cursor:pointer;
+  font-size:18px;
+  font-weight:900;
+  color:#1d4ed8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.tp-swap-btn:hover{ background: rgba(37,99,235,0.10); }
+
+/* 검색 바 안에서 쓰는 date input */
+.tp-input--bar{ height: 32px; background: transparent; border:none; padding:0; border-radius:0; }
+.tp-input--bar:focus{ box-shadow:none; }
+
+@media (max-width: 980px){
+  .tp-searchbar{ flex-direction:column; }
+  .tp-searchbar__date, .tp-searchbar__action{ width:100%; }
+  .tp-searchbar__loc{ width:100%; }
+}
+
+/* ==============================
+   동일 출발/도착 선택 UX
+   - shake 애니메이션 + 상단 토스트
+   ============================== */
+@keyframes tpShake{
+  0%{ transform: translateX(0); }
+  20%{ transform: translateX(-4px); }
+  40%{ transform: translateX(4px); }
+  60%{ transform: translateX(-3px); }
+  80%{ transform: translateX(3px); }
+  100%{ transform: translateX(0); }
+}
+
+.tp-shake{ animation: tpShake .38s ease-in-out; }
+
+.tp-toast{
+  position: fixed;
+  left: 50%;
+  top: 82px;
+  transform: translate(-50%, -10px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.tp-toast.is-show{
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.tp-toast__msg{
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+  max-width: min(92vw, 520px);
+  text-align: center;
+}
+
+
+/* -------- 교통수단 탭(아이콘) : 검색바와 연결 -------- */
+.tp-card{ position:relative; }
+
+.tp-tabs2{
+  padding-left: 0;
+  position:absolute;
+  top:0;
+  left: 0;
+  display:flex;
+  gap:8px;
+  z-index:5;
+}
+
+.tp-tab2{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:42px;
+  padding:0 16px;
+  border-radius:14px 14px 0 0;
+  border:1px solid #e8eefb;
+  border-bottom: none;
+  background: #eef3ff;
+  color:#0f172a;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:none;
+}
+
+.tp-tab2:hover{ border-color:#cbd5e1; }
+
+.tp-tab2.is-active{
+  background:#ffffff;
+  color:#0c5cff;
+  border-color:#cfe0ff;
+  border-bottom: none;
+  box-shadow:none;
+}
+
+.tp-tab2__icon{
+  width:18px;
+  height:18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.tp-tab2__icon svg{
+  /* 다른 전역 CSS(svg {width:100%...})가 있어도 아이콘 크기가 깨지지 않게 강제 */
+  width:18px !important;
+  height:18px !important;
+  max-width:18px;
+  max-height:18px;
+  display:block;
+}
+
+.tp-tab2__label{ line-height:1; }
+
+@media (max-width: 720px){
+  .tp-tabs2{
+    top:-16px;
+    left:12px;
+    gap:6px;
+  }
+  .tp-tab2{
+    height:36px;
+    padding:0 12px;
+    font-size:13px;
+  }
+}
+
+.tp-tabs2::after{
+  content:'';
+  position:absolute;
+  left:-12px;
+  right:-12px;
+  bottom:-1px;
+  height:1px;
+  background:#e8eefb;
+}

@@ -26,14 +26,13 @@
     .tiny{font-size:12px;}
     input[type="text"]{width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;}
     select{padding:6px; border:1px solid #ccc; border-radius:8px;}
+    .pill{display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; font-size:12px; color:#666;}
   </style>
 
-  <!-- ✅ appkey는 하나만! + autoload=false 필수 -->
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24${kakaoJsKey}&libraries=services&autoload=false"></script>
+  <!-- ✅ appkey는 하나만! (문자열로 붙이면 깨짐) -->
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24&libraries=services&autoload=false"></script>
 </head>
 <body>
-
-<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
@@ -45,9 +44,12 @@
 
   <div class="side">
 
+    <!-- =======================
+         1) 장소 목록
+    ======================== -->
     <div class="box">
       <b>장소 목록</b>
-      <div class="list">
+      <div class="list" id="spotList">
         <c:forEach var="s" items="${spots}">
           <div class="row">
             <label style="flex:1;">
@@ -76,6 +78,28 @@
       </div>
     </div>
 
+    <!-- =======================
+         2) 근처 숙소 목록(추가)
+         - 장소 목록 아래 표시
+         - 체크하면 selected에 들어가고 저장됨
+    ======================== -->
+    <div class="box">
+      <b>근처 숙소 <span class="pill">DB</span></b>
+      <div class="muted tiny" style="margin-top:4px;">
+        * 현재 선택한 장소들의 중심 좌표 기준으로 주변 숙소를 불러와.
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" onclick="loadNearbyStays()">주변 숙소 불러오기</button>
+        <button type="button" onclick="clearStayLayer()">숙소 마커 제거</button>
+      </div>
+
+      <div id="stayList" class="list"></div>
+    </div>
+
+    <!-- =======================
+         3) 선택 목록
+    ======================== -->
     <div class="box">
       <b>선택 목록(순서)</b>
       <div id="selectedBox" class="list"></div>
@@ -90,28 +114,46 @@
   </div>
 </div>
 
+<!-- ✅ 저장은 백엔드 컨트롤러(@RequestParam)랑 맞춰서 "폼 submit" -->
+<form id="saveForm" method="post" action="${pageContext.request.contextPath}/plans/route/save" style="display:none;">
+  <input type="hidden" name="pIdx" value="${pIdx}">
+  <input type="hidden" name="cityId" value="${cityId}">
+  <c:forEach var="p" items="${purpose}">
+    <input type="hidden" name="purpose" value="${fn:escapeXml(p)}">
+  </c:forEach>
+
+  <div id="hiddenInputs"></div>
+</form>
+
 <script>
-  // ✅ contextPath 고정
+  // ✅ contextPath
   const ctx = '${pageContext.request.contextPath}';
 
-  // ✅ 선택 데이터
-  let selected = []; // [{id,name,lat,lng,day,memo}]
+  // ✅ 선택 데이터: 장소+숙소 통합
+  // [{id,name,lat,lng,day,memo}]
+  let selected = [];
 
-  // ✅ 지도 전역(딱 1번만 선언)
+  // ✅ 지도 전역
   let map = null;
   let bounds = null;
-  let markers = [];
-  let line = null;
+
+  // ✅ "선택된 것" 마커/라인 레이어
+  let selectedMarkers = [];
+  let routeLines = [];
+
+  // ✅ "근처 숙소 표시" 마커 레이어
+  let stayMarkers = [];
 
   const pIdx = Number('${pIdx}');
   const selectedBox = document.getElementById('selectedBox');
   const hiddenInputs = document.getElementById('hiddenInputs');
 
-  // ✅ Kakao SDK 로드가 끝난 뒤에만 실행 (kakao undefined 방지)
+  // ✅ Kakao SDK 로드 후 실행
   kakao.maps.load(function () {
     initMap();
-    bindCheckboxEvents();
-    renderSelected(); // 초기 렌더
+    bindSpotCheckboxEvents();
+    renderSelected();
+    renderMapSelectedLayer();
   });
 
   function initMap() {
@@ -125,15 +167,17 @@
     bounds = new kakao.maps.LatLngBounds();
   }
 
-  function bindCheckboxEvents() {
+  // =========================
+  // 장소 체크박스 이벤트
+  // =========================
+  function bindSpotCheckboxEvents() {
     document.querySelectorAll('.spotChk').forEach(chk => {
 
-      // ✅ row(줄) 클릭 시 지도 이동
+      // row 클릭 시 지도 이동
       const row = chk.closest('.row');
       if (row) {
         row.style.cursor = 'pointer';
         row.addEventListener('click', (e) => {
-          // 체크박스 자체 클릭은 기존 로직 타게 두고
           if (e.target && (e.target.tagName === 'INPUT')) return;
 
           const lat = Number(chk.dataset.lat);
@@ -146,11 +190,13 @@
         });
       }
 
-      // ✅ 체크박스 체크/해제 로직(기존 그대로)
       chk.addEventListener('change', () => {
         const id = Number(chk.dataset.id);
 
         if (chk.checked) {
+          // 중복 방지
+          if (selected.some(x => x.id === id)) return;
+
           selected.push({
             id: id,
             name: chk.dataset.name,
@@ -161,39 +207,84 @@
           });
         } else {
           selected = selected.filter(x => x.id !== id);
+          // 숙소 체크박스도 같은 id면 같이 해제(같은 spotT면 충돌 가능성 있음)
+          const stayChk = document.querySelector('.stayChk[data-id="' + id + '"]');
+          if (stayChk) stayChk.checked = false;
         }
 
         renderSelected();
-        renderMapMarkers();
+        renderMapSelectedLayer();
       });
 
     });
   }
 
+  // =========================
+  // 지도 레이어 관리
+  // =========================
   function fitBounds() {
-    if (!map || !bounds || markers.length === 0) return;
+    if (!map || !bounds || selectedMarkers.length === 0) return;
     map.setBounds(bounds);
   }
 
-  function clearMap() {
-    markers.forEach(m => m.setMap(null));
-    markers = [];
+  function clearSelectedLayer() {
+    selectedMarkers.forEach(m => m.setMap(null));
+    selectedMarkers = [];
 
-    // ✅ bounds는 재생성이 정답 (setSouthWest 같은 거 없음)
+    routeLines.forEach(l => l.setMap(null));
+    routeLines = [];
+
     bounds = new kakao.maps.LatLngBounds();
+  }
 
-    if (line) { line.setMap(null); line = null; }
+  function clearStayLayer() {
+    stayMarkers.forEach(m => m.setMap(null));
+    stayMarkers = [];
+    const stayList = document.getElementById('stayList');
+    if (stayList) stayList.innerHTML = '';
   }
 
   function clearSelection() {
     document.querySelectorAll('.spotChk').forEach(chk => chk.checked = false);
+    document.querySelectorAll('.stayChk').forEach(chk => chk.checked = false);
+
     selected = [];
     renderSelected();
-    clearMap();
+
+    clearSelectedLayer(); // 선택 마커/라인만 제거
     document.getElementById('totalDist').innerText = '-';
     document.getElementById('totalTime').innerText = '-';
   }
 
+  // ✅ 선택된 것(장소+숙소) 마커 렌더
+  function renderMapSelectedLayer() {
+    if (!map) return;
+
+    clearSelectedLayer();
+    if (selected.length === 0) return;
+
+    selected.forEach((s, idx) => {
+      const pos = new kakao.maps.LatLng(s.lat, s.lng);
+      bounds.extend(pos);
+
+      const marker = new kakao.maps.Marker({ position: pos, map: map });
+      selectedMarkers.push(marker);
+
+      const iw = new kakao.maps.InfoWindow({
+        content: '<div style="padding:6px 8px; font-size:13px;"><b>'
+               + (idx + 1) + '. ' + escapeHtml(s.name)
+               + '</b></div>'
+      });
+
+      kakao.maps.event.addListener(marker, 'click', () => iw.open(map, marker));
+    });
+
+    map.setBounds(bounds);
+  }
+
+  // =========================
+  // 선택 목록 UI
+  // =========================
   function dayOptions(selectedDay) {
     let html = '';
     for (let d = 1; d <= 7; d++) {
@@ -272,7 +363,7 @@
     selected[idx - 1] = selected[idx];
     selected[idx] = tmp;
     renderSelected();
-    renderMapMarkers();
+    renderMapSelectedLayer();
   }
 
   function moveDown(idx) {
@@ -281,45 +372,28 @@
     selected[idx + 1] = selected[idx];
     selected[idx] = tmp;
     renderSelected();
-    renderMapMarkers();
+    renderMapSelectedLayer();
   }
 
   function removeAt(idx) {
     const id = selected[idx].id;
     selected.splice(idx, 1);
 
+    // 장소 체크 해제
     const chk = document.querySelector('.spotChk[data-id="' + id + '"]');
     if (chk) chk.checked = false;
 
+    // 숙소 체크 해제
+    const stayChk = document.querySelector('.stayChk[data-id="' + id + '"]');
+    if (stayChk) stayChk.checked = false;
+
     renderSelected();
-    renderMapMarkers();
+    renderMapSelectedLayer();
   }
 
-  function renderMapMarkers() {
-    if (!map) return;
-
-    clearMap();
-    if (selected.length === 0) return;
-
-    selected.forEach((s, idx) => {
-      const pos = new kakao.maps.LatLng(s.lat, s.lng);
-      bounds.extend(pos);
-
-      const marker = new kakao.maps.Marker({ position: pos, map: map });
-      markers.push(marker);
-
-      const iw = new kakao.maps.InfoWindow({
-        content: '<div style="padding:6px 8px; font-size:13px;"><b>'
-               + (idx + 1) + '. ' + escapeHtml(s.name)
-               + '</b></div>'
-      });
-
-      kakao.maps.event.addListener(marker, 'click', () => iw.open(map, marker));
-    });
-
-    map.setBounds(bounds);
-  }
-
+  // =========================
+  // 경로 계산 (일차별 색상 라인 유지)
+  // =========================
   async function calcRoute() {
     if (selected.length < 2) {
       alert('경로 계산은 최소 2개 장소가 필요해.');
@@ -339,18 +413,196 @@
     document.getElementById('totalDist').innerText = formatDistance(data.distanceM);
     document.getElementById('totalTime').innerText = formatDuration(data.durationSec);
 
-    if (line) { line.setMap(null); line = null; }
-    if (data.path && data.path.length) {
-      const path = data.path.map(p => new kakao.maps.LatLng(p.lat, p.lng));
-      line = new kakao.maps.Polyline({
+    // 기존 라인 제거
+    routeLines.forEach(l => l.setMap(null));
+    routeLines = [];
+
+    const grouped = groupByDay();
+    Object.keys(grouped).forEach(day => {
+
+      const arr = grouped[day];
+      if (arr.length < 2) return;
+
+      const path = arr.map(s => new kakao.maps.LatLng(s.lat, s.lng));
+
+      const polyline = new kakao.maps.Polyline({
         path: path,
         strokeWeight: 5,
+        strokeColor: getColorByDay(day),
         strokeOpacity: 0.85
       });
-      line.setMap(map);
-    }
+
+      polyline.setMap(map);
+      routeLines.push(polyline);
+    });
   }
 
+  function getColorByDay(day) {
+    const colors = {
+      1: "#2979ff",
+      2: "#ff1744",
+      3: "#00c853",
+      4: "#ff9100",
+      5: "#9c27b0"
+    };
+    return colors[Number(day)] || "#222";
+  }
+
+  function groupByDay() {
+    const map = {};
+    selected.forEach(s => {
+      if (!map[s.day]) map[s.day] = [];
+      map[s.day].push(s);
+    });
+    return map;
+  }
+
+  // =========================
+  // ✅ 숙소 기능(추가)
+  // - 선택된 장소 중심 기준으로 /plans/api/stays 호출
+  // - 목록 아래 체크박스 표시
+  // - 체크하면 selected에 들어가 저장됨
+  // - 지도에 숙소 마커도 표시(별도 레이어)
+  // =========================
+  function getCenter() {
+    let lat = 0, lng = 0;
+    selected.forEach(s => { lat += s.lat; lng += s.lng; });
+    return { lat: lat / selected.length, lng: lng / selected.length };
+  }
+
+  async function loadNearbyStays() {
+    if (selected.length === 0) {
+      alert('먼저 장소를 1개 이상 선택해줘.');
+      return;
+    }
+
+    const center = getCenter();
+    const url = ctx + '/plans/api/stays?lat=' + center.lat + '&lng=' + center.lng;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      alert('숙소 불러오기 실패(서버 로그 확인)');
+      return;
+    }
+
+    const stays = await res.json();
+    console.log('stays raw =', stays); // ✅ 개발자도구에서 여기로 실제 필드명 확인 가능
+
+    // 🔥 기존 숙소 마커 제거
+    stayMarkers.forEach(m => m.setMap(null));
+    stayMarkers = [];
+
+    const stayList = document.getElementById('stayList');
+    stayList.innerHTML = '';
+
+    if (!stays || stays.length === 0) {
+      stayList.innerHTML = '<div class="muted" style="padding:8px 0;">근처 숙소가 없어.</div>';
+      return;
+    }
+
+    stays.forEach(stay => {
+      // ✅ 백엔드 DTO 필드명 케이스를 다 흡수(가장 중요)
+      const id =
+        Number(stay.id ?? stay.sIdx ?? stay.idx ?? stay.s_idx);
+
+      const name =
+        String(stay.name ?? stay.sName ?? stay.s_name ?? stay.spotName ?? stay.sname ?? '');
+
+      const lat =
+        Number(stay.lat ?? stay.sLat ?? stay.s_lat);
+
+      const lng =
+        Number(stay.lng ?? stay.sLng ?? stay.s_lng);
+
+      const dist =
+        Number(stay.distance ?? stay.dist ?? stay.distanceKm ?? stay.distance_km ?? 0);
+
+      // ✅ 좌표가 없으면 마커/목록이 망가져서 여기서 스킵
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        console.warn('좌표 누락 stay =', stay);
+        return;
+      }
+
+      // ====== 목록(체크박스) ======
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const checked = selected.some(x => x.id === id);
+
+      row.innerHTML =
+        '<label style="flex:1;">' +
+          '<input type="checkbox" class="stayChk" ' +
+            'data-id="' + id + '" ' +
+            'data-name="' + escapeHtml(name) + '" ' +
+            'data-lat="' + lat + '" ' +
+            'data-lng="' + lng + '" ' +
+            (checked ? 'checked' : '') +
+          '>' +
+          escapeHtml(name) +
+          '<span class="muted tiny"> (약 ' + dist.toFixed(2) + ' km)</span>' +
+        '</label>';
+
+      stayList.appendChild(row);
+
+      // ====== 지도 마커 ======
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(lat, lng),
+        map: map
+      });
+      stayMarkers.push(marker);
+
+      const iw = new kakao.maps.InfoWindow({
+        content:
+          '<div style="padding:8px;">' +
+            '<b>' + escapeHtml(name) + '</b><br>' +
+            '약 ' + dist.toFixed(2) + ' km' +
+          '</div>'
+      });
+
+      kakao.maps.event.addListener(marker, 'click', () => iw.open(map, marker));
+    });
+
+    // ✅ 숙소 체크/해제 이벤트 바인딩
+    document.querySelectorAll('.stayChk').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const id = Number(chk.dataset.id);
+
+        if (chk.checked) {
+          if (selected.some(x => x.id === id)) return;
+
+          selected.push({
+            id: id,
+            name: chk.dataset.name + ' (숙소)',
+            lat: Number(chk.dataset.lat),
+            lng: Number(chk.dataset.lng),
+            day: 1,
+            memo: '숙소'
+          });
+        } else {
+          selected = selected.filter(x => x.id !== id);
+        }
+
+        renderSelected();
+        renderMapMarkers(); // ✅ 기존 마커 기능 유지
+      });
+    });
+  }
+
+  // =========================
+  // 저장 (폼 submit으로 컨트롤러와 맞춤)
+  // =========================
+  function savePlan() {
+    if (selected.length < 1) {
+      alert('저장할 장소가 없어.');
+      return;
+    }
+    buildHiddenInputs();
+    document.getElementById('saveForm').submit();
+  }
+
+  // =========================
+  // 유틸
+  // =========================
   function formatDuration(sec) {
     sec = Number(sec || 0);
     const h = Math.floor(sec / 3600);
@@ -380,62 +632,8 @@
       .replaceAll('<','&lt;')
       .replaceAll('>','&gt;');
   }
-  
-  async function savePlan() {
-    if (selected.length < 1) {
-      alert('저장할 장소가 없어.');
-      return;
-    }
-
-    // seq 자동 생성 (선택 순서 기준)
-    const items = selected.map((s, idx) => ({
-      sIdx: s.id,
-      day: s.day,
-      seq: idx + 1,
-      memo: s.memo || ""
-    }));
-
-    const payload = {
-	  pIdx: pIdx,
-      title: "내 여행 플랜",   // 필요하면 input으로 바꿔도 됨
-      start: null,            // 서버에서 기본값 처리
-      end: null,
-      items: items
-    };
-
-    try {
-      const res = await fetch(ctx + '/route/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        alert('저장 실패: ' + text);
-        return;
-      }
-
-      const data = await res.json();
-
-      if (data.ok) {
-        alert('계획 저장이 완료되었습니다.');
-        // 👉 저장 성공 후 메인페이지 이동
-        window.location.href = ctx + '/';
-      } else {
-        alert(data.msg || '저장 실패');
-      }
-
-    } catch (e) {
-      console.error(e);
-      alert('서버 오류 발생');
-    }
-  }
 </script>
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
-
 </body>
 </html>

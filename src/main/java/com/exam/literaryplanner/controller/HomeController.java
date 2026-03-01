@@ -2,29 +2,43 @@ package com.exam.literaryplanner.controller;
 
 import com.exam.literaryplanner.domain.Spot;
 import com.exam.literaryplanner.service.SpotService;
+import com.exam.literaryplanner.service.WishListService; // 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import jakarta.servlet.http.HttpSession; // 추가
 
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor // SpotService를 자동으로 주입받기 위해 추가합니다.
+@RequiredArgsConstructor
 public class HomeController {
 
     private final SpotService spotService;
+    private final WishListService wishListService; // 추가
 
-    // "/"와 "/index" 요청을 모두 처리합니다.
     @GetMapping({"/", "/index"})
-    public String home(Model model) {
-        // 1. 오늘의 인기 여행지 6개 데이터를 가져옵니다.
+    public String home(HttpSession session, Model model) {
         List<Spot> popularSpots = spotService.getTodayPopularSpots();
         
-        // 2. JSP에서 사용할 수 있도록 모델에 담습니다.
-        model.addAttribute("popularSpots", popularSpots);
+        // 로그인된 회원번호 추출
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = null;
+        try {
+            if (loginMember != null) {
+                mIdx = (Integer) loginMember.getClass().getMethod("getMIdx").invoke(loginMember);
+            }
+        } catch (Exception e) {}
 
-        // View Resolver가 /WEB-INF/views/index.jsp 로 변환하여 찾아줍니다.
+        // 찜 상태 세팅
+        if (mIdx != null) {
+            for (Spot s : popularSpots) {
+                s.setIsHearted(wishListService.isHearted(mIdx, s.getId()));
+            }
+        }
+        
+        model.addAttribute("popularSpots", popularSpots);
         return "index";
     }
 }

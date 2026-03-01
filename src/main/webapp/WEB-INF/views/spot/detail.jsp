@@ -120,8 +120,6 @@
 					font-size: 18px;
 					font-weight: bold;
 					cursor: pointer;
-					display: block;
-					text-decoration: none;
 				}
 			</style>
 		</head>
@@ -129,9 +127,20 @@
 		<body>
 			
 			<jsp:include page="/WEB-INF/views/common/header.jsp" />
-			
-			<!-- ✅ 중복 헤더 제거: 공통 header.jsp만 사용 -->
+			<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+				    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
+				        
+				        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
+				            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
+				                 alt="PlanTrip 로고" 
+				                 style="height: 45px; width: auto; object-fit: contain;">
+				        </a>
 
+				        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
+				            </nav>
+				        
+				    </div>
+				</header>
 			<div class="container">
 				<%-- 1. 이미지 갤러리 (로컬 이미지 연결) --%>
 					<div class="image-gallery">
@@ -155,10 +164,13 @@
 						<%-- 2. 상세 정보 영역 --%>
 							<div class="info-section">
 								<%-- 1. 장소 이름 --%>
-									<div class="spot-name"
-										style="font-size: 32px; font-weight: 800; margin-bottom: 10px;">
-										${spot.name}
-									</div>
+								<div class="spot-name" style="font-size: 32px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+								    <span>${spot.name}</span>
+								    <button class="wish-btn" onclick="toggleWish(event, ${spot.id}, this)" 
+								            style="background: white; border: 1px solid #ddd; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex-shrink: 0;">
+								        ${spot.isHearted ? '❤️' : '🤍'}
+								    </button>
+								</div>
 
 									<%-- 2. 별점 --%>
 										<div class="rating"
@@ -232,7 +244,10 @@
 							        <div style="font-size: 14px; color: #777; margin-bottom: 20px;">
 							            지금 바로 계획을 세워보세요
 							        </div>
-									<a class="btn-booking" href="${pageContext.request.contextPath}/plans/planRoute">일정 만들기</a>
+									<button type="button" class="btn-booking" 
+									        onclick="location.href='/plans/planRoute'">
+									    일정 만들기
+									</button>
 							    </div>
 							</aside>
 					</div>
@@ -241,5 +256,36 @@
 			<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 		</body>
-
+<script>
+	
+	// 하트 토글 통신 함수
+	function toggleWish(event, sIdx, btn) {
+	    event.preventDefault();
+	    event.stopPropagation(); // 카드 링크로 이동하는 것을 방지하고 하트만 토글시킴
+	    
+	    fetch('/api/wish/toggle', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify({ sIdx: sIdx })
+	    })
+	    .then(response => {
+	        if (response.status === 401) {
+	            alert('로그인이 필요한 서비스입니다.');
+	            return;
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        if (data && data.success) {
+	            btn.innerText = data.isHearted ? '❤️' : '🤍';
+	            if (data.isHearted) btn.classList.add('active');
+	            else btn.classList.remove('active');
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error:', error);
+	        alert('처리 중 오류가 발생했습니다.');
+	    });
+	}
+</script>
 		</html>

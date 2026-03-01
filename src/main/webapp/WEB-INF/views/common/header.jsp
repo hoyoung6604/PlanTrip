@@ -17,18 +17,7 @@
       <a href="${pageContext.request.contextPath}/community" class="pt-wave">커뮤니티</a>
       <a href="${pageContext.request.contextPath}/maps" class="pt-wave">지도</a>
 
-      <div class="nav-dropdown" id="transportWrap">
-        <button class="nav-drop-btn pt-wave" type="button" id="transportBtn"
-                aria-haspopup="true" aria-expanded="false">
-          교통수단 <span class="chev" aria-hidden="true">▾</span>
-        </button>
-
-        <div class="nav-drop-menu" id="transportMenu" role="menu" aria-label="교통수단">
-          <a href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-          <a href="${pageContext.request.contextPath}/transport/expbus">버스</a>
-          <a href="${pageContext.request.contextPath}/transport/train">기차</a>
-        </div>
-      </div>
+      <a href="${pageContext.request.contextPath}/transport/flight" class="pt-wave">교통수단</a>
 
       <j:if test="${not empty sessionScope.loginMember}">
         <a href="${pageContext.request.contextPath}/members/mypage" class="pt-wave">마이페이지</a>

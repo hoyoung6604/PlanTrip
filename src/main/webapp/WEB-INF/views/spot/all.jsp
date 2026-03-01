@@ -129,22 +129,26 @@
                 <div style="color: #999; margin-top: 5px;">총 ${spotList.size()}개의 장소가 검색되었습니다.</div>
             </div>
 
-            <div class="spot-list">
-                <j:forEach var="s" items="${spotList}">
-                    <a href="${pageContext.request.contextPath}/spots/detail/${s.id}" class="card">
-                        <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');"></div>
-                        <div class="info-box">
-                            <div class="spot-title">${s.name}</div>
-                            <div class="spot-addr">${s.addr}</div>
-							<div class="spot-price">
-							                    <span class="star-yellow">★</span> 
-							                    ${not empty s.price ? s.price : '0.0'}
-							                </div>
-                            <div class="btn-detail">상세보기</div>
-                        </div>
-                    </a>
-                </j:forEach>
-            </div>
+			<div class="spot-list">
+			    <j:forEach var="s" items="${spotList}">
+			        <a href="${pageContext.request.contextPath}/spots/detail/${s.id}" class="card" style="position: relative;">
+			            <button class="wish-btn" onclick="toggleWish(event, ${s.id}, this)" 
+			                    style="position: absolute; top: 15px; left: 15px; z-index: 10; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+			                ${s.isHearted ? '❤️' : '🤍'}
+			            </button>
+			            <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');"></div>
+			            <div class="info-box">
+			                <div class="spot-title">${s.name}</div>
+			                <div class="spot-addr">${s.addr}</div>
+			                <div class="spot-price">
+			                    <span class="star-yellow">★</span> 
+			                    ${not empty s.price ? s.price : '0.0'}
+			                </div>
+			                <div class="btn-detail">상세보기</div>
+			            </div>
+			        </a>
+			    </j:forEach>
+			</div>
             
             <j:if test="${empty spotList}">
                 <div style="text-align: center; padding: 100px 0; color: #999; background: white; border-radius: 16px;">
@@ -159,4 +163,36 @@
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
+<script>
+	// 하트 토글 통신 함수
+	function toggleWish(event, sIdx, btn) {
+	    event.preventDefault();
+	    event.stopPropagation(); // 카드 링크로 이동하는 것을 방지하고 하트만 토글시킴
+	    
+	    fetch('/api/wish/toggle', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify({ sIdx: sIdx })
+	    })
+	    .then(response => {
+	        if (response.status === 401) {
+	            alert('로그인이 필요한 서비스입니다.');
+	            return;
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        if (data && data.success) {
+	            btn.innerText = data.isHearted ? '❤️' : '🤍';
+	            if (data.isHearted) btn.classList.add('active');
+	            else btn.classList.remove('active');
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error:', error);
+	        alert('처리 중 오류가 발생했습니다.');
+	    });
+	}
+	
+</script>
 </html>

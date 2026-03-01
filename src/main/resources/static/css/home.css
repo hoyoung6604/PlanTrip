@@ -81,8 +81,27 @@ a{ color:inherit; text-decoration:none; }
   object-fit:contain;
 }
 
-.nav{ display:flex; align-items:center; justify-content:center; gap:28px; font-weight: 700; }
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  font-weight:700;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  min-width:0;
+}
+
 .header-link{ font-weight:900; padding:8px 10px; border-radius:10px; }
+
+/* 비로그인(로그인/회원가입) 링크 스타일: 2줄로 내려가는 현상 방지 */
+.header-auth{
+  font-weight:800;
+  padding:8px 10px;
+  border-radius:10px;
+  white-space:nowrap;
+}
+.header-auth:hover{ background: rgba(255,255,255,.28); }
 
 /* =========================
    ✅ 로그인 후 햄버거 메뉴 (header.css에 있던 것 home.css로 이관)
@@ -91,6 +110,8 @@ a{ color:inherit; text-decoration:none; }
   display:flex;
   align-items:center;
   gap:14px; /* 기존 gap이 있으면 유지해도 됨 */
+  justify-content:flex-end;
+  white-space:nowrap;
 }
 
 /* hamburger */

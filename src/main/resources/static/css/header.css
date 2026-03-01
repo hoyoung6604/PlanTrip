@@ -52,6 +52,8 @@ body{ padding-top:72px; }
   align-items:center;
   justify-content:space-between;
   gap:18px;
+  /* ✅ 헤더 1줄 고정(로그인/회원가입이 2줄로 떨어지는 현상 방지) */
+  flex-wrap: nowrap;
 }
 
 
@@ -61,6 +63,7 @@ body{ padding-top:72px; }
   align-items:center;
   height: var(--headerH);
   overflow: visible;
+  flex: 0 0 auto;
 }
 .brand-top a.brand-top{
   display:flex;
@@ -82,6 +85,11 @@ body{ padding-top:72px; }
   display:flex;
   align-items:center;
   gap:26px;
+  /* ✅ 가운데 네비는 줄바꿈 없이 유지 */
+  flex: 1 1 auto;
+  justify-content: center;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .pt-nav a,
@@ -140,6 +148,8 @@ body{ padding-top:72px; }
   display:flex;
   align-items:center;
   gap:14px;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 /* hamburger */

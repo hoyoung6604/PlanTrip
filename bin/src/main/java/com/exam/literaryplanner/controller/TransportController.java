@@ -111,36 +111,35 @@ public class TransportController {
         model.addAttribute("selectedAirportId", arrAirportId);
 
         addPagingGeneric(model, all, page, 10);
-        return "transport/flight";
-    }
 
-    // 출발 공항 기준으로 도착 공항 후보를 계산(프론트 자동 필터링용)
-    @GetMapping("/flight/arrivals")
-    @ResponseBody
-    public java.util.List<String> flightArrivals(
-            @RequestParam String depAirportId,
-            @RequestParam String depPlandTime
-    ) {
-        java.util.List<String> ids = new java.util.ArrayList<>();
-        java.util.Map<String, String> airports = transportService.getAirports(); // id -> name
+// ✅ 출발 공항 기준으로 도착 공항 후보를 계산(프론트 자동 필터링용)
+@GetMapping("/flight/arrivals")
+@ResponseBody
+public List<String> flightArrivals(
+        @RequestParam String depAirportId,
+        @RequestParam String depPlandTime
+) {
+    // 공항 목록은 고정이므로, 전체 공항을 돌면서 "결과가 있는 도착지"만 반환
+    List<String> ids = new ArrayList<>();
+    Map<String, String> airports = transportService.getAirports();
+    if (airports == null || airports.isEmpty()) return ids;
 
-        for (String arrId : airports.keySet()) {
-            if (arrId == null || arrId.isBlank()) continue;
-            if (arrId.equals(depAirportId)) continue;
-
-            try {
-                java.util.List<java.util.Map<String, Object>> tmp = transportService.searchFlight(depAirportId, arrId, depPlandTime);
-                if (tmp != null && !tmp.isEmpty()) {
-                    ids.add(arrId);
-                }
-            } catch (Exception ignore) {
-                // 일부 조합은 API에서 에러가 날 수 있어요 → 제외
-            }
+    for (String arrId : airports.keySet()) {
+        if (arrId == null) continue;
+        if (arrId.equals(depAirportId)) continue;
+        try {
+            List<?> r = transportService.searchFlight(depAirportId, arrId, depPlandTime);
+            if (r != null && !r.isEmpty()) ids.add(arrId);
+        } catch (Exception ignore) {
+            // 일부 조합은 API에서 에러가 날 수 있어요 → 제외
         }
-        return ids;
     }
+    // 결과가 없으면 빈 리스트(프론트는 이 경우 필터링을 강제하지 않음)
+    return ids;
+}
 
-
+return "transport/flight";
+    }
 
     @GetMapping("/expbus")
     public String expbus(
@@ -169,11 +168,6 @@ public class TransportController {
         String dep = (depCity == null || depCity.isBlank()) ? "서울" : depCity;
         String arr = (arrCity == null || arrCity.isBlank()) ? "부산" : arrCity;
 
-        /* AUTO: dep==arr */
-        if (dep.equals(arr)) {
-            arr = dep.equals("부산") ? "서울" : "부산";
-        }
-
         model.addAttribute("depCity", dep);
         model.addAttribute("arrCity", arr);
 
@@ -195,14 +189,6 @@ public class TransportController {
         List<Map<String, String>> arrSubTerminals = transportService.getSuburbsBusTerminalsByCity(arr);
         model.addAttribute("depSubTerminals", depSubTerminals);
         model.addAttribute("arrSubTerminals", arrSubTerminals);
-
-        // AUTO: 기본 터미널 선택(도시 변경 시 자동으로 첫 터미널로 맞춰줌)
-        if ((depTerminalId == null || depTerminalId.isBlank()) && depTerminals != null && !depTerminals.isEmpty()) {
-            depTerminalId = depTerminals.get(0).get("terminalId");
-        }
-        if ((arrTerminalId == null || arrTerminalId.isBlank()) && arrTerminals != null && !arrTerminals.isEmpty()) {
-            arrTerminalId = arrTerminals.get(0).get("terminalId");
-        }
 
         // 선택값 유지
         model.addAttribute("depTerminalId", depTerminalId);
@@ -260,12 +246,6 @@ public class TransportController {
 
         String dep = (depCity == null || depCity.isBlank()) ? "서울" : depCity;
         String arr = (arrCity == null || arrCity.isBlank()) ? "부산" : arrCity;
-
-        /* AUTO: dep==arr */
-        if (dep.equals(arr)) {
-            arr = dep.equals("부산") ? "서울" : "부산";
-        }
-
         model.addAttribute("depCity", dep);
         model.addAttribute("arrCity", arr);
 

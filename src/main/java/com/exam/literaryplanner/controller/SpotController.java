@@ -3,15 +3,16 @@ package com.exam.literaryplanner.controller;
 import com.exam.literaryplanner.domain.City;
 import com.exam.literaryplanner.domain.Spot;
 import com.exam.literaryplanner.service.SpotService;
+import com.exam.literaryplanner.service.WishListService;
+import com.exam.literaryplanner.repository.CityRepository;
 
 import jakarta.servlet.http.HttpSession;
-
-import com.exam.literaryplanner.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class SpotController {
 
     private final SpotService spotService;
     private final CityRepository cityRepository;
+    private final WishListService wishListService; // 찜 기능 서비스 의존성 추가
 
     @GetMapping("/spot")
     public String getCityDetail(
@@ -36,105 +38,156 @@ public class SpotController {
         } else {
             cityId = (Integer) session.getAttribute("selectedCityId");
             // 만약 세션에도 없다면 그때만 진짜 기본값(예: 4)을 줍니다.
-            if (cityId == null) cityId = 4; 
+            if (cityId == null) {
+                cityId = 4; 
+            }
         }
 
-        // 2. 이후 로직은 동일
+        // 로그인 사용자 정보 추출
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = extractMIdx(loginMember);
+
+        // 2. 이후 로직
         City city = cityRepository.findById(cityId).orElseThrow();
         model.addAttribute("city", city);
-        model.addAttribute("selectedCity", cityId); // JSP의 ${selectedCity}에 들어갈 값
+        model.addAttribute("selectedCity", cityId); 
 
-        model.addAttribute("tourList", spotService.list(null, "TOUR", cityId, 0, 10).getContent());
-        model.addAttribute("stayList", spotService.list(null, "STAY", cityId, 0, 10).getContent());
-        model.addAttribute("actList", spotService.list(null, "ACT", cityId, 0, 10).getContent());
-        model.addAttribute("foodList", spotService.list(null, "FOOD", cityId, 0, 10).getContent());
+        // 각 리스트 조회
+        List<Spot> tourList = spotService.list(null, "TOUR", cityId, 0, 10).getContent();
+        List<Spot> stayList = spotService.list(null, "STAY", cityId, 0, 10).getContent();
+        List<Spot> actList = spotService.list(null, "ACT", cityId, 0, 10).getContent();
+        List<Spot> foodList = spotService.list(null, "FOOD", cityId, 0, 10).getContent();
+
+        // 찜 상태 반영
+        applyWishListStatus(tourList, mIdx);
+        applyWishListStatus(stayList, mIdx);
+        applyWishListStatus(actList, mIdx);
+        applyWishListStatus(foodList, mIdx);
+
+        model.addAttribute("tourList", tourList);
+        model.addAttribute("stayList", stayList);
+        model.addAttribute("actList", actList);
+        model.addAttribute("foodList", foodList);
 
         return "spot/spot"; 
     }
     
-    // ✅ 2. 도시 버튼을 누를 때 데이터만 보내주는 메서드
+    // 도시 버튼을 누를 때 데이터만 보내주는 메서드
     @GetMapping("/api/contents")
-    @ResponseBody // 페이지 이동 없이 JSON 데이터만 반환
-    public Map<String, Object> getCityContents(@RequestParam(value = "cityId") Integer cityId) {
+    @ResponseBody 
+    public Map<String, Object> getCityContents(
+            @RequestParam(value = "cityId") Integer cityId,
+            HttpSession session) {
+        
         Map<String, Object> map = new HashMap<>();
         
-        // 원하셨던 순서대로 데이터를 담습니다: 관광지 -> 숙소 -> 액티비티 -> 맛집
-        map.put("tourList", spotService.list(null, "TOUR", cityId, 0, 10).getContent());
-        map.put("stayList", spotService.list(null, "STAY", cityId, 0, 10).getContent());
-        map.put("actList", spotService.list(null, "ACT", cityId, 0, 10).getContent());
-        map.put("foodList", spotService.list(null, "FOOD", cityId, 0, 10).getContent());
+        // 로그인 사용자 정보 추출
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = extractMIdx(loginMember);
+
+        // 카테고리별 데이터 조회
+        List<Spot> tourList = spotService.list(null, "TOUR", cityId, 0, 10).getContent();
+        List<Spot> stayList = spotService.list(null, "STAY", cityId, 0, 10).getContent();
+        List<Spot> actList = spotService.list(null, "ACT", cityId, 0, 10).getContent();
+        List<Spot> foodList = spotService.list(null, "FOOD", cityId, 0, 10).getContent();
+        
+        // 찜 상태 반영
+        applyWishListStatus(tourList, mIdx);
+        applyWishListStatus(stayList, mIdx);
+        applyWishListStatus(actList, mIdx);
+        applyWishListStatus(foodList, mIdx);
+
+        map.put("tourList", tourList);
+        map.put("stayList", stayList);
+        map.put("actList", actList);
+        map.put("foodList", foodList);
         
         return map;
     }
     
     @GetMapping("/detail/{id}")
-    public String getSpotDetail(@PathVariable("id") Integer id, Model model) {
-        // 1. ID로 해당 관광지의 모든 정보(이름, 주소, 설명, 이미지 등)를 가져옵니다.
+    public String getSpotDetail(@PathVariable("id") Integer id, HttpSession session, Model model) {
         Spot spot = spotService.findById(id); 
-        model.addAttribute("spot", spot);
         
-        // 2. 상세 페이지(detail.jsp)로 이동합니다.
+        // 상세 페이지 찜 여부 체크
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = extractMIdx(loginMember);
+        if (mIdx != null) {
+            spot.setIsHearted(wishListService.isHearted(mIdx, spot.getId()));
+        }
+        
+        model.addAttribute("spot", spot);
         return "spot/detail"; 
     }
     
     @GetMapping("/all")
     public String getAllSpots(
-            @RequestParam("cityId") Integer cityId, // 여기서 부산(2번)을 받음
+            @RequestParam("cityId") Integer cityId,
             @RequestParam("catCode") String catCode,
+            HttpSession session,
             Model model) {
         
         City city = cityRepository.findById(cityId).orElseThrow();
         List<Spot> spotList = spotService.list(null, catCode, cityId, 0, 100).getContent();
 
+        // 로그인 사용자 정보 추출 및 찜 상태 반영
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = extractMIdx(loginMember);
+        applyWishListStatus(spotList, mIdx);
+
         model.addAttribute("city", city);
         model.addAttribute("catCode", catCode);
         model.addAttribute("spotList", spotList);
-        
-        // 중요: 현재 선택된 도시 ID를 다시 모델에 담아 JSP에 전달
         model.addAttribute("selectedCity", cityId); 
 
         return "spot/all";
-        
     }
     
     @GetMapping("/api/recommend")
-    @ResponseBody // 페이지가 아닌 JSON 데이터를 반환합니다.
-    public List<Map<String, Object>> getRecommend(@RequestParam("category") String category) {
-        // 1. 서비스에서 랜덤하게 섞인 장소들을 가져옵니다.
+    @ResponseBody 
+    public List<Map<String, Object>> getRecommend(@RequestParam("category") String category, HttpSession session) {
         List<Spot> spots = spotService.getRandomSpotsByCategory(category);
+        List<Map<String, Object>> result = new ArrayList<>();
         
-        // 2. JSON 변환 시 에러(무한루프) 방지 및 프론트엔드 편의를 위해 Map으로 변환
-        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        Object loginMember = session.getAttribute("loginMember");
+        Integer mIdx = extractMIdx(loginMember);
         
         for (Spot s : spots) {
-            Map<String, Object> map = new java.util.HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("id", s.getId());
             map.put("name", s.getName());
             map.put("image", s.getImage());
-            // 도시 이름을 바로 접근할 수 있게 cityName으로 따로 담아줍니다.
             map.put("cityName", (s.getCity() != null) ? s.getCity().getName() : "기타");
+            
+            // 찜 상태 추가
+            boolean hearted = (mIdx != null) && wishListService.isHearted(mIdx, s.getId());
+            map.put("isHearted", hearted);
+            
             result.add(map);
         }
-        
         return result;
     }
-    
-	/*
-	 * @GetMapping("/api/contents")
-	 * 
-	 * @ResponseBody public Map<String, Object> getContents(@RequestParam Integer
-	 * cityId, HttpSession session) { Map<String, Object> data = new HashMap<>();
-	 * List<Spot> tourList = spotService.getTourList(cityId); // 관광지 리스트 조회
-	 * 
-	 * // 세션에서 로그인 정보 가져오기 Object loginMember = session.getAttribute("loginMember");
-	 * if (loginMember != null) { Integer mIdx = extractMIdx(loginMember); // 로그인 유저
-	 * ID 추출
-	 * 
-	 * // 리스트를 돌며 찜 여부를 하나씩 체크 for (Spot s : tourList) { boolean hearted =
-	 * wishListService.isHearted(mIdx, s.getId()); s.setIsHearted(hearted); // Spot
-	 * 엔티티의 @Transient 필드에 저장 } }
-	 * 
-	 * data.put("tourList", tourList); // ... 나머지 stayList, foodList 등도 동일하게 처리
-	 * return data; }
-	 */
+
+    // 공통 보조 메서드 1: 리스트 내부의 각 Spot에 대해 찜 여부를 체크하여 세팅
+    private void applyWishListStatus(List<Spot> spots, Integer mIdx) {
+        if (mIdx == null || spots == null || spots.isEmpty()) {
+            return;
+        }
+        for (Spot s : spots) {
+            boolean hearted = wishListService.isHearted(mIdx, s.getId());
+            s.setIsHearted(hearted);
+        }
+    }
+
+    // 공통 보조 메서드 2: 세션 객체에서 mIdx 추출
+    private Integer extractMIdx(Object loginMember) {
+        if (loginMember == null) {
+            return null;
+        }
+        try {
+            return (Integer) loginMember.getClass().getMethod("getMIdx").invoke(loginMember);
+        } catch (Exception e) {
+            return null; 
+        }
+    }
 }

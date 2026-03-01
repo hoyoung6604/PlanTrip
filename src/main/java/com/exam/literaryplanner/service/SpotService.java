@@ -96,4 +96,24 @@ public class SpotService {
 	    return spots.stream().limit(10).collect(java.util.stream.Collectors.toList());
 	}
 	
+	// 마이페이지 전체 찜한 목록 조회용
+    @Transactional(readOnly = true)
+    public List<Spot> getWishSpots(Integer mIdx) {
+        if (mIdx == null) {
+            return new ArrayList<>(); 
+        }
+        return spotRepository.findWishSpotsByMemberIdx(mIdx);
+    }
+
+    // 마이페이지 최근 찜한 6개 조회용
+    @Transactional(readOnly = true)
+    public List<Spot> getRecentWishSpots(Integer mIdx) {
+        if (mIdx == null) {
+            return new ArrayList<>();
+        }
+        // 첫 번째 페이지(0)에서 6개의 데이터를 가져오도록 설정
+        Pageable limit = PageRequest.of(0, 6);
+        return spotRepository.findRecentWishSpots(mIdx, limit).getContent();
+    }
+	
 }

@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ import com.exam.literaryplanner.repository.CityRepository;
 import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.MemberDeleteService;
 import com.exam.literaryplanner.service.PlanMapService;
+import com.exam.literaryplanner.service.SpotService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -43,6 +45,7 @@ public class MyPageController {
     private final PlanMapService planMapService;
     private final SpotRepository spotRepository;
     private final CityRepository cityRepository;
+    private final SpotService spotService;
 
     public MyPageController(LiteraryRepository literaryRepository,
                             CommunityRepository reviewRepository,
@@ -52,7 +55,8 @@ public class MyPageController {
                             PlanDetailRepository planDetailRepository,
                             PlanMapService planMapService,
                             SpotRepository spotRepository,
-                            CityRepository cityRepository) {
+                            CityRepository cityRepository,
+                            SpotService spotService) {
         this.literaryRepository = literaryRepository;
         this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
@@ -62,18 +66,38 @@ public class MyPageController {
         this.planMapService = planMapService;
         this.spotRepository = spotRepository;
         this.cityRepository = cityRepository;
+        this.spotService = spotService;
     }
 
     /* ================= 마이페이지 메인 ================= */
     @GetMapping
-    public String mypage(HttpSession session) {
+    public String mypage(HttpSession session, Model model) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) {
             return "redirect:/members/login";
         }
 
+     // 가장 최근에 찜한 장소 6
+        List<Spot> recentWishList = spotService.getRecentWishSpots(loginMember.getMIdx());
+        model.addAttribute("recentWishList", recentWishList);
+
         return "members/mypage/mypage";
+    }
+    
+    /* ================= 내가 찜한 장소 (전체보기) ================= */
+    @GetMapping("/wishlist")
+    public String myWishList(HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return "redirect:/members/login";
+        }
+
+        // 전체 찜 목록 가져오기 (이전에 SpotService에 만들어둔 getWishSpots 메서드 사용)
+        List<Spot> allWishList = spotService.getWishSpots(loginMember.getMIdx());
+        model.addAttribute("allWishList", allWishList);
+
+        return "members/mypage/wishlist"; // 새롭게 띄워줄 jsp 파일 경로
     }
 
     /* ================= 비밀번호 확인 ================= */
@@ -189,7 +213,6 @@ public class MyPageController {
         model.addAttribute("plans", plans);
         return "members/mypage/plans";
     }
-
     /* ================= 내가 쓴 후기 ================= */
     @GetMapping("/reviews")
     public String myReviews(@RequestParam(required = false) String keyword,
@@ -242,35 +265,24 @@ public class MyPageController {
         if (loginMember == null) return "redirect:/members/login";
 
         var plan = travelPlanRepository.findMyPlanView(pIdx, loginMember.getMIdx())
-        	    .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
+                .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
 
-        // 좌표 리스트 조회 (native 결과를 PlanPoint로 변환 예시)
-        List<Object[]> rows = planDetailRepository.findPointsNative(pIdx);
-        List<Map<String, Object>> points = new ArrayList<>();
-        for (Object[] r : rows) {
-            points.add(Map.of(
-                    "name", (String) r[0],
-                    "lat", ((Number) r[1]).doubleValue(),
-                    "lng", ((Number) r[2]).doubleValue()
-            ));
-        }
-
-        // JSON 문자열로 내려주기
-        String pointsJson = planMapService.buildPointsJson(pIdx);
-
-        model.addAttribute("plan", plan);
-        
-     // regDateStr도 여기서 만들면 됨
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String regDateStr = plan.getpRegDate() == null ? "" : plan.getpRegDate().format(fmt);
+
+        model.addAttribute("plan", plan);
         model.addAttribute("regDateStr", regDateStr);
+
+        // ✅ 동선용(숙소 제외)
         model.addAttribute("pointsJson", planMapService.buildPointsJson(pIdx));
-        model.addAttribute("spotNames", planMapService.getSpotNames(pIdx));
         model.addAttribute("spotNamesByDay", planMapService.getSpotNamesByDay(pIdx));
+
+        // ✅ 숙소용(숙소만)
+        model.addAttribute("staysJson", planMapService.buildStaysJson(pIdx));
+        model.addAttribute("stayNamesByDay", planMapService.getStayNamesByDay(pIdx));
 
         return "members/mypage/planView";
     }
-
     @GetMapping("/plans/delete")
     public String planDelete(@RequestParam Integer pIdx, HttpSession session) {
         Member loginMember = (Member) session.getAttribute("loginMember");
@@ -305,6 +317,8 @@ public class MyPageController {
 
         return "plans/route";
     }
+    
+    
 
 }
 

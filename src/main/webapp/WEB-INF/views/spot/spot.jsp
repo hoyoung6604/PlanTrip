@@ -307,51 +307,64 @@
 					display: none !important;
 				}*/
 
-				
-				
+
+
 				/* 기본 하트 버튼 스타일 (메인 및 상세 공통) */
 				.wish-btn {
-				    position: absolute !important;
-				    top: 12px !important;
-				    right: 12px !important;
-				    z-index: 100 !important; /* 이미지(.spot-img)보다 훨씬 높은 값을 줌 */
-				    background: rgba(255, 255, 255, 0.9) !important;
-				    border: none;
-				    border-radius: 50%;
-				    width: 36px;
-				    height: 36px;
-				    display: flex;
-				    align-items: center;
-				    justify-content: center;
-				    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-				    cursor: pointer;
-				    font-size: 18px;
-				    visibility: visible !important; /* 강제 표시 */
+					position: absolute !important;
+					top: 12px !important;
+					right: 12px !important;
+					z-index: 100 !important;
+					/* 이미지(.spot-img)보다 훨씬 높은 값을 줌 */
+					background: rgba(255, 255, 255, 0.9) !important;
+					border: none;
+					border-radius: 50%;
+					width: 36px;
+					height: 36px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+					cursor: pointer;
+					font-size: 18px;
+					visibility: visible !important;
+					/* 강제 표시 */
 				}
-				
-				
-				.wish-btn, .wish-btn-large {
-				    transition: all 0.2s ease; /* 부드러운 애니메이션 효과 */
-				    outline: none;
+
+
+				.wish-btn,
+				.wish-btn-large {
+					transition: all 0.2s ease;
+					/* 부드러운 애니메이션 효과 */
+					outline: none;
 				}
 
 				/* 1. 마우스를 올렸을 때 (Hover) */
-				.wish-btn:hover, .wish-btn-large:hover {
-				    background-color: #f9f9f9; /* 배경색이 아주 연한 회색으로 변경 */
-				    transform: scale(1.1);      /* 크기가 10% 커짐 */
-				    box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* 그림자가 더 진해져서 떠오르는 느낌 */
+				.wish-btn:hover,
+				.wish-btn-large:hover {
+					background-color: #f9f9f9;
+					/* 배경색이 아주 연한 회색으로 변경 */
+					transform: scale(1.1);
+					/* 크기가 10% 커짐 */
+					box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+					/* 그림자가 더 진해져서 떠오르는 느낌 */
 				}
 
 				/* 2. 클릭하는 순간 (Active - 물리적 피드백) */
-				.wish-btn:active, .wish-btn-large:active {
-				    transform: scale(0.9);      /* 누를 때 살짝 작아짐 */
+				.wish-btn:active,
+				.wish-btn-large:active {
+					transform: scale(0.9);
+					/* 누를 때 살짝 작아짐 */
 				}
 
 				/* 3. 찜이 된 상태일 때 (Active 클래스가 붙었을 때) */
 				/* 자바스크립트에서 btn.classList.toggle('active')를 쓸 경우 유용합니다 */
-				.wish-btn.active, .wish-btn-large.active {
-				    border-color: #ff4b4b;      /* 테두리를 빨간색으로 */
-				    color: #ff4b4b;             /* 아이콘이 텍스트라면 색상 변경 */
+				.wish-btn.active,
+				.wish-btn-large.active {
+					border-color: #ff4b4b;
+					/* 테두리를 빨간색으로 */
+					color: #ff4b4b;
+					/* 아이콘이 텍스트라면 색상 변경 */
 				}
 			</style>
 		</head>
@@ -423,25 +436,22 @@
 									<p style="padding: 20px; color: #999;">등록된 관광지가 없습니다.</p>
 								</j:if>
 								<j:forEach var="s" items="${tourList}">
-								    <div class="card-item" style="position: relative;">
-								        <button class="wish-btn" 
-								                onclick="toggleWish(event, ${s.id}, this)" 
-								                style="position: absolute; top: 15px; right: 15px; z-index: 10; background: rgba(255,255,255,0.8); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-								            ${s.isHearted ? '❤️' : '🤍'}
-								        </button>
-
-								        <a href="${pageContext.request.contextPath}/spots/detail/${s.id}" style="text-decoration:none; color:inherit;">
-								            <div class="card">
-								                <div style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative;">
-								                    🏛️
-								                </div>
-								                <div style="padding: 20px;">
-								                    <div style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">${s.name}</div>
-								                    <div style="font-size: 13px; color: #777;">${s.addr}</div>
-								                </div>
-								            </div>
-								        </a>
-								    </div>
+									<div class="card-item">
+										<a href="${pageContext.request.contextPath}/spots/detail/${s.id}"
+											style="text-decoration:none; color:inherit;">
+											<div class="card">
+												<div
+													style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative;">
+													🏛️
+												</div>
+												<div style="padding: 20px;">
+													<div style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
+														${s.name}</div>
+													<div style="font-size: 13px; color: #777;">${s.addr}</div>
+												</div>
+											</div>
+										</a>
+									</div>
 								</j:forEach>
 							</div>
 							<button class="nav-btn" onclick="sideScroll('tour-slider', 'right')">›</button>
@@ -466,7 +476,7 @@
 											<div class="card">
 												<div
 													style="height: 200px; background: #eef2ff; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-													🛌</div>
+												</div>
 												<div style="padding: 20px;">
 													<div style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
 														${s.name}</div>
@@ -499,7 +509,7 @@
 												<div class="card">
 													<div
 														style="height: 200px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-														🏄</div>
+													</div>
 													<div style="padding: 20px;">
 														<div
 															style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
@@ -533,7 +543,7 @@
 													<div class="card">
 														<div
 															style="height: 200px; background: #fff5f5; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-															🍱</div>
+														</div>
 														<div style="padding: 20px;">
 															<div
 																style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
@@ -546,130 +556,129 @@
 										</div>
 										<button class="nav-btn" onclick="sideScroll('food-slider', 'right')">›</button>
 									</div>
-			</div>
 
-			<script>
+									<script>
 
-				const CONTEXT_PATH = "${pageContext.request.contextPath}";
-				// 1. 데이터를 불러오고 화면을 갱신하는 핵심 함수
-				function loadCity(cityId, btn) {
-					if (!btn) return;
+										const CONTEXT_PATH = "${pageContext.request.contextPath}";
+										// 1. 데이터를 불러오고 화면을 갱신하는 핵심 함수
+										function loadCity(cityId, btn) {
+											if (!btn) return;
 
-					sessionStorage.setItem("lastCityId", cityId);
+											sessionStorage.setItem("lastCityId", cityId);
 
-					document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
-					btn.classList.add('active');
+											document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+											btn.classList.add('active');
 
-					const contextPath = CONTEXT_PATH;
+											const contextPath = CONTEXT_PATH;
 
-					// 전체보기 링크 갱신
-					document.querySelectorAll('.all-link').forEach(link => {
-						const catCode = link.getAttribute('data-cat');
-						link.href = contextPath + "/spots/all?cityId=" + cityId + "&catCode=" + catCode;
-					});
+											// 전체보기 링크 갱신
+											document.querySelectorAll('.all-link').forEach(link => {
+												const catCode = link.getAttribute('data-cat');
+												link.href = contextPath + "/spots/all?cityId=" + cityId + "&catCode=" + catCode;
+											});
 
-					fetch(contextPath + "/spots/api/contents?cityId=" + cityId)
-						.then(res => res.json())
-						.then(data => {
-							// 데이터가 넘어오는지 콘솔에서 확인
-							console.log("실제 데이터 구조:", data.tourList[0]);
-							console.log("Fetched Data:", data);
+											fetch(contextPath + "/spots/api/contents?cityId=" + cityId)
+												.then(res => res.json())
+												.then(data => {
+													// 데이터가 넘어오는지 콘솔에서 확인
+													console.log("실제 데이터 구조:", data.tourList[0]);
+													console.log("Fetched Data:", data);
 
-							renderSection('tour-slider', data.tourList, '🏛️');
-							renderSection('stay-slider', data.stayList, '🛌');
-							renderSection('act-slider', data.actList, '🏄');
-							renderSection('food-slider', data.foodList, '🍱');
-						})
-						.catch(err => console.error("데이터 로딩 실패:", err));
-				}
+													renderSection('tour-slider', data.tourList, '🏛️');
+													renderSection('stay-slider', data.stayList, '🛌');
+													renderSection('act-slider', data.actList, '🏄');
+													renderSection('food-slider', data.foodList, '🍱');
+												})
+												.catch(err => console.error("데이터 로딩 실패:", err));
+										}
 
-				// 2. 섹션 그리기 함수 (JSP 충돌 방지 처리가 완료된 버전)
+										// 2. 섹션 그리기 함수 (JSP 충돌 방지 처리가 완료된 버전)
 
-				// ✅ 카드 제목/주소가 길면 자동 마키(옆으로 흐름) 적용
-				function initSpotMarquee(scopeEl) {
-					if (!scopeEl) return;
+										// ✅ 카드 제목/주소가 길면 자동 마키(옆으로 흐름) 적용
+										function initSpotMarquee(scopeEl) {
+											if (!scopeEl) return;
 
-					const nodes = scopeEl.querySelectorAll('[data-marquee-text]');
-					nodes.forEach(el => {
-						if (el.dataset && el.dataset.marqueeInit === "1") return;
+											const nodes = scopeEl.querySelectorAll('[data-marquee-text]');
+											nodes.forEach(el => {
+												if (el.dataset && el.dataset.marqueeInit === "1") return;
 
-						const txt = (el.textContent || '').trim();
-						if (!txt) return;
+												const txt = (el.textContent || '').trim();
+												if (!txt) return;
 
-						// 렌더 직후 overflow 계산을 위해 한 프레임 뒤에 처리
-						requestAnimationFrame(() => {
-							const need = el.scrollWidth > el.clientWidth + 2;
-							if (!need) {
-								el.dataset.marqueeInit = "1";
-								return;
-							}
+												// 렌더 직후 overflow 계산을 위해 한 프레임 뒤에 처리
+												requestAnimationFrame(() => {
+													const need = el.scrollWidth > el.clientWidth + 2;
+													if (!need) {
+														el.dataset.marqueeInit = "1";
+														return;
+													}
 
-							el.classList.add('is-marquee');
+													el.classList.add('is-marquee');
 
-							const track = document.createElement('span');
-							track.className = 'spot-marquee-track';
+													const track = document.createElement('span');
+													track.className = 'spot-marquee-track';
 
-							const a = document.createElement('span');
-							a.className = 'spot-marquee-item';
-							a.textContent = txt;
+													const a = document.createElement('span');
+													a.className = 'spot-marquee-item';
+													a.textContent = txt;
 
-							const b = document.createElement('span');
-							b.className = 'spot-marquee-item';
-							b.textContent = txt;
+													const b = document.createElement('span');
+													b.className = 'spot-marquee-item';
+													b.textContent = txt;
 
-							track.appendChild(a);
-							track.appendChild(b);
+													track.appendChild(a);
+													track.appendChild(b);
 
-							// 거리/시간 계산 (너무 빠르지 않게)
-							const dist = a.getBoundingClientRect().width + 22; // gap 포함
-							const speed = 50; // px/s
-							const dur = Math.max(6, dist / speed);
+													// 거리/시간 계산 (너무 빠르지 않게)
+													const dist = a.getBoundingClientRect().width + 22; // gap 포함
+													const speed = 50; // px/s
+													const dur = Math.max(6, dist / speed);
 
-							track.style.setProperty('--spotMarqueeDist', dist + 'px');
-							track.style.setProperty('--spotMarqueeDur', dur + 's');
+													track.style.setProperty('--spotMarqueeDist', dist + 'px');
+													track.style.setProperty('--spotMarqueeDur', dur + 's');
 
-							el.innerHTML = '';
-							el.appendChild(track);
+													el.innerHTML = '';
+													el.appendChild(track);
 
-							el.dataset.marqueeInit = "1";
-						});
-					});
-				}
+													el.dataset.marqueeInit = "1";
+												});
+											});
+										}
 
 
-				function renderSection(containerId, list, emoji) {
-					const container = document.getElementById(containerId);
-					if (!container) return;
+										function renderSection(containerId, list, emoji) {
+											const container = document.getElementById(containerId);
+											if (!container) return;
 
-					container.innerHTML = '';
+											container.innerHTML = '';
 
-					if (!list || list.length === 0) {
-						container.innerHTML = '<p style="padding:40px; color:#999; text-align:center; width:100%;">등록된 정보가 없습니다. 😊</p>';
-						return;
-					}
+											if (!list || list.length === 0) {
+												container.innerHTML = '<p style="padding:40px; color:#999; text-align:center; width:100%;">등록된 정보가 없습니다. 😊</p>';
+												return;
+											}
 
-					// 이미지 URL 정규화(상대/절대/외부링크 모두 대응)
-					const resolveImg = (raw) => {
-						if (!raw) return CONTEXT_PATH + '/img/hero.jpg'; // 기본 이미지
-						const s = String(raw).trim();
-						if (!s) return CONTEXT_PATH + '/img/hero.jpg';
-						if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
-						if (s.startsWith(CONTEXT_PATH + '/')) return s;
-						if (s.startsWith('/')) return CONTEXT_PATH + s;
-						return CONTEXT_PATH + '/' + s.replace(/^\/+/, '');
-					};
+											// 이미지 URL 정규화(상대/절대/외부링크 모두 대응)
+											const resolveImg = (raw) => {
+												if (!raw) return CONTEXT_PATH + '/img/hero.jpg'; // 기본 이미지
+												const s = String(raw).trim();
+												if (!s) return CONTEXT_PATH + '/img/hero.jpg';
+												if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
+												if (s.startsWith(CONTEXT_PATH + '/')) return s;
+												if (s.startsWith('/')) return CONTEXT_PATH + s;
+												return CONTEXT_PATH + '/' + s.replace(/^\/+/, '');
+											};
 
-					// renderSection 함수 내부의 list.forEach 부분을 찾아서 아래와 같이 수정하세요.
-					list.forEach(s => {
-					    const spotId = s.id || s.s_idx || s.sIdx;
-					    const spotName = s.name || s.s_name || s.sname || '이름 없음';
-					    const spotAddr = s.addr || s.s_addr || s.saddr || '주소 정보 없음';
-					    const isHearted = s.isHearted || false; // 서버에서 넘어온 찜 상태
+											// renderSection 함수 내부의 list.forEach 부분을 찾아서 아래와 같이 수정하세요.
+											list.forEach(s => {
+												const spotId = s.id || s.s_idx || s.sIdx;
+												const spotName = s.name || s.s_name || s.sname || '이름 없음';
+												const spotAddr = s.addr || s.s_addr || s.saddr || '주소 정보 없음';
+												const isHearted = s.isHearted || false; // 서버에서 넘어온 찜 상태
 
-					    const rawImg = s.img || s.sImg || s.s_img || s.image || s.imageUrl;
-					    const spotImg = resolveImg(rawImg);
+												const rawImg = s.img || s.sImg || s.s_img || s.image || s.imageUrl;
+												const spotImg = resolveImg(rawImg);
 
-					    const cardHtml = `
+												const cardHtml = `
 					        <div class="card-item" style="position: relative;">
 					            <button class="wish-btn \${isHearted ? 'active' : ''}" 
 					                    type="button" 
@@ -693,100 +702,84 @@
 					            </a>
 					        </div>
 					    `;
-					    container.insertAdjacentHTML('beforeend', cardHtml);
-					});
+												container.insertAdjacentHTML('beforeend', cardHtml);
+											});
 
-					initSpotMarquee(container);
-				}
+											initSpotMarquee(container);
+										}
 
-				// 3. 슬라이더 이동 함수
-				function sideScroll(elementId, direction) {
-					const container = document.getElementById(elementId);
-					const card = container.querySelector('.card-item');
-					if (!card) return;
-					const scrollAmount = card.clientWidth + 20;
-					if (direction === 'left') container.scrollLeft -= scrollAmount;
-					else container.scrollLeft += scrollAmount;
-				}
+										// 3. 슬라이더 이동 함수
+										function sideScroll(elementId, direction) {
+											const container = document.getElementById(elementId);
+											const card = container.querySelector('.card-item');
+											if (!card) return;
+											const scrollAmount = card.clientWidth + 20;
+											if (direction === 'left') container.scrollLeft -= scrollAmount;
+											else container.scrollLeft += scrollAmount;
+										}
 
-				// 4. 페이지 진입 시 실행 로직
-				document.addEventListener("DOMContentLoaded", function () {
-					const savedCityId = sessionStorage.getItem("lastCityId") || "4";
-					const buttons = document.querySelectorAll('.city-btn');
-					let targetBtn = null;
+										// 4. 페이지 진입 시 실행 로직
+										document.addEventListener("DOMContentLoaded", function () {
+											const savedCityId = sessionStorage.getItem("lastCityId") || "4";
+											const buttons = document.querySelectorAll('.city-btn');
+											let targetBtn = null;
 
-					buttons.forEach(btn => {
-						if (btn.getAttribute('onclick').includes(savedCityId)) {
-							targetBtn = btn;
-						}
-					});
+											buttons.forEach(btn => {
+												if (btn.getAttribute('onclick').includes(savedCityId)) {
+													targetBtn = btn;
+												}
+											});
 
-					if (targetBtn) {
-						loadCity(savedCityId, targetBtn);
-					} else if (buttons.length > 0) {
-						loadCity("4", buttons[0]);
-					}
+											if (targetBtn) {
+												loadCity(savedCityId, targetBtn);
+											} else if (buttons.length > 0) {
+												loadCity("4", buttons[0]);
+											}
 
 
-				});
-				
-				function toggleWish(event, sIdx, btn) {
-				    // 1. 상세 페이지 이동 방지
-				    event.preventDefault();
-				    event.stopPropagation();
+										});
 
-				    // 2. 서버 통신
-				    fetch('/api/wish/toggle', {
-				        method: 'POST',
-				        headers: {
-				            'Content-Type': 'application/json'
-				        },
-				        body: JSON.stringify({ sIdx: sIdx })
-				    })
-				    .then(response => {
-				        if (response.status === 401) {
-				            // ✅ 커뮤니티와 동일: 커스텀 알림 UI → 확인 시 로그인 모달 오픈
-				            try{
-				                sessionStorage.setItem('authRedirect', location.pathname + location.search + location.hash);
-				            }catch(e){}
+										function toggleWish(event, sIdx, btn) {
+											// 1. 상세 페이지 이동 방지
+											event.preventDefault();
+											event.stopPropagation();
 
-				            if (window.LoginRequiredPrompt && typeof window.LoginRequiredPrompt.open === 'function') {
-				                window.LoginRequiredPrompt.open({
-				                    message: '로그인이 필요한 서비스입니다.\n계속하려면 로그인해 주세요.',
-				                    onConfirm: function(){
-				                        if (window.AuthModal && typeof window.AuthModal.open === 'function') {
-				                            window.AuthModal.open('login');
-				                        }
-				                    }
-				                });
-				            } else if (window.AuthModal && typeof window.AuthModal.open === 'function') {
-				                window.AuthModal.open('login');
-				            }
-				            return null;
-				        }
-				        return response.json();
-				    })
-					.then(data => {
-					    if (data && data.success) {
-					        btn.innerText = data.isHearted ? '❤️' : '🤍';
-					        
-					        // CSS의 .active 스타일을 적용/해제함
-					        if (data.isHearted) {
-					            btn.classList.add('active');
-					        } else {
-					            btn.classList.remove('active');
-					        }
-					    }
-					})
-				    .catch(error => {
-				        console.error('Error:', error);
-				        alert('처리 중 오류가 발생했습니다.');
-				    });
-				}
+											// 2. 서버 통신
+											fetch('/api/wish/toggle', {
+												method: 'POST',
+												headers: {
+													'Content-Type': 'application/json'
+												},
+												body: JSON.stringify({sIdx: sIdx})
+											})
+												.then(response => {
+													if (response.status === 401) {
+														alert('로그인이 필요한 서비스입니다.');
+														return;
+													}
+													return response.json();
+												})
+												.then(data => {
+													if (data && data.success) {
+														btn.innerText = data.isHearted ? '❤️' : '🤍';
 
-			</script>
+														// CSS의 .active 스타일을 적용/해제함
+														if (data.isHearted) {
+															btn.classList.add('active');
+														} else {
+															btn.classList.remove('active');
+														}
+													}
+												})
+												.catch(error => {
+													console.error('Error:', error);
+													alert('처리 중 오류가 발생했습니다.');
+												});
+										}
 
-			<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+									</script>
+
+									<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 		</body>
 
 		</html>
