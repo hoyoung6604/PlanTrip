@@ -1,16 +1,23 @@
 package com.exam.literaryplanner.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient; // WebClient 대신 RestClient 임포트
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +115,9 @@ public class TransportService {
         for (Map<String, Object> m : items) {
             String id = Objects.toString(m.get("terminalId"), "").trim();
             String nm = Objects.toString(m.get("terminalNm"), "").trim();
-            if (!id.isBlank() && !nm.isBlank()) map.put(nm, id);
+            if (!id.isBlank() && !nm.isBlank()) {
+				map.put(nm, id);
+			}
         }
         return map;
     }
@@ -117,7 +126,9 @@ public class TransportService {
         Map<String, String> all = getExpBusTerminals();
 
         List<Map<String, String>> list = new ArrayList<>();
-        if (city == null || city.isBlank()) return list;
+        if (city == null || city.isBlank()) {
+			return list;
+		}
 
         List<String> keys;
         switch (city) {
@@ -144,18 +155,29 @@ public class TransportService {
     }
 
     private int scoreTerminal(String name) {
-        if (name == null) return 0;
+        if (name == null) {
+			return 0;
+		}
         int s = 0;
-        if (name.contains("고속")) s += 30;
-        if (name.contains("종합")) s += 20;
-        if (name.contains("시외")) s += 10;
-        if (name.length() <= 6) s += 3;
+        if (name.contains("고속")) {
+			s += 30;
+		}
+        if (name.contains("종합")) {
+			s += 20;
+		}
+        if (name.contains("시외")) {
+			s += 10;
+		}
+        if (name.length() <= 6) {
+			s += 3;
+		}
         return s;
     }
 
     public List<Map<String, Object>> searchExpBusByTerminal(String depTerminalId, String arrTerminalId, String depPlandTime) {
-        if (depTerminalId == null || depTerminalId.isBlank()) return Collections.emptyList();
-        if (arrTerminalId == null || arrTerminalId.isBlank()) return Collections.emptyList();
+        if (depTerminalId == null || depTerminalId.isBlank() || arrTerminalId == null || arrTerminalId.isBlank()) {
+			return Collections.emptyList();
+		}
         return searchExpBus(depTerminalId, arrTerminalId, depPlandTime);
     }
 
@@ -174,7 +196,9 @@ public class TransportService {
                 .body(JsonNode.class);
 
         List<Map<String, Object>> list = postProcessBus(extract(root));
-        for (Map<String, Object> m : list) m.put("busType", "고속");
+        for (Map<String, Object> m : list) {
+			m.put("busType", "고속");
+		}
         return list;
     }
 
@@ -191,7 +215,7 @@ public class TransportService {
     }
 
     // =========================
-    //  SUBURBS BUS (시외) 
+    //  SUBURBS BUS (시외)
     // =========================
     private static final String SUB_BUS_TERMINAL_URL =
             "http://apis.data.go.kr/1613000/SuburbsBusInfoService/getSuberbsBusTrminlList";
@@ -216,7 +240,9 @@ public class TransportService {
         for (Map<String, Object> m : items) {
             String id = Objects.toString(m.get("terminalId"), "").trim();
             String nm = Objects.toString(m.get("terminalNm"), "").trim();
-            if (!id.isBlank() && !nm.isBlank()) map.put(nm, id);
+            if (!id.isBlank() && !nm.isBlank()) {
+				map.put(nm, id);
+			}
         }
         return map;
     }
@@ -225,7 +251,9 @@ public class TransportService {
         Map<String, String> all = getSuburbsBusTerminals();
 
         List<Map<String, String>> list = new ArrayList<>();
-        if (city == null || city.isBlank()) return list;
+        if (city == null || city.isBlank()) {
+			return list;
+		}
 
         List<String> keys;
         switch (city) {
@@ -255,8 +283,9 @@ public class TransportService {
     }
 
     public List<Map<String, Object>> searchSuburbsBusByTerminal(String depTerminalId, String arrTerminalId, String depPlandTime) {
-        if (depTerminalId == null || depTerminalId.isBlank()) return Collections.emptyList();
-        if (arrTerminalId == null || arrTerminalId.isBlank()) return Collections.emptyList();
+        if (depTerminalId == null || depTerminalId.isBlank() || arrTerminalId == null || arrTerminalId.isBlank()) {
+			return Collections.emptyList();
+		}
 
         JsonNode root = restClient.get()
                 .uri(SUB_BUS_URL, uriBuilder -> uriBuilder
@@ -272,7 +301,9 @@ public class TransportService {
                 .body(JsonNode.class);
 
         List<Map<String, Object>> list = postProcessSuburbsBus(extract(root));
-        for (Map<String, Object> m : list) m.put("busType", "시외");
+        for (Map<String, Object> m : list) {
+			m.put("busType", "시외");
+		}
         return list;
     }
 
@@ -324,7 +355,7 @@ public class TransportService {
         TRAIN_CITY_TO_STATION_ID.put("강릉", List.of("NAT601936"));
         TRAIN_CITY_TO_STATION_ID.put("수원", List.of("NAT030000"));
     }
-    
+
     public List<Map<String, Object>> searchTrainByCity(String depCity, String arrCity, String depPlandTime) {
         List<String> depIds = TRAIN_CITY_TO_STATION_ID.get(depCity);
         List<String> arrIds = TRAIN_CITY_TO_STATION_ID.get(arrCity);
@@ -334,10 +365,14 @@ public class TransportService {
         }
 
         for (String depId : depIds) {
-            if (depId == null || depId.isBlank()) continue;
+            if (depId == null || depId.isBlank()) {
+				continue;
+			}
 
             for (String arrId : arrIds) {
-                if (arrId == null || arrId.isBlank()) continue;
+                if (arrId == null || arrId.isBlank()) {
+					continue;
+				}
 
                 List<Map<String, Object>> list = searchTrain(depId, arrId, depPlandTime);
                 if (list != null && !list.isEmpty()) {
@@ -410,13 +445,17 @@ public class TransportService {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private List<Map<String, Object>> extract(JsonNode root) {
         List<Map<String, Object>> list = new ArrayList<>();
-        if (root == null) return list;
+        if (root == null) {
+			return list;
+		}
 
         JsonNode items = root.path("response").path("body").path("items").path("item");
         ObjectMapper mapper = new ObjectMapper();
 
         if (items.isArray()) {
-            for (JsonNode n : items) list.add(mapper.convertValue(n, Map.class));
+            for (JsonNode n : items) {
+				list.add(mapper.convertValue(n, Map.class));
+			}
         } else if (!items.isMissingNode() && !items.isNull()) {
             list.add(mapper.convertValue(items, Map.class));
         }
@@ -424,24 +463,34 @@ public class TransportService {
     }
 
     private String firstNonBlank(String... vals) {
-        if (vals == null) return "";
+        if (vals == null) {
+			return "";
+		}
         for (String v : vals) {
-            if (v != null && !v.isBlank()) return v;
+            if (v != null && !v.isBlank()) {
+				return v;
+			}
         }
         return "";
     }
 
     private String prettyTime12(String yyyymmddhhmm) {
-        if (yyyymmddhhmm == null) return "";
+        if (yyyymmddhhmm == null) {
+			return "";
+		}
         String s = yyyymmddhhmm.trim();
-        if (s.length() != 12) return s;
+        if (s.length() != 12) {
+			return s;
+		}
 
         LocalDateTime dt = LocalDateTime.parse(s, DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
         return dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     private String prettyTimeFlex(String value) {
-        if (value == null) return "";
+        if (value == null) {
+			return "";
+		}
         String s = value.trim();
         try {
             if (s.length() == 12) {

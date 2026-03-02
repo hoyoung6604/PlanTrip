@@ -16,21 +16,11 @@
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
-  
-  <style>
-    /* 카드 호버(마우스 오버) 시 살짝 떠오르는 애니메이션 */
-    .wish-card-item {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .wish-card-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    }
-  </style>
 </head>
-<body class="page-solid">
+<body>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
+
 <c:set var="displayName" value="사용자" />
 <c:choose>
   <c:when test="${not empty sessionScope.loginUserName}">
@@ -50,216 +40,134 @@
 <div class="mp-shell">
 
   <aside class="mp-side">
-    <div class="mp-brand">
-      <div class="mp-logo"></div>
-      <div class="mp-brand-name"><c:out value="${displayName}"/></div>
-    </div>
-
-    <div class="sec">
-      <div class="sec-title">OVERVIEW</div>
-      <nav class="mp-nav">
-        <a class="active" href="${pageContext.request.contextPath}/members/mypage">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>대시보드
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/check">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>회원정보 수정
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/plans">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>내 여행 계획
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/reviews">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>내 여행 후기
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/wishlist">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
-          </span>내 찜 목록
-        </a>
-      </nav>
-    </div>
-
-    <div class="sec sec-bottom">
-      <div class="sec-title">SETTINGS</div>
-      <nav class="mp-nav">
-        <button class="menu-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/'">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>메인으로
-        </button>
-
-        <form action="${pageContext.request.contextPath}/members/logout" method="post" style="margin:0;">
-          <button class="menu-btn danger" type="submit">
-            <span class="mp-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M10 17l-1 0a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </span>로그아웃
-          </button>
-        </form>
-      </nav>
-    </div>
+    <nav class="mp-nav">
+      <a class="active" href="${pageContext.request.contextPath}/members/mypage">
+        <span class="mp-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </span>대시보드
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/check">
+        <span class="mp-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </span>회원정보 수정
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/plans">
+        <span class="mp-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </span>내 여행 계획
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/reviews">
+        <span class="mp-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </span>내 여행 후기
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/wishlist">
+        <span class="mp-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </span>내 찜 목록
+      </a>
+    </nav>
   </aside>
 
   <main class="mp-main">
-      <div class="mp-topbar">
-        <div class="mp-search">
-          <span class="sico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <input type="text" placeholder="Search your travel..." />
+
+      <section class="mp-card mp-info-card">
+        <div class="info-body">
+          <div class="avatar-wrap">
+            <div class="css-avatar">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+          </div>
+          
+          <div class="info-content">
+            <div class="info-title-wrap">
+              <h3 class="info-title">내 정보</h3>
+              <span class="role-badge">
+                <c:choose>
+                  <c:when test="${sessionScope.loginMember.MRole == 9}">관리자</c:when>
+                  <c:otherwise>일반 회원</c:otherwise>
+                </c:choose>
+              </span>
+            </div>
+
+            <div class="info-table">
+              <div class="info-row">
+                <span class="lbl">이름</span>
+                <span class="val"><c:out value="${displayName}"/></span>
+              </div>
+              <div class="info-row">
+                <span class="lbl">아이디</span>
+                <span class="val" style="display:flex; align-items:center; gap:8px;">
+                  <c:out value="${sessionScope.loginMember.MId}" default="아이디 정보 없음"/>
+                  <c:if test="${not empty sessionScope.loginMember.snsId}">
+                    <span class="social-badge kakao">Social</span>
+                  </c:if>
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="lbl">이메일</span>
+                <span class="val">
+                  <c:out value="${sessionScope.loginMember.MEmail}" default="이메일 정보 없음"/>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+        
+        <div class="info-footer">
+          <a href="${pageContext.request.contextPath}/members/mypage/withdraw" class="btn-withdraw">회원 탈퇴</a>
+        </div>
+      </section>
 
-      <div class="mp-placeholder"></div>
-
-      <section class="mp-card mp-grow" style="width: 100%;">
+      <section class="mp-card mp-grow">
         <div class="mp-card-head">
           <div>
             <div class="mp-card-title">최근 찜한 장소</div>
-            <div class="mp-card-sub">내가 가장 최근에 관심 등록한 6곳입니다.</div>
+            <div class="mp-card-sub">내가 가장 최근에 관심 등록한 8곳입니다.</div>
           </div>
         </div>
 
-        <div class="mp-card-body" style="width: 100%;">
-          
+        <div class="mp-card-body">
           <c:if test="${empty recentWishList}">
             <div style="padding: 40px; text-align: center; color: #999;">아직 찜한 장소가 없습니다. 여행지를 둘러보고 찜 기능을 사용해 보세요.</div>
           </c:if>
 
           <c:if test="${not empty recentWishList}">
-            <div class="mp-deck" style="display: flex !important; flex-wrap: wrap !important; gap: 16px !important; padding-bottom: 10px;">
-              
+            <div class="mp-deck">
               <c:forEach var="spot" items="${recentWishList}">
-                
-                <a href="${pageContext.request.contextPath}/spots/detail/${spot.id}" 
-                   class="item wish-card-item" 
-                   style="text-decoration: none; color: inherit; width: calc(33.333% - 11px); min-width: 220px !important; flex-shrink: 0 !important; margin-bottom: 10px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; display: block; background: #fff;">
+                <a href="${pageContext.request.contextPath}/spots/detail/${spot.id}" class="item wish-card-item">
                   
                   <c:set var="defaultImg" value="${pageContext.request.contextPath}/img/hero.jpg" />
                   
-                  <div class="thumb" 
-                       style="background-image: url('${not empty spot.image ? spot.image : defaultImg}'); background-size: cover; background-position: center; height: 160px; width: 100%;">
-                  </div>
+                  <div class="thumb" style="background-image: url('${not empty spot.image ? spot.image : defaultImg}');"></div>
                   
-                  <div class="meta" style="padding: 15px;">
-                    <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-                      
-                      <span class="tag" style="background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">
-                        ${spot.city != null ? spot.city.name : '기타'}
-                      </span>
-                      
+                  <div class="meta">
+                    <div class="tag-wrap">
+                      <span class="tag-city">${spot.city != null ? spot.city.name : '기타'}</span>
                       <c:choose>
-                        <c:when test="${spot.catCode == 'TOUR'}"><span class="tag" style="background: #f0f0f0; color: #333; padding: 3px 8px; border-radius: 4px; font-size: 11px;">TOUR</span></c:when>
-                        <c:when test="${spot.catCode == 'STAY'}"><span class="tag" style="background: #eef2ff; color: #3b82f6; padding: 3px 8px; border-radius: 4px; font-size: 11px;">STAY</span></c:when>
-                        <c:when test="${spot.catCode == 'ACT'}"><span class="tag" style="background: #f0fdf4; color: #22c55e; padding: 3px 8px; border-radius: 4px; font-size: 11px;">ACT</span></c:when>
-                        <c:when test="${spot.catCode == 'FOOD'}"><span class="tag" style="background: #fff5f5; color: #ef4444; padding: 3px 8px; border-radius: 4px; font-size: 11px;">FOOD</span></c:when>
-                        <c:otherwise><span class="tag" style="background: #f0f0f0; color: #333; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${spot.catCode}</span></c:otherwise>
+                        <c:when test="${spot.catCode == 'TOUR'}"><span class="tag-cat tag-tour">TOUR</span></c:when>
+                        <c:when test="${spot.catCode == 'STAY'}"><span class="tag-cat tag-stay">STAY</span></c:when>
+                        <c:when test="${spot.catCode == 'ACT'}"><span class="tag-cat tag-act">ACT</span></c:when>
+                        <c:when test="${spot.catCode == 'FOOD'}"><span class="tag-cat tag-food">FOOD</span></c:when>
+                        <c:otherwise><span class="tag-cat">${spot.catCode}</span></c:otherwise>
                       </c:choose>
                     </div>
                     
-                    <div class="ttl" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; font-size: 15px;">${spot.name}</div>
-                    <div class="sub" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: #777; margin-top: 5px;">${spot.addr}</div>
+                    <div class="ttl">${spot.name}</div>
+                    <div class="sub">${spot.addr}</div>
                   </div>
                 </a>
-                
               </c:forEach>
             </div>
           </c:if>
-
         </div>
       </section>
   </main>
-
-  <aside class="mp-right">
-    <section class="mp-profile">
-      <div class="mp-profile-top">
-        <div class="ttl">내 계정</div>
-        <div class="mp-mini"></div>
-      </div>
-
-      <div class="name"><c:out value="${displayName}"/></div>
-      <div class="desc">계정 정보 및 여행 기록을 확인할 수 있어요</div>
-
-      <div class="mp-list">
-        <div class="mp-row">
-          <div class="left">
-            <div class="ttl">회원정보 수정</div>
-            <div class="sub">비밀번호 확인 후 수정</div>
-          </div>
-          <span class="mp-pill" onclick="location.href='${pageContext.request.contextPath}/members/mypage/check'">이동</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="mp-card">
-      <div class="mp-card-head">
-        <div>
-          <div class="mp-card-title">내 여행 계획</div>
-          <div class="mp-card-sub">최근 작성한 계획</div>
-        </div>
-        <button class="mp-btn" onclick="location.href='${pageContext.request.contextPath}/members/mypage/plans'">전체보기</button>
-      </div>
-      <div class="mp-card-body">
-        <div class="mp-list">
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">제주 2박 3일</div>
-              <div class="sub">2026-03-12 ~ 2026-03-14</div>
-            </div>
-            <span class="mp-pill">예정</span>
-          </div>
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">부산 당일치기</div>
-              <div class="sub">2026-04-01</div>
-            </div>
-            <span class="mp-pill">예정</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mp-card">
-      <div class="mp-card-head">
-        <div>
-          <div class="mp-card-title">내 여행 후기</div>
-          <div class="mp-card-sub">최근 작성한 후기</div>
-        </div>
-        <button class="mp-btn" onclick="location.href='${pageContext.request.contextPath}/members/mypage/reviews'">전체보기</button>
-      </div>
-      <div class="mp-card-body">
-        <div class="mp-list">
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">제주 여행 후기</div>
-              <div class="sub">작성일: 2026-04-03</div>
-            </div>
-            <span class="mp-pill">완료</span>
-          </div>
-          <div class="mp-row">
-            <div class="left">
-              <div class="ttl">강릉 여행 후기</div>
-              <div class="sub">작성일: 2026-05-10</div>
-            </div>
-            <span class="mp-pill">완료</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </aside>
-
 </div>
 
-  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

@@ -33,9 +33,9 @@ public class SupportService {
         q.setQTitle(qTitle);
         q.setQCont(qCont);
         q.setQStatus(0);
-        
+
         q.setQRegDate(java.time.LocalDateTime.now());
-        
+
         return qnaRepository.save(q);
     }
 

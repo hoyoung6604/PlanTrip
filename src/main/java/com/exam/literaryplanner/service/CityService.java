@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class CityService {
 
     private final CityRepository cityRepository;
-    
+
 //    public CityService(CityRepository cityRepository) {
 //    	this.cityRepository = cityRepository;
 //    }

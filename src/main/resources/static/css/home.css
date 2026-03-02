@@ -1,3 +1,9 @@
+
+:root{
+  --homeCardW: 380px; /* 인기/맞춤 카드 공통 폭 */
+  --homeCardGap: 20px;
+  --homeCardImgH: 270px; /* 이미지 영역 높이 */
+}
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 
 :root{
@@ -236,7 +242,7 @@ a{ color:inherit; text-decoration:none; }
    - hero 레이아웃/텍스트는 유지
 ============================================================ */
 .scroll-down{
-  position:absolute;
+  position:fixed;
   left:50%;
   bottom:40px;
   transform:translateX(-50%);
@@ -248,6 +254,8 @@ a{ color:inherit; text-decoration:none; }
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.35);
   backdrop-filter:blur(10px);
+
+  z-index:3;
 
   box-shadow:0 10px 30px rgba(0,0,0,.12);
   display:flex;
@@ -276,13 +284,13 @@ a{ color:inherit; text-decoration:none; }
    ✅ 2. Hero & 검색바 (요청대로 “유지”)
 ============================================================ */
 .hero{ height:100vh; min-height:680px; position:relative; padding-top:var(--headerH); overflow:hidden; }
-.hero-copy{ position:absolute; left:50%; transform:translateX(-50%); z-index:2; text-align:center; width:min(980px, calc(100% - 48px)); pointer-events:none; }
-.hero-copy--top{ top: 28%; }
+.hero-copy{ position:fixed; left:50%; transform:translateX(-50%); z-index:3; text-align:center; width:min(980px, calc(100% - 48px)); pointer-events:none; }
+.hero-copy--top{ top: 28vh; }
 .hero-title{ font-family:var(--scriptFont); font-weight:800; font-size:80px; color:#fff; text-shadow:0 8px 26px rgba(0,0,0,.35); }
 
 .searchbar{
   position:absolute; left:50%; top:44%; transform:translateX(-50%);
-  width:min(920px, calc(100% - 48px)); border-radius:999px; z-index:2;
+  width:min(920px, calc(100% - 48px)); border-radius:999px; z-index:50;
   display:flex; align-items:center; padding:12px 14px; gap:10px;
   background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
   box-shadow:0 18px 50px rgba(0,0,0,.12);
@@ -323,7 +331,7 @@ a{ color:inherit; text-decoration:none; }
 .post-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,.12); }
 
 .post-img {
-  width: 100%; height: 250px; background-size: cover; background-position: center;
+  width: 100%; height: var(--homeCardImgH); background-size: cover; background-position: center;
   border-bottom: 1px solid #eee; /* 이미지 아래 회색 라인 복구 */
 }
 
@@ -343,12 +351,12 @@ a{ color:inherit; text-decoration:none; }
 .marquee { overflow: hidden; }
 .marquee__track {
   display: flex;
-  gap: 20px;
+  gap: var(--homeCardGap);
   will-change: transform;
   transform: translate3d(0,0,0);
   animation: marquee 30s linear infinite; /* no-js fallback */
 }
-.marquee .post-card { flex: 0 0 350px; }
+.marquee .post-card { flex: 0 0 var(--homeCardW); }
 .marquee__track.is-js{
   animation: none !important; /* JS 제어 시 CSS 애니메이션 끔 */
 }
@@ -360,12 +368,19 @@ a{ color:inherit; text-decoration:none; }
 }
 
 .recommend-wrap { position: relative; }
+
+/* ✅ 맞춤형 여행 추천: 3장 뷰 + 인기 카드와 동일 크기 */
+.recommend-wrap{
+  max-width: calc(var(--homeCardW) * 3 + var(--homeCardGap) * 2);
+  margin: 0 auto;
+}
 #recommendCards {
-  display: flex; gap: 20px; overflow-x: auto; padding: 10px 0 30px;
+  scroll-behavior: smooth;
+  display: flex; gap: var(--homeCardGap); overflow-x: auto; padding: 10px 0 30px;
   scrollbar-width: none; -ms-overflow-style: none;
 }
 #recommendCards::-webkit-scrollbar { display: none; }
-#recommendCards .post-card { flex: 0 0 calc((100% - 40px) / 3); min-width: 300px; }
+#recommendCards .post-card { flex: 0 0 var(--homeCardW); }
 
 /* 화살표 박스 버튼 복구 */
 .arrow-btn {
@@ -380,3 +395,7 @@ a{ color:inherit; text-decoration:none; }
 .segmented { display: flex; gap: 8px; }
 .seg-btn { padding: 10px 20px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-weight: 600; color: #64748b; }
 .seg-btn.active { background: #2f6fed; color: #fff; border-color: #2f6fed; }
+
+/* ✅ 공통 찜(하트) 버튼 */
+.wish-btn{position:absolute;top:15px;right:15px;z-index:999;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:35px;height:35px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.wish-btn.active{filter:drop-shadow(0 4px 10px rgba(0,0,0,.15));}

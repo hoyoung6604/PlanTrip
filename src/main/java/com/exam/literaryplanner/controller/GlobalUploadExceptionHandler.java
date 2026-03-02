@@ -1,12 +1,12 @@
 package com.exam.literaryplanner.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 사진 업로드 시(용량/요청 크기 초과 등) 브라우저에서 ERR_CONNECTION_RESET 처럼 보이는 상황을 방지하기 위한 공통 처리.

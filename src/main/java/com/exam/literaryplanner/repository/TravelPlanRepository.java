@@ -25,7 +25,7 @@ public interface TravelPlanRepository extends JpaRepository<TravelPlan, Integer>
     @org.springframework.transaction.annotation.Transactional
     @Query("DELETE FROM TravelPlan t WHERE t.pIdx = :pIdx AND t.mIdx = :mIdx")
     int deleteMyPlan(@Param("pIdx") Integer pIdx, @Param("mIdx") Integer mIdx);
-    
+
     @Query(value = """
             SELECT
               tp.p_idx     AS pIdx,

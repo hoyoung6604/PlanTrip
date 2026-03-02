@@ -79,10 +79,14 @@ public class PlanMapService {
 
         Map<Integer, List<String>> byDay = new LinkedHashMap<>();
         for (var r : rows) {
-            if (r.getDay() == null) continue;
+            if (r.getDay() == null) {
+				continue;
+			}
 
             String name = r.getName();
-            if (name == null || name.isBlank()) continue;
+            if (name == null || name.isBlank()) {
+				continue;
+			}
 
             byDay.computeIfAbsent(r.getDay(), k -> new ArrayList<>()).add(name);
         }
@@ -97,10 +101,14 @@ public class PlanMapService {
 
         Map<Integer, List<String>> byDay = new LinkedHashMap<>();
         for (var r : rows) {
-            if (r.getDay() == null) continue;
+            if (r.getDay() == null) {
+				continue;
+			}
 
             String name = r.getName();
-            if (name == null || name.isBlank()) continue;
+            if (name == null || name.isBlank()) {
+				continue;
+			}
 
             byDay.computeIfAbsent(r.getDay(), k -> new ArrayList<>()).add(name);
         }

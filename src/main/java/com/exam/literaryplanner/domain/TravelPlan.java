@@ -3,7 +3,12 @@ package com.exam.literaryplanner.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "travelPlanT")
@@ -28,12 +33,12 @@ public class TravelPlan {
 
     @Column(name = "p_regDate", nullable = false, insertable = false, updatable = false)
     private LocalDateTime pRegDate;
-    
+
     @Column(name = "tp_title", nullable = false, length = 200)
     private String tpTitle;
 
     public TravelPlan() {}
-    
+
     public String getTpTitle() { return tpTitle; }
     public void setTpTitle(String tpTitle) { this.tpTitle = tpTitle; }
 

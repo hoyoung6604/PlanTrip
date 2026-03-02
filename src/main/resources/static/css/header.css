@@ -21,6 +21,11 @@ button,input,select,textarea{ font-family:var(--font); }
 /* ✅ 공통: 고정 헤더 공간 확보 */
 body{ padding-top:72px; }
 
+/* ✅ 공통: footer가 화면 아래에 붙도록(콘텐츠 짧은 페이지) */
+html,body{min-height:100%;}
+body{min-height:100vh; display:flex; flex-direction:column;}
+
+
 /* container */
 .container{
   width:min(var(--maxW), calc(100% - 48px));
@@ -40,6 +45,13 @@ body{ padding-top:72px; }
   z-index:99999;
   transition: transform .22s ease;
 }
+
+.header.is-solid{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+
 
 /* 스크롤 내릴 때 숨김(요구사항: 아래로 스크롤하면 사라지고, 위로/맨 위로 오면 다시 표시) */
 .header.is-hidden{

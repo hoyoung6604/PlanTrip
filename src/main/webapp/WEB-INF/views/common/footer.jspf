@@ -1,7 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <style>
   .ptf-footer{
+    margin-top:auto; /* ✅ 짧은 페이지에서 하단 고정 */
+    padding-bottom: 24px;
     background:#fff;
     color:#111827;
     position:relative;

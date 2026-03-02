@@ -11,144 +11,286 @@
   <script src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
   <style>
-    .wrap{display:flex; gap:16px;}
-    #map{width:70%; height:720px; border-radius:10px; border:1px solid #ddd;}
-    .side{width:30%;}
-    .box{border:1px solid #ddd; border-radius:10px; padding:12px; margin-bottom:12px;}
-    .list{max-height:240px; overflow:auto; border-top:1px solid #eee; margin-top:8px;}
-    .row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px dashed #eee;}
-    .row:last-child{border-bottom:none;}
-    .muted{color:#777; font-size:13px;}
-    button{padding:10px 12px; border:1px solid #ccc; border-radius:8px; background:#fff; cursor:pointer;}
-    button.primary{border-color:#222;}
-    .selItem{display:flex; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px dashed #eee;}
-    .selItem:last-child{border-bottom:none;}
-    .tiny{font-size:12px;}
-    input[type="text"]{width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;}
-    select{padding:6px; border:1px solid #ccc; border-radius:8px;}
-    .pill{display:inline-block; padding:2px 8px; border:1px solid #ddd; border-radius:999px; font-size:12px; color:#666;}
+    /* 지도 전체 영역 (스크롤 해야 푸터가 보이도록 높이 지정) */
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 100vh; /* 화면의 88%를 차지하여 푸터를 스크롤 아래로 밀어냄 */
+      min-height: 750px;
+      overflow: hidden;
+      background: #f8f9fa;
+      border-top: 1px solid #eee; /* 헤더와의 경계선 */
+    }
+
+    /* 전체 화면 지도 */
+    #map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* ---------------------------------
+       왼쪽 타임라인 패널 & 토글
+    --------------------------------- */
+    .left-timeline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 380px;
+      height: 100%;
+      background: #fff;
+      z-index: 10;
+      box-shadow: 2px 0 16px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease-in-out;
+    }
+    .left-timeline.closed {
+      transform: translateX(-100%);
+    }
+    
+    /* 왼쪽 패널 토글 버튼 */
+    .toggle-btn.left-btn {
+      position: absolute;
+      top: 50%;
+      right: -28px;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 70px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 3px 0 6px rgba(0,0,0,0.05);
+      z-index: 11;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .timeline-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+    .timeline-header h3 { margin: 0; font-size: 18px; color: #222; }
+
+    #selectedBox {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px;
+      background: #fcfcfc;
+    }
+
+    /* 타임라인 아이템 디자인 (트리플 스타일) */
+    .selItem { position: relative; padding-left: 28px; margin-bottom: 24px; }
+    .selItem::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; background: #2979ff; border-radius: 50%; box-shadow: 0 0 0 3px #e3edff; z-index: 2; }
+    .selItem::after { content: ''; position: absolute; left: 5px; top: 20px; bottom: -30px; width: 2px; background: #e3edff; z-index: 1; }
+    .selItem:last-child::after { display: none; }
+    .sel-card { background: #fff; border: 1px solid #eaeaea; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .sel-card b { font-size: 15px; color: #111; display: block; margin-bottom: 4px; }
+
+    /* ---------------------------------
+       오른쪽 위젯 패널 & 토글
+    --------------------------------- */
+    .right-tools {
+      position: absolute;
+      top: 40px; /* 헤더에서 충분히 떨어지도록 넉넉하게 내림 */
+      right: 30px;
+      width: 360px;
+      max-height: calc(100% - 80px); /* 스크롤을 위한 하단 여백 확보 */
+      z-index: 10;
+      transition: transform 0.3s ease-in-out;
+    }
+    .right-tools.closed {
+      transform: translateX(calc(100% + 30px));
+    }
+    
+    /* 오른쪽 패널 컨텐츠 래퍼 (스크롤 영역) */
+    .right-tools-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: calc(88vh - 100px);
+      overflow-y: auto;
+      pointer-events: none;
+    }
+    
+    /* 오른쪽 패널 토글 버튼 */
+    .toggle-btn.right-btn {
+      position: absolute;
+      top: 50%;
+      left: -28px;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 70px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: -3px 0 6px rgba(0,0,0,0.05);
+      z-index: 11;
+      font-size: 12px;
+      color: #555;
+      pointer-events: auto;
+    }
+
+    .box { pointer-events: auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #f0f0f0; }
+    .box b { font-size: 16px; color: #222; display: block; margin-bottom: 12px; }
+
+    .list { max-height: 220px; overflow-y: auto; padding-right: 8px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; border-bottom: 1px dashed #eee; cursor: pointer; transition: background 0.2s; }
+    .row:hover { background: #f9f9f9; }
+    .row:last-child { border-bottom: none; }
+
+    /* 공통 요소 및 버튼 최적화 */
+    .muted { color: #777; font-size: 13px; }
+    .tiny { font-size: 12px; }
+    
+    button { padding: 10px 14px; border: 1px solid #ccc; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; transition: 0.2s; box-sizing: border-box; }
+    button:hover { background: #f5f5f5; }
+    button.primary { border-color: #2979ff; background: #2979ff; color: #fff; border: none; }
+    button.primary:hover { background: #1c54b2; }
+    button.btn-icon { padding: 4px 8px; font-size: 12px; border: 1px solid #eee; border-radius: 6px; background: #fff; color: #555; }
+    
+    input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; box-sizing: border-box; }
+    input[type="text"]:focus { border-color: #2979ff; }
+    select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
   </style>
 
-  <!-- ✅ appkey는 하나만! (문자열로 붙이면 깨짐) -->
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24&libraries=services&autoload=false"></script>
 </head>
 <body>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-<h2>장소 선택 & 경로 계산</h2>
-<p class="muted">도시/목적 조건에 맞는 장소를 선택하면 지도에 표시하고, “경로 계산”으로 시간/거리를 구해줘.</p>
-
-<div class="wrap">
+<div class="map-container">
+  
   <div id="map"></div>
-
-  <div class="side">
-
-    <!-- =======================
-         1) 장소 목록
-    ======================== -->
-    <div class="box">
-      <b>장소 목록</b>
-      <div class="list" id="spotList">
-        <c:forEach var="s" items="${spots}">
-          <div class="row">
-            <label style="flex:1;">
-              <input type="checkbox" class="spotChk"
-                     data-id="${s.id}"
-                     data-name="${fn:escapeXml(s.name)}"
-                     data-lat="${s.lat}"
-                     data-lng="${s.lng}">
-              ${s.name}
-              <span class="muted tiny">(${s.catCode})</span>
-            </label>
-            <span class="muted tiny">${s.lat}, ${s.lng}</span>
-          </div>
-        </c:forEach>
+  
+  <div class="left-timeline closed" id="leftTimeline">
+    <button class="toggle-btn left-btn" id="leftToggleBtn" onclick="toggleLeftPanel()">▶</button>
+    
+    <div class="timeline-header">
+      <div>
+        <h3>나의 일정</h3>
+        <span class="muted tiny">장소를 선택하면 코스가 만들어져.</span>
       </div>
-
-      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="primary" onclick="calcRoute()">경로 계산</button>
-        <button type="button" onclick="clearSelection()">선택 초기화</button>
-        <button type="button" onclick="fitBounds()">전체보기</button>
-      </div>
-
-      <div style="margin-top:10px;">
-        <div class="muted">총 거리: <span id="totalDist">-</span></div>
-        <div class="muted">총 시간: <span id="totalTime">-</span></div>
-      </div>
-    </div>
-
-    <!-- =======================
-         2) 근처 숙소 목록(추가)
-         - 장소 목록 아래 표시
-         - 체크하면 selected에 들어가고 저장됨
-    ======================== -->
-    <div class="box">
-      <b>근처 숙소 <span class="pill">DB</span></b>
-      <div class="muted tiny" style="margin-top:4px;">
-        * 현재 선택한 장소들의 중심 좌표 기준으로 주변 숙소를 불러와.
-      </div>
-
-      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" onclick="loadNearbyStays()">주변 숙소 불러오기</button>
-        <button type="button" onclick="clearStayLayer()">숙소 마커 제거</button>
-      </div>
-
-      <div id="stayList" class="list"></div>
-    </div>
-
-    <!-- =======================
-         3) 선택 목록
-    ======================== -->
-    <div class="box">
-      <b>선택 목록(순서)</b>
-      <div id="selectedBox" class="list"></div>
-
       <button type="button" class="primary" onclick="savePlan()">선택 저장</button>
-
-      <p class="muted tiny" style="margin-top:8px;">
-        * p_day는 일차(1일차/2일차...)야. 지금은 간단히 선택목록에서 바꿀 수 있게 해뒀어.
-      </p>
     </div>
-
+    
+    <div id="selectedBox"></div>
   </div>
-</div>
 
-<!-- ✅ 저장은 백엔드 컨트롤러(@RequestParam)랑 맞춰서 "폼 submit" -->
-<form id="saveForm" method="post" action="${pageContext.request.contextPath}/plans/route/save" style="display:none;">
+  <div class="right-tools" id="rightTools">
+    <button class="toggle-btn right-btn" id="rightToggleBtn" onclick="toggleRightPanel()">▶</button>
+    
+    <div class="right-tools-content">
+      <div class="box">
+        <b>장소 목록</b>
+        <div class="list" id="spotList">
+          <c:forEach var="s" items="${spots}">
+            <div class="row">
+              <label style="flex:1; cursor: pointer; display: flex; align-items: center;">
+                <input type="checkbox" class="spotChk"
+                       data-id="${s.id}"
+                       data-name="${fn:escapeXml(s.name)}"
+                       data-lat="${s.lat}"
+                       data-lng="${s.lng}"
+                       style="margin-right: 8px;">
+                ${s.name}
+                <span class="muted tiny" style="margin-left:4px;">(${s.catCode})</span>
+              </label>
+              <span class="muted tiny">${s.lat}, ${s.lng}</span>
+            </div>
+          </c:forEach>
+        </div>
+
+        <div style="margin-top:16px;">
+          <button type="button" class="primary" onclick="calcRoute()" style="width: 100%; margin-bottom: 8px; padding: 12px;">경로 계산</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="clearSelection()" style="flex: 1;">초기화</button>
+            <button type="button" onclick="fitBounds()" style="flex: 1;">전체보기</button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; padding-top:16px; border-top: 1px dashed #eee; background: #fafafa; border-radius: 8px; padding: 12px;">
+          <div class="muted">총 거리: <span id="totalDist" style="font-weight:700; color:#2979ff;">-</span></div>
+          <div class="muted" style="margin-top:4px;">총 시간: <span id="totalTime" style="font-weight:700; color:#2979ff;">-</span></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <b style="margin-bottom:8px;">근처 숙소</b>
+        <div class="muted tiny" style="margin-bottom:12px; line-height:1.4;">
+          * 현재 유저 선택한 장소들의 중심 좌표 기준으로 주변 숙소를 불러와 줍니다.
+        </div>
+
+        <div style="display:flex; gap:8px; margin-bottom: 12px;">
+          <button type="button" onclick="loadNearbyStays()" style="flex:1; border-color:#2979ff; color:#2979ff;">주변 숙소 불러오기</button>
+          <button type="button" onclick="clearStayLayer()" style="padding: 10px;">마커 제거</button>
+        </div>
+
+        <div id="stayList" class="list"></div>
+      </div>
+    </div>
+  </div> 
+</div> <form id="saveForm" method="post" action="${pageContext.request.contextPath}/plans/route/save" style="display:none;">
   <input type="hidden" name="pIdx" value="${pIdx}">
   <input type="hidden" name="cityId" value="${cityId}">
   <c:forEach var="p" items="${purpose}">
     <input type="hidden" name="purpose" value="${fn:escapeXml(p)}">
   </c:forEach>
-
   <div id="hiddenInputs"></div>
 </form>
 
 <script>
+  // ✅ 패널 토글 애니메이션 로직
+  function toggleLeftPanel() {
+    const panel = document.getElementById('leftTimeline');
+    const btn = document.getElementById('leftToggleBtn');
+    panel.classList.toggle('closed');
+    btn.innerText = panel.classList.contains('closed') ? '▶' : '◀';
+  }
+
+  function toggleRightPanel() {
+    const panel = document.getElementById('rightTools');
+    const btn = document.getElementById('rightToggleBtn');
+    panel.classList.toggle('closed');
+    btn.innerText = panel.classList.contains('closed') ? '◀' : '▶';
+  }
+
   // ✅ contextPath
   const ctx = '${pageContext.request.contextPath}';
 
-  // ✅ 선택 데이터: 장소+숙소 통합
-  // [{id,name,lat,lng,day,memo}]
   let selected = [];
-
-  // ✅ 지도 전역
   let map = null;
   let bounds = null;
-
-  // ✅ "선택된 것" 마커/라인 레이어
   let selectedMarkers = [];
   let routeLines = [];
-
-  // ✅ "근처 숙소 표시" 마커 레이어
   let stayMarkers = [];
 
   const pIdx = Number('${pIdx}');
   const selectedBox = document.getElementById('selectedBox');
   const hiddenInputs = document.getElementById('hiddenInputs');
 
-  // ✅ Kakao SDK 로드 후 실행
   kakao.maps.load(function () {
     initMap();
     bindSpotCheckboxEvents();
@@ -158,32 +300,22 @@
 
   function initMap() {
     const mapEl = document.getElementById('map');
-
     map = new kakao.maps.Map(mapEl, {
       center: new kakao.maps.LatLng(37.5665, 126.9780),
       level: 7
     });
-
     bounds = new kakao.maps.LatLngBounds();
   }
 
-  // =========================
-  // 장소 체크박스 이벤트
-  // =========================
   function bindSpotCheckboxEvents() {
     document.querySelectorAll('.spotChk').forEach(chk => {
-
-      // row 클릭 시 지도 이동
       const row = chk.closest('.row');
       if (row) {
-        row.style.cursor = 'pointer';
         row.addEventListener('click', (e) => {
           if (e.target && (e.target.tagName === 'INPUT')) return;
-
           const lat = Number(chk.dataset.lat);
           const lng = Number(chk.dataset.lng);
           if (!lat || !lng || !map) return;
-
           const pos = new kakao.maps.LatLng(lat, lng);
           map.setLevel(5);
           map.panTo(pos);
@@ -192,11 +324,8 @@
 
       chk.addEventListener('change', () => {
         const id = Number(chk.dataset.id);
-
         if (chk.checked) {
-          // 중복 방지
           if (selected.some(x => x.id === id)) return;
-
           selected.push({
             id: id,
             name: chk.dataset.name,
@@ -205,23 +334,23 @@
             day: 1,
             memo: ''
           });
+          
+          // 장소 선택 시 왼쪽 패널 자동 열기
+          const leftPanel = document.getElementById('leftTimeline');
+          if (leftPanel.classList.contains('closed')) {
+            toggleLeftPanel();
+          }
         } else {
           selected = selected.filter(x => x.id !== id);
-          // 숙소 체크박스도 같은 id면 같이 해제(같은 spotT면 충돌 가능성 있음)
           const stayChk = document.querySelector('.stayChk[data-id="' + id + '"]');
           if (stayChk) stayChk.checked = false;
         }
-
         renderSelected();
         renderMapSelectedLayer();
       });
-
     });
   }
 
-  // =========================
-  // 지도 레이어 관리
-  // =========================
   function fitBounds() {
     if (!map || !bounds || selectedMarkers.length === 0) return;
     map.setBounds(bounds);
@@ -230,10 +359,8 @@
   function clearSelectedLayer() {
     selectedMarkers.forEach(m => m.setMap(null));
     selectedMarkers = [];
-
     routeLines.forEach(l => l.setMap(null));
     routeLines = [];
-
     bounds = new kakao.maps.LatLngBounds();
   }
 
@@ -247,44 +374,38 @@
   function clearSelection() {
     document.querySelectorAll('.spotChk').forEach(chk => chk.checked = false);
     document.querySelectorAll('.stayChk').forEach(chk => chk.checked = false);
-
     selected = [];
     renderSelected();
-
-    clearSelectedLayer(); // 선택 마커/라인만 제거
+    clearSelectedLayer();
     document.getElementById('totalDist').innerText = '-';
     document.getElementById('totalTime').innerText = '-';
+    
+    // 모두 해제 시 왼쪽 패널 자동 닫기
+    const leftPanel = document.getElementById('leftTimeline');
+    if (!leftPanel.classList.contains('closed')) {
+      toggleLeftPanel();
+    }
   }
 
-  // ✅ 선택된 것(장소+숙소) 마커 렌더
   function renderMapSelectedLayer() {
     if (!map) return;
-
     clearSelectedLayer();
     if (selected.length === 0) return;
 
     selected.forEach((s, idx) => {
       const pos = new kakao.maps.LatLng(s.lat, s.lng);
       bounds.extend(pos);
-
       const marker = new kakao.maps.Marker({ position: pos, map: map });
       selectedMarkers.push(marker);
 
       const iw = new kakao.maps.InfoWindow({
-        content: '<div style="padding:6px 8px; font-size:13px;"><b>'
-               + (idx + 1) + '. ' + escapeHtml(s.name)
-               + '</b></div>'
+        content: '<div style="padding:6px 8px; font-size:13px;"><b>' + (idx + 1) + '. ' + escapeHtml(s.name) + '</b></div>'
       });
-
       kakao.maps.event.addListener(marker, 'click', () => iw.open(map, marker));
     });
-
     map.setBounds(bounds);
   }
 
-  // =========================
-  // 선택 목록 UI
-  // =========================
   function dayOptions(selectedDay) {
     let html = '';
     for (let d = 1; d <= 7; d++) {
@@ -297,29 +418,26 @@
     selectedBox.innerHTML = '';
 
     if (selected.length === 0) {
-      selectedBox.innerHTML = '<div class="muted" style="padding:8px 0;">선택된 장소가 없어.</div>';
+      selectedBox.innerHTML = '<div class="muted" style="text-align:center; padding-top:40px;">오른쪽 장소 목록에서<br>원하는 곳을 추가해주세요.</div>';
     } else {
       selected.forEach((s, idx) => {
         const div = document.createElement('div');
         div.className = 'selItem';
 
         div.innerHTML =
-          '<div style="flex:1;">' +
-            '<b>' + (idx + 1) + '. ' + escapeHtml(s.name) + '</b>' +
-            '<div class="muted tiny">' + s.lat + ', ' + s.lng + '</div>' +
-
-            '<div style="margin-top:6px; display:flex; gap:8px; align-items:center;">' +
-              '<span class="muted tiny">일차</span>' +
-              '<select data-idx="' + idx + '" class="daySel">' +
-                dayOptions(s.day) +
-              '</select>' +
-              '<button type="button" class="tiny" onclick="moveUp(' + idx + ')">▲</button>' +
-              '<button type="button" class="tiny" onclick="moveDown(' + idx + ')">▼</button>' +
-              '<button type="button" class="tiny" onclick="removeAt(' + idx + ')">삭제</button>' +
+          '<div class="sel-card">' +
+            '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">' +
+              '<b style="flex:1; margin-right:8px; line-height:1.4;">' + escapeHtml(s.name) + '</b>' +
+              '<div style="display:flex; gap:4px;">' +
+                '<button type="button" class="btn-icon" onclick="moveUp(' + idx + ')">▲</button>' +
+                '<button type="button" class="btn-icon" onclick="moveDown(' + idx + ')">▼</button>' +
+                '<button type="button" class="btn-icon" style="color:#ff5252;" onclick="removeAt(' + idx + ')">✕</button>' +
+              '</div>' +
             '</div>' +
-
-            '<div style="margin-top:6px;">' +
-              '<input type="text" placeholder="메모(선택)" value="' + escapeXml(s.memo) + '" data-idx="' + idx + '" class="memoInp">' +
+            
+            '<div style="display:flex; gap:8px; align-items:center;">' +
+              '<select data-idx="' + idx + '" class="daySel" style="width: 80px;">' + dayOptions(s.day) + '</select>' +
+              '<input type="text" placeholder="메모(선택)" value="' + escapeXml(s.memo) + '" data-idx="' + idx + '" class="memoInp" style="flex:1;">' +
             '</div>' +
           '</div>';
 
@@ -378,28 +496,27 @@
   function removeAt(idx) {
     const id = selected[idx].id;
     selected.splice(idx, 1);
-
-    // 장소 체크 해제
     const chk = document.querySelector('.spotChk[data-id="' + id + '"]');
     if (chk) chk.checked = false;
-
-    // 숙소 체크 해제
     const stayChk = document.querySelector('.stayChk[data-id="' + id + '"]');
     if (stayChk) stayChk.checked = false;
-
     renderSelected();
     renderMapSelectedLayer();
+    
+    // 삭제 후 리스트가 비어있으면 왼쪽 패널 닫기
+    if(selected.length === 0) {
+        const leftPanel = document.getElementById('leftTimeline');
+        if (!leftPanel.classList.contains('closed')) {
+          toggleLeftPanel();
+        }
+    }
   }
 
-  // =========================
-  // 경로 계산 (일차별 색상 라인 유지)
-  // =========================
   async function calcRoute() {
     if (selected.length < 2) {
       alert('경로 계산은 최소 2개 장소가 필요해.');
       return;
     }
-
     const spotIds = selected.map(s => s.id).join(',');
     const url = ctx + '/plans/api/directions?spotIds=' + encodeURIComponent(spotIds);
 
@@ -413,16 +530,13 @@
     document.getElementById('totalDist').innerText = formatDistance(data.distanceM);
     document.getElementById('totalTime').innerText = formatDuration(data.durationSec);
 
-    // 기존 라인 제거
     routeLines.forEach(l => l.setMap(null));
     routeLines = [];
 
     const grouped = groupByDay();
     Object.keys(grouped).forEach(day => {
-
       const arr = grouped[day];
       if (arr.length < 2) return;
-
       const path = arr.map(s => new kakao.maps.LatLng(s.lat, s.lng));
 
       const polyline = new kakao.maps.Polyline({
@@ -431,20 +545,13 @@
         strokeColor: getColorByDay(day),
         strokeOpacity: 0.85
       });
-
       polyline.setMap(map);
       routeLines.push(polyline);
     });
   }
 
   function getColorByDay(day) {
-    const colors = {
-      1: "#2979ff",
-      2: "#ff1744",
-      3: "#00c853",
-      4: "#ff9100",
-      5: "#9c27b0"
-    };
+    const colors = { 1: "#2979ff", 2: "#ff1744", 3: "#00c853", 4: "#ff9100", 5: "#9c27b0" };
     return colors[Number(day)] || "#222";
   }
 
@@ -457,13 +564,6 @@
     return map;
   }
 
-  // =========================
-  // ✅ 숙소 기능(추가)
-  // - 선택된 장소 중심 기준으로 /plans/api/stays 호출
-  // - 목록 아래 체크박스 표시
-  // - 체크하면 selected에 들어가 저장됨
-  // - 지도에 숙소 마커도 표시(별도 레이어)
-  // =========================
   function getCenter() {
     let lat = 0, lng = 0;
     selected.forEach(s => { lat += s.lat; lng += s.lng; });
@@ -475,7 +575,6 @@
       alert('먼저 장소를 1개 이상 선택해줘.');
       return;
     }
-
     const center = getCenter();
     const url = ctx + '/plans/api/stays?lat=' + center.lat + '&lng=' + center.lng;
 
@@ -486,9 +585,6 @@
     }
 
     const stays = await res.json();
-    console.log('stays raw =', stays); // ✅ 개발자도구에서 여기로 실제 필드명 확인 가능
-
-    // 🔥 기존 숙소 마커 제거
     stayMarkers.forEach(m => m.setMap(null));
     stayMarkers = [];
 
@@ -496,101 +592,72 @@
     stayList.innerHTML = '';
 
     if (!stays || stays.length === 0) {
-      stayList.innerHTML = '<div class="muted" style="padding:8px 0;">근처 숙소가 없어.</div>';
+      stayList.innerHTML = '<div class="muted" style="padding:8px 0; text-align:center;">근처 숙소가 없어.</div>';
       return;
     }
 
     stays.forEach(stay => {
-      // ✅ 백엔드 DTO 필드명 케이스를 다 흡수(가장 중요)
-      const id =
-        Number(stay.id ?? stay.sIdx ?? stay.idx ?? stay.s_idx);
+      const id = Number(stay.id ?? stay.sIdx ?? stay.idx ?? stay.s_idx);
+      const name = String(stay.name ?? stay.sName ?? stay.s_name ?? stay.spotName ?? stay.sname ?? '');
+      const lat = Number(stay.lat ?? stay.sLat ?? stay.s_lat);
+      const lng = Number(stay.lng ?? stay.sLng ?? stay.s_lng);
+      const dist = Number(stay.distance ?? stay.dist ?? stay.distanceKm ?? stay.distance_km ?? 0);
 
-      const name =
-        String(stay.name ?? stay.sName ?? stay.s_name ?? stay.spotName ?? stay.sname ?? '');
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
-      const lat =
-        Number(stay.lat ?? stay.sLat ?? stay.s_lat);
-
-      const lng =
-        Number(stay.lng ?? stay.sLng ?? stay.s_lng);
-
-      const dist =
-        Number(stay.distance ?? stay.dist ?? stay.distanceKm ?? stay.distance_km ?? 0);
-
-      // ✅ 좌표가 없으면 마커/목록이 망가져서 여기서 스킵
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        console.warn('좌표 누락 stay =', stay);
-        return;
-      }
-
-      // ====== 목록(체크박스) ======
       const row = document.createElement('div');
       row.className = 'row';
-
       const checked = selected.some(x => x.id === id);
 
       row.innerHTML =
-        '<label style="flex:1;">' +
+        '<label style="flex:1; cursor: pointer; display: flex; align-items: center;">' +
           '<input type="checkbox" class="stayChk" ' +
-            'data-id="' + id + '" ' +
-            'data-name="' + escapeHtml(name) + '" ' +
-            'data-lat="' + lat + '" ' +
-            'data-lng="' + lng + '" ' +
-            (checked ? 'checked' : '') +
-          '>' +
+            'data-id="' + id + '" data-name="' + escapeHtml(name) + '" data-lat="' + lat + '" data-lng="' + lng + '" ' +
+            (checked ? 'checked' : '') + ' style="margin-right: 8px;">' +
           escapeHtml(name) +
-          '<span class="muted tiny"> (약 ' + dist.toFixed(2) + ' km)</span>' +
+          '<span class="muted tiny" style="margin-left:4px;"> (약 ' + dist.toFixed(2) + ' km)</span>' +
         '</label>';
 
       stayList.appendChild(row);
 
-      // ====== 지도 마커 ======
-      const marker = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(lat, lng),
-        map: map
-      });
+      const marker = new kakao.maps.Marker({ position: new kakao.maps.LatLng(lat, lng), map: map });
       stayMarkers.push(marker);
 
       const iw = new kakao.maps.InfoWindow({
-        content:
-          '<div style="padding:8px;">' +
-            '<b>' + escapeHtml(name) + '</b><br>' +
-            '약 ' + dist.toFixed(2) + ' km' +
-          '</div>'
+        content: '<div style="padding:8px;"><b>' + escapeHtml(name) + '</b><br>약 ' + dist.toFixed(2) + ' km</div>'
       });
-
       kakao.maps.event.addListener(marker, 'click', () => iw.open(map, marker));
     });
 
-    // ✅ 숙소 체크/해제 이벤트 바인딩
     document.querySelectorAll('.stayChk').forEach(chk => {
       chk.addEventListener('change', () => {
         const id = Number(chk.dataset.id);
-
         if (chk.checked) {
           if (selected.some(x => x.id === id)) return;
-
-          selected.push({
-            id: id,
-            name: chk.dataset.name + ' (숙소)',
-            lat: Number(chk.dataset.lat),
-            lng: Number(chk.dataset.lng),
-            day: 1,
-            memo: '숙소'
-          });
+          selected.push({ id: id, name: chk.dataset.name + ' (숙소)', lat: Number(chk.dataset.lat), lng: Number(chk.dataset.lng), day: 1, memo: '숙소' });
+          
+          // 숙소 선택 시 왼쪽 패널 닫혀있으면 열기
+          const leftPanel = document.getElementById('leftTimeline');
+          if (leftPanel.classList.contains('closed')) {
+            toggleLeftPanel();
+          }
         } else {
           selected = selected.filter(x => x.id !== id);
         }
-
         renderSelected();
-        renderMapMarkers(); // ✅ 기존 마커 기능 유지
+        renderMapSelectedLayer(); 
+        
+        // 삭제 후 리스트가 비어있으면 왼쪽 패널 닫기
+        if(selected.length === 0) {
+            const leftPanel = document.getElementById('leftTimeline');
+            if (!leftPanel.classList.contains('closed')) {
+              toggleLeftPanel();
+            }
+        }
       });
     });
   }
 
-  // =========================
-  // 저장 (폼 submit으로 컨트롤러와 맞춤)
-  // =========================
   function savePlan() {
     if (selected.length < 1) {
       alert('저장할 장소가 없어.');
@@ -600,9 +667,6 @@
     document.getElementById('saveForm').submit();
   }
 
-  // =========================
-  // 유틸
-  // =========================
   function formatDuration(sec) {
     sec = Number(sec || 0);
     const h = Math.floor(sec / 3600);
@@ -615,23 +679,8 @@
     return (m >= 1000) ? ((m / 1000).toFixed(1) + ' km') : (m + ' m');
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replaceAll('&','&amp;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'",'&#039;');
-  }
-
-  function escapeXml(str) {
-    return String(str ?? '')
-      .replaceAll('&','&amp;')
-      .replaceAll('"','&quot;')
-      .replaceAll("'",'&#039;')
-      .replaceAll('<','&lt;')
-      .replaceAll('>','&gt;');
-  }
+  function escapeHtml(str) { return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+  function escapeXml(str) { return String(str ?? '').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll("'",'&#039;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 </script>
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>

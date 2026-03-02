@@ -1,11 +1,11 @@
 package com.exam.literaryplanner.config;
 
+import java.util.Map;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * 커뮤니티 글 내용(c_cont) 컬럼이 너무 짧아서(Data truncation) 등록이 실패하는 문제를 막기 위한 패치.

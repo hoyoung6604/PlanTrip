@@ -1,17 +1,13 @@
 package com.exam.literaryplanner.service;
 
-import com.exam.literaryplanner.domain.PlanDetail;
-import com.exam.literaryplanner.domain.PlanSaveRequest;
-import com.exam.literaryplanner.domain.PlanSaveRequest.PlanItem;
-import com.exam.literaryplanner.domain.TravelPlan;
-import com.exam.literaryplanner.repository.PlanDetailRepository;
-import com.exam.literaryplanner.repository.TravelPlanRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
+import com.exam.literaryplanner.domain.PlanDetail;
+import com.exam.literaryplanner.domain.PlanSaveRequest;
+import com.exam.literaryplanner.domain.TravelPlan;
+import com.exam.literaryplanner.repository.PlanDetailRepository;
+import com.exam.literaryplanner.repository.TravelPlanRepository;
 
 @Service
 public class PlanSaveService {
@@ -28,10 +24,15 @@ public class PlanSaveService {
     @Transactional
     public Integer saveRoutePlan(Integer mIdx, PlanSaveRequest req) {
 
-        if (mIdx == null) throw new IllegalArgumentException("로그인이 필요합니다.");
-        if (req == null) throw new IllegalArgumentException("요청이 비었습니다.");
-        if (req.getItems() == null || req.getItems().isEmpty())
-            throw new IllegalArgumentException("저장할 장소가 없습니다.");
+        if (mIdx == null) {
+			throw new IllegalArgumentException("로그인이 필요합니다.");
+		}
+        if (req == null) {
+			throw new IllegalArgumentException("요청이 비었습니다.");
+		}
+        if (req.getItems() == null || req.getItems().isEmpty()) {
+			throw new IllegalArgumentException("저장할 장소가 없습니다.");
+		}
 
         Integer pIdx = req.getpIdx();
         if (pIdx == null || pIdx <= 0) {
@@ -62,6 +63,6 @@ public class PlanSaveService {
 
         return pIdx;
     }
-    
-    
+
+
 }

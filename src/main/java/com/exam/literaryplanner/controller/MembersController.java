@@ -1,14 +1,18 @@
 package com.exam.literaryplanner.controller;
 
-import java.util.Map;
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.service.LiteraryService;
@@ -223,8 +227,11 @@ public class MembersController {
         String m = (e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage());
         if (m != null) {
             String lower = m.toLowerCase();
-            if (lower.contains("m_email") || lower.contains("email")) msg = "이미 가입된 이메일입니다.";
-            else if (lower.contains("m_id") || lower.contains("id")) msg = "이미 사용 중인 아이디입니다.";
+            if (lower.contains("m_email") || lower.contains("email")) {
+				msg = "이미 가입된 이메일입니다.";
+			} else if (lower.contains("m_id") || lower.contains("id")) {
+				msg = "이미 사용 중인 아이디입니다.";
+			}
         }
         return msg;
     }

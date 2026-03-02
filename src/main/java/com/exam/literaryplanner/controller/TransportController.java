@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class TransportController {
 
     private final TransportService transportService;
-    
+
 //    public TransportController(TransportService transportService) {
 //    	this.transportService = transportService;
 //    }
@@ -76,9 +76,13 @@ public class TransportController {
             boolean arrIsJeju = jejuId.equals(arrId) || arrNm.contains("제주");
 
             if ("JEJU_OUT".equals(direction)) {
-                if (depIsJeju) filtered.add(m);
+                if (depIsJeju) {
+					filtered.add(m);
+				}
             } else if ("JEJU_IN".equals(direction)) {
-                if (arrIsJeju) filtered.add(m);
+                if (arrIsJeju) {
+					filtered.add(m);
+				}
             }
         }
 
@@ -94,9 +98,11 @@ public class TransportController {
             @RequestParam(defaultValue = "1") int page,
             Model model
     ) {
-        
+
         List<?> all = transportService.searchFlight(depAirportId, arrAirportId, depPlandTime);
-        if (all == null) all = Collections.emptyList();
+        if (all == null) {
+			all = Collections.emptyList();
+		}
 
         // ✅ JSP UI(칩/달력) 렌더링에 필요한 공통 값 세팅
         model.addAttribute("airports", transportService.getAirports());
@@ -125,8 +131,9 @@ public class TransportController {
         java.util.Map<String, String> airports = transportService.getAirports(); // id -> name
 
         for (String arrId : airports.keySet()) {
-            if (arrId == null || arrId.isBlank()) continue;
-            if (arrId.equals(depAirportId)) continue;
+            if (arrId == null || arrId.isBlank() || arrId.equals(depAirportId)) {
+				continue;
+			}
 
             try {
                 java.util.List<java.util.Map<String, Object>> tmp = transportService.searchFlight(depAirportId, arrId, depPlandTime);
@@ -295,14 +302,22 @@ public class TransportController {
     //  paging utils
     // =========================
     private void addPaging(Model model, List<Map<String, Object>> list, int page, int pageSize) {
-        if (list == null) list = Collections.emptyList();
+        if (list == null) {
+			list = Collections.emptyList();
+		}
 
         int total = list.size();
         int totalPages = (int) Math.ceil((double) total / pageSize);
-        if (totalPages == 0) totalPages = 1;
+        if (totalPages == 0) {
+			totalPages = 1;
+		}
 
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
+        if (page < 1) {
+			page = 1;
+		}
+        if (page > totalPages) {
+			page = totalPages;
+		}
 
         int fromIndex = (page - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, total);
@@ -317,14 +332,22 @@ public class TransportController {
     }
 
     private void addPagingGeneric(Model model, List<?> list, int page, int pageSize) {
-        if (list == null) list = Collections.emptyList();
+        if (list == null) {
+			list = Collections.emptyList();
+		}
 
         int total = list.size();
         int totalPages = (int) Math.ceil((double) total / pageSize);
-        if (totalPages == 0) totalPages = 1;
+        if (totalPages == 0) {
+			totalPages = 1;
+		}
 
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
+        if (page < 1) {
+			page = 1;
+		}
+        if (page > totalPages) {
+			page = totalPages;
+		}
 
         int fromIndex = (page - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, total);

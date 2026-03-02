@@ -10,6 +10,6 @@ public interface PlanService {
 	Integer createPlan(String city, Integer mIdx, List<String> purposes, LocalDate start, LocalDate end);
 
     TravelPlan getPlan(Integer planId);
-    
-    
+
+
 }

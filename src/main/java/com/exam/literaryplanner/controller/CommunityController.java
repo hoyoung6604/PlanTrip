@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Community;
+import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Spot;
-import com.exam.literaryplanner.repository.ReviewPhotoRepository;
 import com.exam.literaryplanner.repository.CommunityRepository;
+import com.exam.literaryplanner.repository.ReviewPhotoRepository;
 import com.exam.literaryplanner.repository.SpotRepository;
 import com.exam.literaryplanner.service.ReviewPhotoService;
 import com.exam.literaryplanner.service.SpotService;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/community")
@@ -260,11 +260,7 @@ public class CommunityController {
         }
 
         Community review = reviewRepository.findById(rvIdx).orElse(null);
-        if (review == null) {
-            return "redirect:/community/my-reviews";
-        }
-
-        if (!review.getMIdx().equals(loginMember.getMIdx())) {
+        if ((review == null) || !review.getMIdx().equals(loginMember.getMIdx())) {
             return "redirect:/community/my-reviews";
         }
 
@@ -334,7 +330,9 @@ public class CommunityController {
     // 지역은 설계서상 communityT.c_region 역할
     // spot.addr에서 앞 단어(예: "서울", "부산", "제주")만 뽑아서 저장
     private String extractRegion(Spot spot) {
-        if (spot == null) return null;
+        if (spot == null) {
+			return null;
+		}
 
         String addr = null;
         try {
@@ -355,7 +353,9 @@ public class CommunityController {
         try {
             if (spot.getCity() != null && spot.getCity().getName() != null) {
                 String cityName = spot.getCity().getName().trim();
-                if (!cityName.isBlank()) return cityName;
+                if (!cityName.isBlank()) {
+					return cityName;
+				}
             }
         } catch (Exception ignored) {}
 

@@ -1,21 +1,36 @@
 package com.exam.literaryplanner.controller;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.exam.literaryplanner.domain.*;
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.domain.PlanDetail;
+import com.exam.literaryplanner.domain.Spot;
 import com.exam.literaryplanner.dto.RouteSpotDto;
 import com.exam.literaryplanner.dto.SpotDistanceDto;
-import com.exam.literaryplanner.repository.*;
+import com.exam.literaryplanner.repository.CityRepository;
+import com.exam.literaryplanner.repository.PlanDetailRepository;
 import com.exam.literaryplanner.repository.SpotRepository;
-import com.exam.literaryplanner.service.*;
+import com.exam.literaryplanner.repository.TravelPlanRepository;
+import com.exam.literaryplanner.service.KakaoDirectionsService;
+import com.exam.literaryplanner.service.PlanService;
+import com.exam.literaryplanner.service.RouteService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +67,9 @@ public class RouteController {
             HttpSession session
     ) {
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
+        if (loginMember == null) {
+			return "redirect:/members/login";
+		}
 
         Integer planId = planService.createPlan(
                 planName,
@@ -199,7 +216,7 @@ public class RouteController {
     ) {
         return spotRepository.findNearestStay(lat, lng);
     }
-    
+
     @ResponseBody
     @GetMapping("/api/stays/byRoute")
     public List<SpotDistanceDto> staysByRoute(@RequestParam Integer pIdx) {
@@ -207,7 +224,9 @@ public class RouteController {
         List<PlanDetail> details =
                 planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
 
-        if (details.isEmpty()) return List.of();
+        if (details.isEmpty()) {
+			return List.of();
+		}
 
         List<Spot> spots = spotRepository.findAllById(
                 details.stream()
@@ -220,15 +239,17 @@ public class RouteController {
 
         return spotRepository.findNearestStay(avgLat, avgLng);
     }
-    
-    
+
+
 
     // ==========================
     // 공통 유틸
     // ==========================
     private List<Integer> parseSpotIds(String spotIds) {
 
-        if (!StringUtils.hasText(spotIds)) return List.of();
+        if (!StringUtils.hasText(spotIds)) {
+			return List.of();
+		}
 
         String[] parts = spotIds.split(",");
         LinkedHashSet<Integer> set = new LinkedHashSet<>();

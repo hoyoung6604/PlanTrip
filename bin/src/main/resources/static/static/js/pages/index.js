@@ -251,3 +251,14 @@
     initDropdowns();
   });
 })();
+
+// ✅ 공통 찜(하트) 토글
+window.toggleWish = function(event, sIdx, btn){
+    event = event || window.event;
+  try{ if(event){ event.preventDefault(); event.stopPropagation(); } }catch(e){}
+  var ctx = (window.CONTEXT_PATH || (document.body && document.body.getAttribute('data-context')) || '');
+  fetch(ctx + '/api/wish/toggle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sIdx:sIdx})})
+    .then(function(r){ if(r.status===401){ alert('로그인이 필요한 서비스입니다.'); return null;} return r.json(); })
+    .then(function(d){ if(d&&d.success){ if(btn) btn.textContent = d.isHearted?'❤️':'🤍'; } })
+    .catch(function(e){ console.error(e); alert('처리 중 오류가 발생했습니다.');});
+};

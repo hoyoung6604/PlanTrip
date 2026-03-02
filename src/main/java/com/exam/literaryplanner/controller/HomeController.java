@@ -1,15 +1,17 @@
 package com.exam.literaryplanner.controller;
 
-import com.exam.literaryplanner.domain.Spot;
-import com.exam.literaryplanner.service.SpotService;
-import com.exam.literaryplanner.service.WishListService; // 추가
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import jakarta.servlet.http.HttpSession; // 추가
 
-import java.util.List;
+import com.exam.literaryplanner.domain.Spot;
+import com.exam.literaryplanner.service.SpotService;
+import com.exam.literaryplanner.service.WishListService; // 추가
+
+import jakarta.servlet.http.HttpSession; // 추가
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class HomeController {
     @GetMapping({"/", "/index"})
     public String home(HttpSession session, Model model) {
         List<Spot> popularSpots = spotService.getTodayPopularSpots();
-        
+
         // 로그인된 회원번호 추출
         Object loginMember = session.getAttribute("loginMember");
         Integer mIdx = null;
@@ -37,7 +39,7 @@ public class HomeController {
                 s.setIsHearted(wishListService.isHearted(mIdx, s.getId()));
             }
         }
-        
+
         model.addAttribute("popularSpots", popularSpots);
         return "index";
     }

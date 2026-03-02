@@ -116,6 +116,10 @@
 					border: none;
 					padding: 15px;
 					width: 100%;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					text-decoration: none;
 					border-radius: 10px;
 					font-size: 18px;
 					font-weight: bold;
@@ -127,20 +131,6 @@
 		<body>
 			
 			<jsp:include page="/WEB-INF/views/common/header.jsp" />
-			<header style="background: white; border-bottom: 1px solid #f0f0f0; padding: 12px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-				    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
-				        
-				        <a href="${pageContext.request.contextPath}/index" style="text-decoration: none; display: flex; align-items: center;">
-				            <img src="${pageContext.request.contextPath}/img/PlanTriplog.png" 
-				                 alt="PlanTrip 로고" 
-				                 style="height: 45px; width: auto; object-fit: contain;">
-				        </a>
-
-				        <nav style="display: flex; gap: 20px; font-size: 15px; font-weight: 600;">
-				            </nav>
-				        
-				    </div>
-				</header>
 			<div class="container">
 				<%-- 1. 이미지 갤러리 (로컬 이미지 연결) --%>
 					<div class="image-gallery">
@@ -244,10 +234,7 @@
 							        <div style="font-size: 14px; color: #777; margin-bottom: 20px;">
 							            지금 바로 계획을 세워보세요
 							        </div>
-									<button type="button" class="btn-booking" 
-									        onclick="location.href='/plans/planRoute'">
-									    일정 만들기
-									</button>
+									<a href="/plans/planRoute" class="btn-booking" data-auth-guard>일정 만들기</a>
 							    </div>
 							</aside>
 					</div>
@@ -270,7 +257,7 @@
 	    })
 	    .then(response => {
 	        if (response.status === 401) {
-	            alert('로그인이 필요한 서비스입니다.');
+	            if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { alert('로그인이 필요한 서비스입니다.'); } }
 	            return;
 	        }
 	        return response.json();

@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function initSheetLift(){
     var sheet = document.querySelector('.sheet');
     var hero = document.querySelector('.hero');
+    var heroCopy = document.querySelector('.hero-copy');
+    var header = document.querySelector('.header');
     if(!sheet || !hero) return;
 
     var MAX_LIFT = 260;
@@ -31,6 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function computeTarget(){
       var rect = hero.getBoundingClientRect();
       target = clamp(-rect.top, 0, MAX_LIFT);
+
+      /* ✅ sheet가 올라오면 Welcome 문구는 자연스럽게 숨김 */
+      if(heroCopy){
+        var sheetTop = sheet.getBoundingClientRect().top;
+        var headerH = header ? (header.offsetHeight || 64) : 64;
+        var shouldHide = (target >= (MAX_LIFT - 1)) || (sheetTop <= headerH + 8);
+        heroCopy.classList.toggle('is-hidden', shouldHide);
+      }
+
       if(!rafId) rafId = requestAnimationFrame(tick);
     }
 
@@ -460,5 +471,144 @@ document.addEventListener("DOMContentLoaded", () => {
     initDomestic();
     initHeaderSolid();
     initDropdowns();
+  });
+})();
+
+
+/* ============================================================
+   ✅ 맞춤형 여행 추천(메인) - /spots/api/recommend 연결 복구
+   - index.jsp의 seg-btn(관광지/숙소/문화/맛집) 클릭 시 카드 렌더
+============================================================ */
+(function(){
+  function ctx(){ return (window.CONTEXT_PATH || (document.body && document.body.getAttribute("data-context")) || ""); }
+  function wrap(){ return document.getElementById("recommendCards"); }
+
+  /* wish-btn capture: 카드 링크(<a>)보다 먼저 클릭을 가로채서 상세페이지 이동을 막음 */
+  document.addEventListener("click", function(e){
+    var btn = e.target && e.target.closest ? e.target.closest(".wish-btn") : null;
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var sIdx = btn.getAttribute("data-sidx");
+    if(!sIdx){
+      // 기존 onclick 방식도 지원
+      return;
+    }
+    window.toggleWish(e, parseInt(sIdx,10), btn);
+  }, true);
+  // ✅ 공통 찜(하트) 토글 (index.jsp 인기카드 + 맞춤추천 공통 사용)
+  window.toggleWish = function(event, sIdx, btn){
+    event = event || window.event;
+    try{
+      if(event){ event.preventDefault(); event.stopPropagation(); }
+    }catch(e){}
+    fetch(ctx() + "/api/wish/toggle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sIdx: sIdx })
+    })
+    .then(function(res){
+      if(res.status === 401){
+        // ✅ 메인 찜(하트)도 전용 로그인 안내 UI 사용 (다른 페이지와 동일)
+        if(window.LoginRequiredPrompt && typeof window.LoginRequiredPrompt.open === 'function'){
+          window.LoginRequiredPrompt.open({
+            message: '로그인이 필요한 서비스입니다.\n계속하려면 로그인해 주세요.',
+            onConfirm: function(){
+              if(window.AuthModal && typeof window.AuthModal.open === 'function'){
+                window.AuthModal.open('login');
+              }
+            }
+          });
+        }else if(window.AuthModal && typeof window.AuthModal.open === 'function'){
+          // fallback: 프롬프트 UI가 아직 로드되지 않았어도 로그인 모달은 열어줌
+          window.AuthModal.open('login');
+        }else{
+          alert('로그인이 필요한 서비스입니다.');
+        }
+        return null;
+      }
+      return res.json();
+    })
+    .then(function(data){
+      if(!data) return;
+      if(data.success){
+        var heart = data.isHearted ? "❤️" : "🤍";
+        if(btn) btn.textContent = heart;
+        if(btn){
+          if(data.isHearted) btn.classList.add("active");
+          else btn.classList.remove("active");
+        }
+      }
+    })
+    .catch(function(err){
+      console.error(err);
+      alert("처리 중 오류가 발생했습니다.");
+    });
+  };
+
+
+  function setActive(btn){
+    document.querySelectorAll(".block-recommend .seg-btn").forEach(function(b){
+      b.classList.remove("active");
+    });
+    if(btn) btn.classList.add("active");
+  }
+
+  function esc(s){ return (s||"").toString(); }
+
+  function cardHtml(item){
+    var id = item.id;
+    var name = esc(item.name);
+    var city = esc(item.cityName);
+    var img = esc(item.image);
+    var url = ctx() + "/spots/detail/" + id;
+
+    var imgStyle = img ? ("background-image:url('" + img.replace(/'/g, "%27") + "');") : "";
+    return ''
+      + '<a class="post-card" href="' + url + '" style="position:relative;">'
+      +   '<button class="wish-btn' + (item.isHearted ? ' active' : '') + '" data-sidx="' + id + '"'
+      +     ' onclick="toggleWish(event, ' + id + ', this)">' + (item.isHearted ? '❤️' : '🤍') + '</button>'
+      +   '<div class="post-img" style="' + imgStyle + '"></div>'
+      +   '<div class="post-body">'
+      +     '<h3 class="post-title">' + name + '</h3>'
+      +     '<div class="post-meta">' + city + '</div>'
+      +   '</div>'
+      + '</a>';
+  }
+
+  function render(list){
+    var w = wrap();
+    if(!w) return;
+    if(!Array.isArray(list) || list.length === 0){
+      w.innerHTML = '<div style="padding:18px; color:#6b7280;">추천 결과가 없습니다.</div>';
+      return;
+    }
+    w.innerHTML = list.map(cardHtml).join("");
+  }
+
+  window.loadRecommend = function(category, btn){
+    setActive(btn);
+    var w = wrap();
+    if(!w) return;
+
+    // 로딩 상태
+    w.innerHTML = '<div style="padding:18px; color:#6b7280;">불러오는 중...</div>';
+
+    fetch(ctx() + "/spots/api/recommend?category=" + encodeURIComponent(category), {
+      headers: { "Accept": "application/json" }
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){ render(data); })
+    .catch(function(){
+      w.innerHTML = '<div style="padding:18px; color:#ef4444;">추천 데이터를 불러오지 못했습니다.</div>';
+    });
+  };
+
+  // 첫 진입 시 관광지 자동 로드
+  window.addEventListener("DOMContentLoaded", function(){
+    var first = document.querySelector(".block-recommend .seg-btn.active") || document.querySelector(".block-recommend .seg-btn");
+    if(first){
+      window.loadRecommend("TOUR", first);
+    }
   });
 })();

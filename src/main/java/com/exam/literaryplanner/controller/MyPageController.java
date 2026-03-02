@@ -1,11 +1,9 @@
 package com.exam.literaryplanner.controller;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,17 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.exam.literaryplanner.domain.Community;
 import com.exam.literaryplanner.domain.Member;
-import com.exam.literaryplanner.domain.Review;
 import com.exam.literaryplanner.domain.Spot;
 import com.exam.literaryplanner.domain.TravelPlan;
-import com.exam.literaryplanner.domain.Community;
+import com.exam.literaryplanner.repository.CityRepository;
+import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.repository.LiteraryRepository;
 import com.exam.literaryplanner.repository.PlanDetailRepository;
 import com.exam.literaryplanner.repository.SpotRepository;
 import com.exam.literaryplanner.repository.TravelPlanRepository;
-import com.exam.literaryplanner.repository.CityRepository;
-import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.MemberDeleteService;
 import com.exam.literaryplanner.service.PlanMapService;
 import com.exam.literaryplanner.service.SpotService;
@@ -84,7 +81,7 @@ public class MyPageController {
 
         return "members/mypage/mypage";
     }
-    
+
     /* ================= 내가 찜한 장소 (전체보기) ================= */
     @GetMapping("/wishlist")
     public String myWishList(HttpSession session, Model model) {
@@ -193,7 +190,9 @@ public class MyPageController {
     @GetMapping("/plans")
     public String myPlans(HttpSession session, Model model) {
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
+        if (loginMember == null) {
+			return "redirect:/members/login";
+		}
 
         List<TravelPlan> list = travelPlanRepository.findMyPlans(loginMember.getMIdx());
 
@@ -258,11 +257,13 @@ public class MyPageController {
         session.invalidate();
         return "redirect:/";
     }
-    
+
     @GetMapping("/plans/view")
     public String planView(@RequestParam Integer pIdx, HttpSession session, Model model) {
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
+        if (loginMember == null) {
+			return "redirect:/members/login";
+		}
 
         var plan = travelPlanRepository.findMyPlanView(pIdx, loginMember.getMIdx())
                 .orElseThrow(() -> new IllegalArgumentException("없거나 권한 없음"));
@@ -286,12 +287,14 @@ public class MyPageController {
     @GetMapping("/plans/delete")
     public String planDelete(@RequestParam Integer pIdx, HttpSession session) {
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
+        if (loginMember == null) {
+			return "redirect:/members/login";
+		}
 
         travelPlanRepository.deleteMyPlan(pIdx, loginMember.getMIdx());
         return "redirect:/members/mypage/plans";
     }
-    
+
     @GetMapping("/route")
     public String routePage(
         @RequestParam Integer pIdx,
@@ -317,8 +320,8 @@ public class MyPageController {
 
         return "plans/route";
     }
-    
-    
+
+
 
 }
 

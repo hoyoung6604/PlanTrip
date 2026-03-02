@@ -54,3 +54,17 @@
     });
   });
 })();
+
+// ✅ 공통: 스크롤 시 헤더를 흰색 바로 분리(겹침 방지)
+(() => {
+  const header = document.querySelector('.header');
+  if (!header) return;
+
+  const onScroll = () => {
+    if (window.scrollY > 20) header.classList.add('is-solid');
+    else header.classList.remove('is-solid');
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();

@@ -46,11 +46,15 @@ public class Qna {
     @Column(name = "q_reg_date", nullable = false)
     private LocalDateTime qRegDate;
 
-    
+
     @PrePersist
     private void prePersist() {
-        if (this.qRegDate == null) this.qRegDate = LocalDateTime.now();
-        if (this.qStatus == null) this.qStatus = 0;
+        if (this.qRegDate == null) {
+			this.qRegDate = LocalDateTime.now();
+		}
+        if (this.qStatus == null) {
+			this.qStatus = 0;
+		}
     }
 
     public Qna() {}

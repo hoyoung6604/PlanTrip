@@ -754,7 +754,7 @@
 											})
 												.then(response => {
 													if (response.status === 401) {
-														alert('로그인이 필요한 서비스입니다.');
+														if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { alert('로그인이 필요한 서비스입니다.'); } }
 														return;
 													}
 													return response.json();
@@ -779,7 +779,9 @@
 
 									</script>
 
-									<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+									</div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 		</body>
 
 		</html>

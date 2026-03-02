@@ -1,7 +1,6 @@
 package com.exam.literaryplanner.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,7 +15,7 @@ public interface ReviewPhotoRepository extends JpaRepository<ReviewPhoto, Intege
 
 	/*
 	 * Optional<ReviewPhoto> findById(Integer rpIdx);
-	 * 
+	 *
 	 * void deleteById(Integer rpIdx);
 	 */
 }

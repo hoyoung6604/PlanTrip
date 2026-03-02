@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class PlanServiceImpl implements PlanService {
 
     private final TravelPlanRepository travelPlanRepository;
-    
+
 //    public PlanServiceImpl(TravelPlanRepository travelPlanRepository) {
 //    	this.travelPlanRepository = travelPlanRepository;
 //    }
@@ -26,9 +26,15 @@ public class PlanServiceImpl implements PlanService {
     public Integer createPlan(String city, Integer mIdx, List<String> purposes,
                               LocalDate start, LocalDate end) {
 
-        if (mIdx == null) throw new IllegalArgumentException("mIdx is required");
-        if (start == null || end == null) throw new IllegalArgumentException("start/end is required");
-        if (end.isBefore(start)) throw new IllegalArgumentException("end date must be >= start date");
+        if (mIdx == null) {
+			throw new IllegalArgumentException("mIdx is required");
+		}
+        if (start == null || end == null) {
+			throw new IllegalArgumentException("start/end is required");
+		}
+        if (end.isBefore(start)) {
+			throw new IllegalArgumentException("end date must be >= start date");
+		}
 
         String safeCity = (city == null) ? "" : city.trim();
         String safePurposes = (purposes == null || purposes.isEmpty()) ? "" : String.join(",", purposes);
@@ -48,7 +54,7 @@ public class PlanServiceImpl implements PlanService {
 
         return travelPlanRepository.save(plan).getPIdx();
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public TravelPlan getPlan(Integer planId) {

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.Community;
+import com.exam.literaryplanner.domain.Member;
 import com.exam.literaryplanner.domain.ReviewPhoto;
 import com.exam.literaryplanner.repository.CommunityRepository;
 import com.exam.literaryplanner.service.ReviewPhotoService;

@@ -1,13 +1,18 @@
 package com.exam.literaryplanner.controller;
 
-import com.exam.literaryplanner.service.WishListService;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.exam.literaryplanner.service.WishListService;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/wish")
@@ -20,12 +25,12 @@ public class WishListController {
     public ResponseEntity<Map<String, Object>> toggleWish(
             @RequestBody Map<String, Integer> requestBody,
             HttpSession session) {
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         // 1. 세션에서 로그인 회원 정보 확인 (세션 키는 본인의 프로젝트에 맞게 수정: 예: "loginMember")
         // 만약 세션에 멤버 객체가 통째로 있다면 객체를 꺼낸 후 getMIdx()를 호출해야 합니다.
-        Object loginMember = session.getAttribute("loginMember"); 
+        Object loginMember = session.getAttribute("loginMember");
 
         if (loginMember == null) {
             response.put("success", false);
@@ -36,7 +41,7 @@ public class WishListController {
         // 로그인된 객체에서 mIdx 추출 (객체 타입에 따라 형변환 필요)
         // 예: Integer mIdx = ((Member)loginMember).getMIdx();
         // 여기서는 편의상 mIdx가 세션에 직접 있다고 가정하거나 형변환을 수행합니다.
-        Integer mIdx = extractMIdx(loginMember); 
+        Integer mIdx = extractMIdx(loginMember);
         Integer sIdx = requestBody.get("sIdx");
 
         // 2. 서비스 호출 (토글 실행)
@@ -55,7 +60,7 @@ public class WishListController {
         try {
             return (Integer) loginMember.getClass().getMethod("getMIdx").invoke(loginMember);
         } catch (Exception e) {
-            return null; 
+            return null;
         }
     }
 }
