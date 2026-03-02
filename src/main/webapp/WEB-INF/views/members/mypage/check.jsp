@@ -43,7 +43,7 @@
   </aside>
 
   <main class="mp-main">
-    <section class="mp-card">
+    <section class="mp-card mp-grow" style="width: 100%;">
       <div class="mp-card-head">
         <div>
           <div class="mp-card-title">비밀번호 확인</div>
@@ -51,19 +51,19 @@
         </div>
       </div>
 
-      <div class="mp-card-body">
-        <c:if test="${not empty error}">
-          <div class="mp-error"><c:out value="${error}"/></div>
-        </c:if>
-
+      <div class="mp-card-body" style="width: 100%; text-align: center; padding: 60px 20px;">
         <form class="mp-form" action="${pageContext.request.contextPath}/members/mypage/check" method="post">
           <div class="mp-field">
             <label>비밀번호</label>
-            <input type="password" name="password" placeholder="비밀번호" required />
+            <input type="password" name="password" placeholder="현재 비밀번호를 입력하세요" required />
           </div>
+
+          <c:if test="${not empty error}">
+            <div class="mp-error-text" style="color: #ef4444; font-size: 14px; font-weight: 600; margin-bottom: 12px; display: block;"><c:out value="${error}"/></div>
+          </c:if>
+
           <div class="mp-actions">
-            <button class="mp-submit" type="submit">확인</button>
-            <button class="mp-cancel" type="button" onclick="history.back()">취소</button>
+            <button class="mp-btn" type="submit">확인</button>
           </div>
         </form>
       </div>

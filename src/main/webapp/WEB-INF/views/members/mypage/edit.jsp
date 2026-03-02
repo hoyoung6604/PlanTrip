@@ -43,44 +43,46 @@
   </aside>
 
   <main class="mp-main">
-    <section class="mp-card">
+    <section class="mp-card mp-grow" style="width: 100%;">
       <div class="mp-card-head">
         <div>
           <div class="mp-card-title">회원정보 수정</div>
-          <div class="mp-card-sub">기본 정보와 비밀번호를 변경할 수 있어요 (비밀번호는 입력한 경우에만 변경돼요)</div>
+          <div class="mp-card-sub">기본 정보와 비밀번호를 변경할 수 있어요</div>
         </div>
       </div>
 
-      <div class="mp-card-body">
+      <div class="mp-card-body" style="width: 100%; text-align: center; padding: 50px 20px;">
         <c:if test="${not empty error}">
-          <div class="mp-error"><c:out value="${error}"/></div>
+          <div class="mp-error-text" style="color: #ef4444; font-size: 14px; font-weight: 600; margin-bottom: 12px; display: block;"><c:out value="${error}"/></div>
         </c:if>
+        
 		<form class="mp-form" action="${pageContext.request.contextPath}/members/mypage/edit" method="post">
 
-		  <div class="mp-field">
-		    <label>이름</label>
-		    <input type="text" name="mName" value="${member.MName}" required />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">이름</label>
+		    <input type="text" name="mName" value="${member.MName}" required style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <div class="mp-field">
-		    <label>이메일</label>
-		    <input type="email" name="mEmail" value="${member.MEmail}" required />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">이메일</label>
+		    <input type="email" name="mEmail" value="${member.MEmail}" required style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <div class="mp-field">
-		    <label>새 비밀번호</label>
-		    <input type="password" name="mPw" placeholder="새 비밀번호" />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">새 비밀번호</label>
+		    <input type="password" name="mPw" placeholder="변경할 경우에만 입력하세요" style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
+		  </div>
+		  
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">새 비밀번호 확인</label>
+		    <input type="password" name="mPwConfirm" placeholder="새 비밀번호를 한 번 더 입력하세요" style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <div class="mp-field">
-		    <label>새 비밀번호 확인</label>
-		    <input type="password" name="mPwConfirm" placeholder="새 비밀번호 확인" />
-		  </div>
+          <div class="mp-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+            <button class="mp-btn danger" type="button" onclick="location.href='${pageContext.request.contextPath}/members/mypage'" style="flex: 1; padding: 15px; background: #fff; color: #555; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 800;">취소</button>
+            <button class="mp-btn" type="submit" style="flex: 1; padding: 15px; background: #3264ff; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: 800;">수정하기</button>
+          </div>
 
-		  <div class="mp-actions">
-		    <button class="mp-submit" type="submit">저장</button>
-		    <button class="mp-cancel" type="button" onclick="history.back()">취소</button>
-		  </div>
 		</form>
       </div>
     </section>
