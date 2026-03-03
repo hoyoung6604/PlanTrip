@@ -10,7 +10,7 @@
   /* ✅ 단일 컬럼 + 가운데 정렬 */
   display: block;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: calc(var(--headerH, 84px) + 14px) auto 0;
 }
 
 /* 메인 영역은 페이지 스크롤(footer가 자연스럽게 붙도록) */

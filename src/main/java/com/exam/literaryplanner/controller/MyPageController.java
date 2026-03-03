@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,7 @@ import com.exam.literaryplanner.service.MemberDeleteService;
 import com.exam.literaryplanner.service.PlanMapService;
 import com.exam.literaryplanner.service.SpotService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -213,13 +216,41 @@ public class MyPageController {
         return "community/myReview";
     }
 
+    /* ================= 회원 탈퇴 =================
+       - 버튼 클릭 → confirm(프론트) → POST /withdraw
+       - fetch 요청(X-Requested-With: fetch)일 때는 JSON 응답
+       - 일반 요청(주소 직접 접근 등)일 때는 redirect fallback
+     */
+    @GetMapping("/withdraw")
+    public String withdrawGet() {
+        // 링크로 직접 접근 시에는 마이페이지로 돌려보냄 (탈퇴는 POST로만)
+        return "redirect:/members/mypage";
+    }
+
     @PostMapping("/withdraw")
-    public String withdraw(HttpSession session) {
+    public ResponseEntity<Map<String, Object>> withdraw(HttpSession session, HttpServletRequest request) {
+        // 프론트(fetch) 여부와 무관하게 POST는 JSON으로 응답한다.
+        // (브라우저가 헤더를 누락/변형해도 성공 흐름이 깨지지 않도록)
+        final String xrw = request.getHeader("X-Requested-With");
+        @SuppressWarnings("unused")
+        final boolean isAjax = (xrw != null && !xrw.isBlank());
+
         Member loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) return "redirect:/members/login";
-        literaryRepository.deleteMemberNative(loginMember.getMIdx());
-        session.invalidate();
-        return "redirect:/";
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("ok", false, "message", "로그인이 필요합니다."));
+        }
+
+        try {
+            // ✅ 연관 데이터 포함 안전 삭제
+            memberDeleteService.deleteMemberAll(loginMember.getMIdx());
+            session.invalidate();
+
+            return ResponseEntity.ok(Map.of("ok", true));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("ok", false, "message", "회원 탈퇴 처리 중 오류가 발생했습니다."));
+        }
     }
 
     @GetMapping("/plans/view")

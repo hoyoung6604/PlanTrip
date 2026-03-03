@@ -438,18 +438,20 @@
   });
 
   // 3) 비밀번호 보기 토글
-  document.addEventListener('click', function(e){
-    const eye = e.target.closest('.eye');
-    if(!eye) return;
-    const row = eye.closest('.input-row');
-    const input = row ? q('input', row) : null;
-    if(!input) return;
+  // 비밀번호 보기(eye) 토글: SVG 버튼용
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".auth-modal .eye");
+    if (!btn) return;
 
-    const isPw = input.getAttribute('type') === 'password';
-    input.setAttribute('type', isPw ? 'text' : 'password');
-    eye.textContent = isPw ? '🙈' : '👁';
+    const row = btn.closest(".input-row");
+    const input = row?.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+
+    const isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+
+    btn.setAttribute("aria-pressed", String(isPassword));
   });
-
   function toParams(form){
     const fd = new FormData(form);
     const p = new URLSearchParams();

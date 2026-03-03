@@ -13,8 +13,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" /><script defer src="${pageContext.request.contextPath}/js/theme.js"></script>
-  <script defer src="${pageContext.request.contextPath}/js/nav-wave.js"></script><script defer src="${pageContext.request.contextPath}/js/pages/index.js"></script></head>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+  <script defer src="${pageContext.request.contextPath}/js/theme.js"></script>
+  <script defer src="${pageContext.request.contextPath}/js/nav-wave.js"></script>
+  <script defer src="${pageContext.request.contextPath}/js/index.js"></script>
+</head>
 
 <body data-context="${pageContext.request.contextPath}">
 
@@ -83,7 +86,7 @@
 <main>
   <!-- ✅ 메인 화면: welcome + 스크롤 화살표는 유지, 검색바만 제거 -->
   <section class="hero">
-    <div class="hero-copy hero-copy--top">
+    <div class="hero-copy hero-copy--center">
       <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
 
@@ -185,5 +188,7 @@
 
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
+
+
 </body>
 </html>

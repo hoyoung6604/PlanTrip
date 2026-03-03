@@ -10,29 +10,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>후기 상세</title>
 
-  
-    <link rel="stylesheet" href="/css/header.css" />
-<!-- 커뮤니티/테마 공통 리소스 (다른 커뮤니티 JSP들과 통일) -->
+  <link rel="stylesheet" href="/css/header.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
-  <!-- 상세 전용은 마지막에 로드해서 덮어쓰기 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/community-review-view.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-    <script defer src="/js/nav-wave.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
 </head>
 <body class="page-solid">
 
-    <jsp:include page="/WEB-INF/views/common/header.jsp" />
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 <div class="cm-shell">
-
-  <!-- 좌측 사이드바는 커뮤니티 목록과 동일 구조로 유지 (통일감) -->
-<!-- ✅ 본문 -->
   <main class="cm-main">
     <div class="rv-card">
 
-      <!-- 상단 헤더 (제목 + 목록 버튼) -->
       <div class="rv-header">
         <div class="rv-title">
           <h1 class="rv-h1">${review.rvTitle}</h1>
@@ -44,26 +37,16 @@
             <span class="rv-muted">조회 ${review.rvVCount}</span>
           </div>
         </div>
-
-        <button class="rv-btn rv-btn-ghost" type="button"
-                onclick="location.href='${pageContext.request.contextPath}/community'">
-          목록
-        </button>
+        <button class="rv-btn rv-btn-ghost" type="button" onclick="location.href='${pageContext.request.contextPath}/community'">목록</button>
       </div>
 
-      <!-- ✅ Trip.com 느낌의 2열 레이아웃 -->
       <div class="rv-grid">
-
-        <!-- LEFT: 사진 -->
         <section class="rv-left">
-	          <c:choose>
-	            <%-- 1) reviewPhotoT(메타) 기준으로 사진이 있으면 그걸 우선 사용 --%>
+	        <c:choose>
             <c:when test="${not empty photos}">
               <div class="rv-photo">
                 <div class="rv-photo-main">
-                  <img id="rvMainImg"
-                       src="<c:url value='/review-photos/${photos[0].rpIdx}'/>"
-                       alt="후기 사진" />
+                  <img id="rvMainImg" src="<c:url value='/review-photos/file/${photos[0].rpIdx}'/>" alt="후기 사진" />
                   <button class="rv-nav rv-prev" type="button" aria-label="이전">‹</button>
                   <button class="rv-nav rv-next" type="button" aria-label="다음">›</button>
                   <div class="rv-photo-count" id="rvPhotoCount">1 / ${fn:length(photos)}</div>
@@ -71,25 +54,20 @@
 
                 <div class="rv-thumbs">
                   <c:forEach var="p" items="${photos}" varStatus="st">
-                    <c:url var="pSrc" value="/review-photos/${p.rpIdx}"/>
-                    <button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}"
-                            data-idx="${st.index}"
-                            data-src="${pSrc}">
+                    <c:url var="pSrc" value="/review-photos/file/${p.rpIdx}"/>
+                    <button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}" data-idx="${st.index}" data-src="${pSrc}">
                       <img src="${pSrc}" alt="thumb"/>
                     </button>
                   </c:forEach>
                 </div>
               </div>
             </c:when>
-	            <%-- 2) (호환) DB에 c_img(파일명 묶음)만 남아있는 경우에도 사진 표시 --%>
             <c:when test="${empty photos and not empty review.rvImg}">
               <c:set var="imgNames" value="${fn:split(review.rvImg,'|')}" />
               <div class="rv-photo">
                 <div class="rv-photo-main">
                   <c:url var="mainNameSrc" value="/review-photos/name/${fn:trim(imgNames[0])}"/>
-                  <img id="rvMainImg"
-                       src="${mainNameSrc}"
-                       alt="후기 사진" />
+                  <img id="rvMainImg" src="${mainNameSrc}" alt="후기 사진" />
                   <button class="rv-nav rv-prev" type="button" aria-label="이전">‹</button>
                   <button class="rv-nav rv-next" type="button" aria-label="다음">›</button>
                   <div class="rv-photo-count" id="rvPhotoCount">1 / ${fn:length(imgNames)}</div>
@@ -98,9 +76,7 @@
                 <div class="rv-thumbs">
                   <c:forEach var="n" items="${imgNames}" varStatus="st">
                     <c:url var="nSrc" value="/review-photos/name/${fn:trim(n)}"/>
-                    <button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}"
-                            data-idx="${st.index}"
-                            data-src="${nSrc}">
+                    <button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}" data-idx="${st.index}" data-src="${nSrc}">
                       <img src="${nSrc}" alt="thumb"/>
                     </button>
                   </c:forEach>
@@ -116,7 +92,6 @@
           </c:choose>
         </section>
 
-        <!-- RIGHT: 작성자/별점 + 내용(스크롤) -->
         <aside class="rv-side">
           <div class="rv-side-head">
             <div class="rv-user">
@@ -138,9 +113,12 @@
               </div>
             </div>
 
-            <div class="rv-rating">
-              <span class="rv-stars">★★★★★</span>
-              <span class="rv-score">${review.rvStar != null ? review.rvStar : 0}/5</span>
+            <div class="rv-rating" style="display: flex; align-items: center;">
+              <c:set var="starCount" value="${review.rvStar != null && review.rvStar > 0 ? review.rvStar : 5}" />
+              <span class="rv-stars" style="color: #ffc107; font-size: 18px; letter-spacing: 2px;">
+                <c:forEach begin="1" end="${starCount}">★</c:forEach><c:forEach begin="${starCount + 1}" end="5"><span style="color: #eee;">★</span></c:forEach>
+              </span>
+              <span class="rv-score" style="margin-left: 8px; font-weight: bold; font-size: 15px; color: #333;">${starCount} / 5</span>
             </div>
           </div>
 
@@ -151,7 +129,6 @@
             </div>
           </div>
         </aside>
-
       </div>
     </div>
   </main>
@@ -179,22 +156,17 @@
     thumbs[cur].classList.add('is-active');
 
     if(countEl) countEl.textContent = (cur + 1) + " / " + total;
-
-    // 썸네일이 많을 때 현재 썸네일이 보이도록
     thumbs[cur].scrollIntoView({block:'nearest', inline:'nearest', behavior:'smooth'});
   }
 
   thumbs.forEach(t => {
     t.addEventListener('click', () => setActive(parseInt(t.dataset.idx, 10)));
   });
-
   if(prevBtn) prevBtn.addEventListener('click', () => setActive(cur - 1));
   if(nextBtn) nextBtn.addEventListener('click', () => setActive(cur + 1));
 })();
 </script>
 
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
-
-
 </body>
 </html>

@@ -45,8 +45,27 @@
 
 
 /* theme-sky.css / home.css가 끼어 있어도 고객센터에서는 배경을 깔끔하게 고정 */
+/*
+  ⚠️ 주의
+  - 일부 페이지에서 html/body를 height:100%로 강제하면 문서 스크롤이 막히고
+    footer까지 내려가지 못하는 현상이 생길 수 있다.
+  - 고객센터 페이지(html[data-page="support"])에만 "문서 스크롤 허용"을 강제한다.
+*/
 html, body{
-  height: 100%;
+  min-height: 100%;
+}
+
+html[data-page="support"],
+html[data-page="support"] body{
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+html[data-page="support"] body{
+  /* header.css의 body:flex 레이아웃이 고객센터에선 footer 스크롤을 막는 경우가 있어
+     block 레이아웃으로 강제해 footer가 자연스럽게 따라오도록 한다. */
+  display: block !important;
+  overflow-y: auto;
 }
 
 body{

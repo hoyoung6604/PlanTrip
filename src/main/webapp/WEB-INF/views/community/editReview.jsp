@@ -20,8 +20,16 @@
 	  <script defer src="/js/ui-toast.js"></script>
 	  <script defer src="/js/theme.js"></script>
 	    <script defer src="/js/nav-wave.js"></script>
+
+  <style>
+    /* ✅ 헤더(고정) + 로고 돌출 높이만큼 콘텐츠를 아래로 내림 (이 JSP 전용) */
+    body{ padding-top: 0 !important; }
+    .cm-shell{
+      margin-top: calc(var(--headerH, 72px) + var(--logoOffset, 35px) - 20px) !important;
+    }
+  </style>
 </head>
-	<body class="page-solid">
+<body class="page-solid">
 
 
     <jsp:include page="/WEB-INF/views/common/header.jsp" />
@@ -91,7 +99,7 @@
               <c:forEach var="p" items="${photos}">
                 <div class="cm-photo-item" style="position:relative; width:120px; height:90px; border-radius:12px; overflow:hidden; background:#f3f4f6;">
                   <img
-                    src="${pageContext.request.contextPath}/review-photos/${p.rpIdx}"
+                    src="${pageContext.request.contextPath}/review-photos/file/${p.rpIdx}"
                     alt="후기 사진"
                     style="width:100%; height:100%; object-fit:cover;"
                   />

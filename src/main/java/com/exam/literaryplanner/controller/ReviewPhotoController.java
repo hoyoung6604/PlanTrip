@@ -28,8 +28,6 @@ import com.exam.literaryplanner.service.ReviewPhotoService;
 
 import jakarta.servlet.http.HttpSession;
 
-///login 만 하면 다른 사람 글에서도 업로드가 가능.
-
 @Controller
 @RequestMapping("/review-photos")
 public class ReviewPhotoController {
@@ -43,23 +41,19 @@ public class ReviewPhotoController {
         this.reviewRepository = reviewRepository;
     }
 
-    // (1) 특정 후기(rvIdx)의 사진 목록(JSON)
     @GetMapping("/list")
     @ResponseBody
     public List<ReviewPhoto> list(@RequestParam Integer rvIdx) {
         return reviewPhotoService.list(rvIdx);
     }
 
-    // ✅ (중요) /review-photos/{rpIdx} 는 아래 serve()가 사용 중
-    // 여기 매핑이 겹치면 사진 요청이 꼬이거나(또는 부팅 시 Ambiguous mapping) 문제가 생길 수 있어서
-    // raw 경로로 분리
     @GetMapping({"/raw/{photoId}", "/file/{photoId}"})
     public ResponseEntity<Resource> file(@PathVariable("photoId") Integer photoId) {
         try {
             ReviewPhoto photo = reviewPhotoService.getPhoto(photoId);
 
-            // ReviewPhotoService의 uploadRoot 규칙과 동일하게 맞춰야 함
-            Path uploadRoot = Paths.get(System.getProperty("user.home"), "literaryplanner_uploads", "reviews");
+            // ✅ Service와 동일하게 user.dir 로 맞춤
+            Path uploadRoot = Paths.get(System.getProperty("user.dir"), "uploads", "reviews");
             Path filePath = uploadRoot.resolve(photo.getRpStoredName());
 
             if (!Files.exists(filePath)) {
@@ -86,7 +80,6 @@ public class ReviewPhotoController {
         }
     }
 
-    // (2) 사진 업로드 (작성자만 가능)
     @PostMapping("/upload")
     public String upload(@RequestParam Integer rvIdx,
                          @RequestParam("photos") MultipartFile[] photos,
@@ -103,26 +96,21 @@ public class ReviewPhotoController {
 			return "redirect:/community";
 		}
 
-        // ✅ 작성자만 업로드 허용
         if (!review.getMIdx().equals(loginMember.getMIdx())) {
             return "redirect:" + redirectBase + rvIdx;
         }
 
-        // ✅ 여러 장 저장
         reviewPhotoService.saveAll(rvIdx, photos);
 
         return "redirect:" + redirectBase + rvIdx;
     }
 
-
-    // (3) 이미지 파일 제공
     @GetMapping("/{rpIdx}")
     public ResponseEntity<Resource> serve(@PathVariable Integer rpIdx) {
 
         ReviewPhoto meta = reviewPhotoService.getMeta(rpIdx);
         Resource resource = reviewPhotoService.loadAsResource(rpIdx);
 
-        // 파일이 실제로 없으면 500 대신 404
         try {
             if (resource == null || !resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();
@@ -147,12 +135,11 @@ public class ReviewPhotoController {
                 .body(resource);
     }
 
-    // ✅ (호환) DB에 rp_idx 메타가 없고, communityT.c_img(저장 파일명)만 남아있는 경우
-    // /review-photos/name/{storedName} 형태로 직접 파일을 서빙
     @GetMapping("/name/{storedName:.+}")
     public ResponseEntity<Resource> serveByStoredName(@PathVariable String storedName) {
         try {
-            Path root = Paths.get(System.getProperty("user.home"), "literaryplanner_uploads", "reviews");
+            // ✅ Service와 동일하게 user.dir 로 맞춤
+            Path root = Paths.get(System.getProperty("user.dir"), "uploads", "reviews");
             Path legacyRoot = Paths.get(System.getProperty("user.home"), "plantrip_uploads", "reviews");
 
             Path filePath = root.resolve(storedName);
@@ -179,7 +166,6 @@ public class ReviewPhotoController {
         }
     }
 
-    // 추가부분
     @PostMapping("/delete")
     public String delete(@RequestParam Integer rpIdx,
                          @RequestParam Integer rvIdx,
@@ -195,7 +181,6 @@ public class ReviewPhotoController {
 			return "redirect:/community";
 		}
 
-        // 작성자만 삭제 가능
         if (!review.getMIdx().equals(loginMember.getMIdx())) {
             return "redirect:/community/view?rvIdx=" + rvIdx;
         }
@@ -204,8 +189,6 @@ public class ReviewPhotoController {
         return "redirect:/community/view?rvIdx=" + rvIdx;
     }
 
-
- // (4) 여러 장 업로드
     @PostMapping("/upload-multi")
     public String uploadMulti(@RequestParam Integer rvIdx,
                               @RequestParam("photos") MultipartFile[] photos,
@@ -220,7 +203,4 @@ public class ReviewPhotoController {
 
         return "redirect:/community/view?rvIdx=" + rvIdx;
     }
-
-
-
 }

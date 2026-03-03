@@ -13,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SpotService {
+
+    private static final Logger log = LoggerFactory.getLogger(SpotService.class);
 
 	private final SpotRepository spotRepository;
 	private final SpotStatsRepository spotStatsRepository;
@@ -109,15 +114,49 @@ public class SpotService {
         return spotRepository.findWishSpotsByMemberIdx(mIdx);
     }
 
-    // 마이페이지 최근 찜한 6개 조회용
+    // 마이페이지 최근 찜한 8개 조회용
     @Transactional(readOnly = true)
     public List<Spot> getRecentWishSpots(Integer mIdx) {
         if (mIdx == null) {
             return new ArrayList<>();
         }
-        // 첫 번째 페이지(0)에서 6개의 데이터를 가져오도록 설정
-        Pageable limit = PageRequest.of(0, 6);
-        return spotRepository.findRecentWishSpots(mIdx, limit).getContent();
+
+        try {
+            /* 첫 번째 페이지(0)에서 8개의 id를 먼저 가져온 뒤, Spot+City를 한 번에 조회 */
+            Pageable limit = PageRequest.of(0, 8);
+
+            List<Integer> ids = spotRepository.findRecentWishSpotIds(mIdx, limit);
+            if (ids == null || ids.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            List<Spot> fetched = spotRepository.findByIdInWithCity(ids);
+            if (fetched == null || fetched.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            /* IN 조회는 순서가 보장되지 않으므로, wishList 최신순(ids 순서)대로 재정렬 */
+            java.util.Map<Integer, Spot> map = new java.util.HashMap<>();
+            for (Spot s : fetched) {
+                map.put(s.getId(), s);
+            }
+
+            List<Spot> ordered = new ArrayList<>();
+            for (Integer id : ids) {
+                Spot s = map.get(id);
+                if (s != null) ordered.add(s);
+            }
+            return ordered;
+
+        } catch (Exception e) {
+            /*
+              ✅ mypage 진입 시 500이 터질 때 대부분 여기(최근 찜 조회)에서 DB 스키마/테이블명/컬럼명이
+              맞지 않아 native query가 실패하는 케이스였습니다.
+              페이지 전체가 죽지 않도록 빈 리스트로 내려주고, 원인은 로그로 남깁니다.
+            */
+            log.error("[MyPage] 최근 찜한 장소 조회 실패 (mIdx={}) - DB 테이블/컬럼명 확인 필요", mIdx, e);
+            return new ArrayList<>();
+        }
     }
 
 }

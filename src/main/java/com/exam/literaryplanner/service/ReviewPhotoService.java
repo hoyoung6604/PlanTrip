@@ -22,14 +22,14 @@ public class ReviewPhotoService {
 
     private final ReviewPhotoRepository reviewPhotoRepository;
 
-    // ✅ (중요) Tomcat 임시폴더가 아니라 "고정 폴더"로 저장
-    // 현재(기준) 경로
+    // ✅ (매우 중요) 한글 사용자명("이은아")에서 발생하는 파일 저장 에러 방지
+    // user.home 대신 현재 프로젝트 실행 경로(user.dir)에 폴더를 만듭니다.
     private final Path uploadRoot = Paths.get(
-            System.getProperty("user.home"),
-            "literaryplanner_uploads",
+            System.getProperty("user.dir"),
+            "uploads",
             "reviews"
     );
-    // 과거 버전 호환: 이전에 다른 폴더명으로 저장된 사진이 있을 수 있어서 조회 시 함께 탐색
+    
     private final Path legacyUploadRoot = Paths.get(
             System.getProperty("user.home"),
             "plantrip_uploads",
@@ -58,13 +58,12 @@ public class ReviewPhotoService {
 
         String stored = UUID.randomUUID() + ext;
 
-        // ✅ 저장될 파일 경로
         Path target = uploadRoot.resolve(stored);
 
-        // ✅ (핵심) 부모 폴더 무조건 생성
+        // 부모 폴더 무조건 생성
         Files.createDirectories(target.getParent());
 
-        // ✅ 파일 저장
+        // 파일 물리적 저장
         file.transferTo(target.toFile());
 
         ReviewPhoto photo = new ReviewPhoto();
@@ -81,21 +80,18 @@ public class ReviewPhotoService {
         ReviewPhoto photo = reviewPhotoRepository.findById(rpIdx).orElseThrow();
         String stored = photo.getRpStoredName();
 
-        // 1) 기본 경로에서 먼저 찾기
         File f = uploadRoot.resolve(stored).toFile();
         FileSystemResource res = new FileSystemResource(f);
         if (res.exists() && res.isReadable()) {
             return res;
         }
 
-        // 2) 과거 경로(폴더명 변경 등)에서도 찾아보기
         File legacy = legacyUploadRoot.resolve(stored).toFile();
         FileSystemResource legacyRes = new FileSystemResource(legacy);
         if (legacyRes.exists() && legacyRes.isReadable()) {
             return legacyRes;
         }
 
-        // ✅ 파일이 실제로 없으면 컨트롤러에서 404로 처리할 수 있게 null 반환
         return null;
     }
 
@@ -103,17 +99,14 @@ public class ReviewPhotoService {
         return reviewPhotoRepository.findById(rpIdx).orElseThrow();
     }
 
-    // 추가
     public void delete(Integer rpIdx) {
         ReviewPhoto photo = reviewPhotoRepository.findById(rpIdx).orElseThrow();
 
-        // 1) 파일 삭제 (파일이 없어도 예외 안 터지게)
         try {
             Path filePath = uploadRoot.resolve(photo.getRpStoredName());
             Files.deleteIfExists(filePath);
         } catch (Exception ignored) {}
 
-        // 2) DB 삭제
         reviewPhotoRepository.deleteById(rpIdx);
     }
 
@@ -126,7 +119,7 @@ public class ReviewPhotoService {
             if (f == null || f.isEmpty()) {
 				continue;
 			}
-            save(rvIdx, f); // 기존 save 재사용
+            save(rvIdx, f); 
         }
     }
 
@@ -138,19 +131,14 @@ public class ReviewPhotoService {
             if (f == null || f.isEmpty()) {
 				continue;
 			}
-            // ✅ 파일 하나가 실패해도 나머지는 계속 저장 (상세보기에서 "사진 없음"이 뜨는 상황 방지)
             try {
-                save(rvIdx, f); // 기존 save 재사용
-            } catch (Exception ignored) {
-                // 사진 저장 실패해도 글/다른 사진 저장은 유지
-            }
+                save(rvIdx, f);
+            } catch (Exception ignored) { }
         }
     }
 
     public ReviewPhoto getPhoto(Integer rpIdx) {
-        // ✅ 여기 repo -> reviewPhotoRepository 로 수정 (컴파일 에러 해결)
         return reviewPhotoRepository.findById(rpIdx)
                 .orElseThrow(() -> new IllegalArgumentException("사진이 없습니다. rpIdx=" + rpIdx));
     }
-
 }

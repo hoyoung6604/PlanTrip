@@ -490,17 +490,50 @@ body.is-modal-open{ overflow: hidden; }
 }
 
 /* 비번 보기 */
-.auth-modal .input-row{ position: relative; }
+/* 비밀번호 보기 버튼(이모지 -> SVG) */
+.auth-modal .input-row{
+  position: relative;
+}
+
 .auth-modal .eye{
   position:absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
-  color: var(--muted);
+  width: 38px;
+  height: 38px;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
   cursor: pointer;
-  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(17,17,17,.55);
 }
+
+.auth-modal .eye:hover{
+  background: rgba(0,0,0,.05);
+  color: rgba(17,17,17,.75);
+}
+
+.auth-modal .eye:focus-visible{
+  outline: 2px solid rgba(47,111,237,.35);
+  outline-offset: 2px;
+}
+
+.auth-modal .eye-ic{
+  width: 18px;
+  height: 18px;
+  display:block;
+}
+
+/* 기본은 open 보이기 */
+.auth-modal .eye-ic--off{ display:none; }
+
+/* 버튼이 눌린 상태(= 비번 보임)일 때 off 아이콘 보여주기 */
+.auth-modal .eye[aria-pressed="true"] .eye-ic--open{ display:none; }
+.auth-modal .eye[aria-pressed="true"] .eye-ic--off{ display:block; }
 
 /* 메인 버튼 */
 .auth-modal .primary-btn{
@@ -525,31 +558,59 @@ body.is-modal-open{ overflow: hidden; }
   display:flex;
   gap: 10px;
 }
+
 .auth-modal .social-btn{
-  flex:1;
+  flex: 1;
   height: 46px;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: #fff;
   font-weight: 800;
   cursor: pointer;
-  color: var(--text);
+
+  /* ✅ a/button 공통 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* ✅ 링크 기본 스타일 제거 */
+  text-decoration: none;
+  color: inherit;
+
+  /* 버튼처럼 보이게 */
+  padding: 0 14px;
+  box-shadow: none;
 }
+
+/* ✅ 네 jspf에서 추가한 구조 대응 */
+.auth-modal .social-icon{
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.auth-modal .social-text{
+  line-height: 1;
+}
+
 .auth-modal .social-btn:hover{ background:#f3f4f6; }
+
 :root[data-theme="dark_disabled"] .auth-modal .social-btn{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
 }
+
+/* ✅ dot은 gap으로 간격 처리 */
 .auth-modal .social-dot{
+  margin-right: 0;
+  vertical-align: baseline;
   display:inline-block;
   width:10px;
   height:10px;
   border-radius:999px;
   background:#e5e7eb;
-  margin-right: 8px;
 }
-
 /* 하단 안내 */
 .auth-modal .auth-footer{
   margin-top: 10px;

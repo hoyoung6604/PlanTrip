@@ -19,7 +19,7 @@ a{ color:inherit; text-decoration:none; }
 button,input,select,textarea{ font-family:var(--font); }
 
 /* ✅ 공통: 고정 헤더 공간 확보 */
-body{ padding-top:72px; }
+body{ padding-top: calc(var(--headerH) + var(--logoOffset)); }
 
 /* ✅ 공통: footer가 화면 아래에 붙도록(콘텐츠 짧은 페이지) */
 html,body{min-height:100%;}

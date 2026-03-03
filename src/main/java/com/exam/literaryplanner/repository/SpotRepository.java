@@ -115,16 +115,32 @@ public interface SpotRepository extends JpaRepository<Spot, Integer> {
     """)
     List<Spot> findWishSpotsByMemberIdx(@Param("mIdx") Integer mIdx);
 
-    /* 9) 최근 찜한 장소 조회 (도시 정보 포함) */
+    /* 9) 최근 찜한 장소 조회 (도시 정보 포함)
+     * ⚠️ 주의: JSP에서 ${spot.city.name} 접근이 있고, 페이징(Pageable)과 fetch join/조인을 한 번에 처리하면
+     *        하이버네이트가 의도보다 적게 반환하거나 LAZY 로딩 예외가 나는 케이스가 있음.
+     *
+     * ✅ 해결: 2단계로 가져온다.
+     *   1) wishListT에서 최근 s_idx N개를 페이징으로 먼저 뽑고
+     *   2) 그 id 목록으로 Spot + City를 fetch join으로 한 번에 조회한다.
+     */
+
+    /* 9-1) 최근 찜한 spot id N개 (wishListT 기준, 최신순) */
+    @Query(value = """
+        SELECT w.s_idx
+        FROM wishListT w
+        WHERE w.m_idx = :mIdx
+        ORDER BY w.w_date DESC
+    """, nativeQuery = true)
+    List<Integer> findRecentWishSpotIds(@Param("mIdx") Integer mIdx, Pageable pageable);
+
+    /* 9-2) id 목록으로 Spot + City를 한 번에 로딩 */
     @Query("""
-        SELECT s
-        FROM Spot s
-        LEFT JOIN FETCH s.city
-        JOIN WishList w ON s.id = w.sIdx
-        WHERE w.mIdx = :mIdx
-        ORDER BY w.wDate DESC
+        select s
+        from Spot s
+        left join fetch s.city
+        where s.id in :ids
     """)
-    Page<Spot> findRecentWishSpots(@Param("mIdx") Integer mIdx, Pageable pageable);
+    List<Spot> findByIdInWithCity(@Param("ids") List<Integer> ids);
 
     /* RouteController 등에서 Pageable 없이 호출할 때(20개 고정) */
     default List<SpotDistanceDto> findNearestStayDefault(double lat, double lng) {

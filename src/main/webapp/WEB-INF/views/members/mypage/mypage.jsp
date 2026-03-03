@@ -16,6 +16,11 @@
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
+  <script>
+    /* contextPath를 JS에서 쓸 수 있게 주입 */
+    window.__ctx = "${pageContext.request.contextPath}";
+  </script>
+  <script defer src="/js/mypage-withdraw.js"></script>
 </head>
 <body>
 
@@ -117,7 +122,7 @@
         </div>
         
         <div class="info-footer">
-          <a href="${pageContext.request.contextPath}/members/mypage/withdraw" class="btn-withdraw">회원 탈퇴</a>
+          <button type="button" class="btn-withdraw" data-action="withdraw">회원 탈퇴</button>
         </div>
       </section>
 
