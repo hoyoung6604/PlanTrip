@@ -84,8 +84,9 @@ body.admin-page{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 6px 6px 14px;
-  height: 92px;
+  /* ✅ (요청) 로고 영역을 '선(구분선)'까지 넉넉히 키움 */
+  padding: 12px 6px 18px;
+  height: 150px;
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
@@ -98,11 +99,11 @@ body.admin-page{
 }
 
 .admin-brand__logo{
-  /* (요청) 사이드바 로고가 너무 작아서 브랜드 영역에 맞게 확대 */
-  height: var(--pt-logo-h, 54px);
+  /* ✅ (요청) Admin 사이드바 로고를 훨씬 더 크게 */
+  height: var(--pt-logo-h, 122px);
   width: auto;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
-  max-width: 220px;
+  max-width: 246px;
 }
 
 .admin-nav{

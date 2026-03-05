@@ -56,18 +56,35 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             name = user.getAttribute("name");
         }
 
-        // ✅ sns_id 저장 규칙 (추천)
+        // ✅ sns_id 저장 규칙
         String snsId = "google:" + subject;
 
         // 1) snsId로 기존 회원 찾기
         Member member = literaryRepository.findBySnsId(snsId).orElse(null);
 
-        // 2) 없으면 자동 회원가입(또는 email로 연결하고 싶으면 email로 한번 더 검색 가능)
+        // 2) snsId로 못 찾으면, "같은 이메일"로 기존 계정이 있는지 먼저 확인해서 연동
+        //    (이걸 안 하면 m_email UNIQUE 때문에 구글 로그인에서 500이 터질 수 있음)
+        if (member == null && email != null && !email.isBlank()) {
+            member = literaryRepository.findByMEmail(email).orElse(null);
+            if (member != null) {
+                member.setSnsId(snsId);
+                member = literaryRepository.save(member);
+            }
+        }
+
+        // 3) 그래도 없으면 자동 회원가입
         if (member == null) {
             member = new Member();
 
-            // m_id는 유니크라서 자동 생성(원하는 규칙으로 바꾸면 됨)
-            member.setMId("google_" + subject.substring(0, Math.min(10, subject.length())));
+            // m_id 유니크 충돌 방지: 기본값 + 필요 시 뒤에 숫자를 붙여서 보정
+            String baseId = "google_" + subject.substring(0, Math.min(10, subject.length()));
+            String newId = baseId;
+            int tries = 0;
+            while (literaryRepository.existsByMId(newId) && tries < 20) {
+                tries++;
+                newId = baseId + "_" + tries;
+            }
+            member.setMId(newId);
 
             // pw는 소셜로그인에서는 안 쓰지만 NOT NULL이라 랜덤+암호화로 채움
             member.setMPw(passwordEncoder.encode(randomPassword(20)));

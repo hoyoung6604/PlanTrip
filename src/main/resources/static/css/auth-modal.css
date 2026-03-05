@@ -625,18 +625,36 @@ body.is-modal-open{ overflow: hidden; }
 }
 
 .auth-modal .form-error{
-  margin: 12px 0;
-  padding: 12px 14px;
-  border: 1px solid rgba(239,68,68,.25);
-  background: rgba(255,241,242,.9);
-  color: rgba(153,27,27,1);
-  border-radius: 12px;
-  font-size: 14px;
+  /* ✅ 요청: 박스(배경/테두리) 없이 텍스트만 */
+  margin: 8px 0 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(220,38,38,1);
+  border-radius: 0;
+  font-size: 13px;
+  line-height: 1.2;
+  /* ✅ 크기(높이) 고정 요구: 기본은 display:none, 보일 때만 한 줄 */
 }
 
 :root[data-theme="dark_disabled"] .auth-modal .form-error{
-  background: rgba(153,27,27,.18);
-  border-color: rgba(248,113,113,.28);
+  background: transparent;
+  border-color: transparent;
+  color: rgba(254,202,202,1);
+}
+
+/* ✅ 필드 옆 에러(아이디/이메일/비밀번호 등) */
+.auth-modal .field-error{
+  display:none;              /* ✅ 기본은 공간 차지 X (모달 크기 유지) */
+  margin: 3px 0 6px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: rgba(220,38,38,1);
+}
+
+.auth-modal .field-error.is-show{ display:block; }
+
+:root[data-theme="dark_disabled"] .auth-modal .field-error{
   color: rgba(254,202,202,1);
 }
 

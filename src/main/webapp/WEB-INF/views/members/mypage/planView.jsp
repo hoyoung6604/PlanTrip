@@ -61,7 +61,12 @@
 
         <div style="display:flex; gap:8px;">
           <button class="mp-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/members/mypage/plans'">목록</button>
-          <button class="mp-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/plans/edit?pIdx=${plan.pIdx}'">수정</button>
+          <!-- ✅ 수정: 마이페이지 상세보기의 '수정'은 기본정보 수정 화면(/plans/edit)으로 이동 -->
+		  <button class="mp-btn" type="button"
+		                    onclick="location.href='${pageContext.request.contextPath}/plans/edit?pIdx=${plan.pIdx}'">
+		              수정
+		            </button>
+
           <button class="mp-btn" type="button" onclick="if(confirm('삭제하시겠습니까?')) location.href='${pageContext.request.contextPath}/members/mypage/plans/delete?pIdx=${plan.pIdx}'">삭제</button>
         </div>
       </div>

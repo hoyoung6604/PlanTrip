@@ -58,4 +58,23 @@ public class TravelPlan {
     public void setPEnd(LocalDate pEnd) { this.pEnd = pEnd; }
 
     public LocalDateTime getPRegDate() { return pRegDate; }
+
+    // ✅ JSP EL/Projection 호환용(TravelPlanViewRow는 getpIdx() 형태라서, JSP에서 ${plan.pIdx}를 그대로 쓰기 위해 추가)
+    public Integer getpIdx() { return getPIdx(); }
+    public void setpIdx(Integer pIdx) { setPIdx(pIdx); }
+
+    public Integer getmIdx() { return getMIdx(); }
+    public void setmIdx(Integer mIdx) { setMIdx(mIdx); }
+
+    public String getpTitle() { return getPTitle(); }
+    public void setpTitle(String pTitle) { setPTitle(pTitle); }
+
+    public java.time.LocalDate getpStart() { return getPStart(); }
+    public void setpStart(java.time.LocalDate pStart) { setPStart(pStart); }
+
+    public java.time.LocalDate getpEnd() { return getPEnd(); }
+    public void setpEnd(java.time.LocalDate pEnd) { setPEnd(pEnd); }
+
+
+
 }

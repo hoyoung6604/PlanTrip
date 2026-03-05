@@ -38,13 +38,12 @@
             </c:otherwise>
           </c:choose>
         </span>
-        <%-- <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
-          <span class="tt-icon" aria-hidden="true">☀️</span>
-          <span class="tt-icon" aria-hidden="true">🌙</span>
-          <span class="tt-indicator" aria-hidden="true"></span>
-        </button> --%>
       </div>
     </div>
+
+    <c:if test="${not empty msg}">
+      <div class="admin-alert admin-card padded">${msg}</div>
+    </c:if>
 
     <div class="admin-pagewrap">
       <section class="admin-card padded">
@@ -71,9 +70,9 @@
               </tr>
             </thead>
             <tbody>
-              <c:forEach var="u" items="${members}">
+              <c:forEach var="u" items="${members}" varStatus="st">
                 <tr>
-                  <td>${u.MIdx}</td>
+                  <td>${st.index + 1}</td>
                   <td>${u.MId}</td>
                   <td>${u.MName}</td>
                   <td>${u.MEmail}</td>
@@ -85,10 +84,14 @@
                       </c:choose>
                     </span>
                   </td>
+
+                  <!-- ✅ 가입일 출력 (LocalDateTime/문자열 어떤 형태든 안전하게 처리) -->
                   <td>
                     <c:choose>
-                      <c:when test="${empty u.MRegDate}">-</c:when>
-                      <c:otherwise>${fn:substring(u.MRegDate,0,10)}</c:otherwise>
+                      <c:when test="${not empty u.MRegDate}">
+                        ${fn:substring(u.MRegDate, 0, 10)}
+                      </c:when>
+                      <c:otherwise>-</c:otherwise>
                     </c:choose>
                   </td>
                 </tr>
@@ -96,7 +99,7 @@
 
               <c:if test="${empty members}">
                 <tr>
-                  <td colspan="6" class="admin-empty">표시할 회원이 없습니다.</td>
+                  <td colspan="7" class="admin-empty">표시할 회원이 없습니다.</td>
                 </tr>
               </c:if>
             </tbody>

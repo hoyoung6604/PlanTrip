@@ -1,5 +1,6 @@
 package com.exam.literaryplanner.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,35 +28,36 @@ public interface LiteraryRepository extends JpaRepository<Member, Integer> {
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM Member m WHERE m.mId = :mId")
     boolean existsByMId(@Param("mId") String mId);
 
-    // 4. 이메일 중복 체크 (추가됨)
+    // 4. 이메일 중복 체크
     @Query("select count(m) > 0 from Member m where m.mEmail = :email")
     boolean existsByEmail(@Param("email") String email);
 
-    // 5. 가입일 순 정렬 (추가됨)
+    // 5. 가입일 순 정렬
     @Query("select m from Member m order by m.mRegDate desc")
     List<Member> findAllOrderByRegDateDesc();
 
-    // 6. 회원 검색 (ID, 이름, 이메일) (추가됨)
+    // 6. 회원 검색 (ID, 이름, 이메일)
     @Query("""
-    		select m
-    		from Member m
-    		where lower(m.mId) like lower(concat('%', :kw, '%'))
-    		   or lower(m.mName) like lower(concat('%', :kw, '%'))
-    		   or lower(m.mEmail) like lower(concat('%', :kw, '%'))
-    		order by m.mRegDate desc
-    		""")
+            select m
+            from Member m
+            where lower(m.mId) like lower(concat('%', :kw, '%'))
+               or lower(m.mName) like lower(concat('%', :kw, '%'))
+               or lower(m.mEmail) like lower(concat('%', :kw, '%'))
+            order by m.mRegDate desc
+            """)
     List<Member> searchMembers(@Param("kw") String kw);
 
-    // 7. 전체 회원 수 카운트 (추가됨)
+    // 7. 전체 회원 수 카운트
     @Query("select count(m) from Member m")
     int countMembers();
 
-    // 8. 네이티브 쿼리를 이용한 회원 삭제 (추가됨)
+    // ✅ 관리자 대시보드: 오늘 가입 회원 수(00:00~24:00)
+    @Query("select count(m) from Member m where m.mRegDate >= :start and m.mRegDate < :end")
+    long countMembersBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    // 8. 네이티브 쿼리를 이용한 회원 삭제
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM memberT WHERE m_idx = ?1", nativeQuery = true)
-    int deleteMemberNative(Integer mIdx);
-
-    // 9. 소셜 로그인 연동 (SNS ID로 찾기) (추가됨)
+    // 9. 소셜 로그인 연동 (SNS ID로 찾기)
     Optional<Member> findBySnsId(String snsId);
 }
