@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
-<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -8,13 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
 
-  <!-- welcome to the PlanTrip 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
-  <script defer src="${pageContext.request.contextPath}/js/theme.js"></script>
   <script defer src="${pageContext.request.contextPath}/js/nav-wave.js"></script>
   <script defer src="${pageContext.request.contextPath}/js/index.js"></script>
 </head>
@@ -48,10 +45,10 @@
       </j:if>
 
       <j:if test="${not empty sessionScope.loginMember}">
-        <a class="header-link" href="/reservations">내 예약</a>
+        <%-- <a class="header-link" href="/reservations">내 예약</a> --%>
 
         <div class="hamburger" id="hmWrap">
-          <button class="hamburger-btn" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
+          <button class="hamburger-btn ${sessionScope.loginMember.MRole == 9 ? 'is-admin' : ''} ${not empty sessionScope.loginMember.snsId ? 'is-social' : ''}" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
             <span></span><span></span><span></span>
           </button>
 
@@ -69,7 +66,7 @@
             </j:if>
 
             <a class="menu-item" href="/members/mypage">마이페이지</a>
-            <a class="menu-item" href="/plan">내 여행 계획</a>
+            
 
             <div class="hm-divider"></div>
 
@@ -84,13 +81,11 @@
 </header>
 
 <main>
-  <!-- ✅ 메인 화면: welcome + 스크롤 화살표는 유지, 검색바만 제거 -->
   <section class="hero">
     <div class="hero-copy hero-copy--center">
       <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
 
-    <!-- ✅ 움직이는 화살표 박스(아래로 이동) -->
     <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
   </section>
 
@@ -123,7 +118,6 @@
               </a>
             </j:forEach>
 
-            <!-- 무한 루프용 복제 -->
             <j:forEach var="s" items="${popularSpots}">
               <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
                 <div class="post-img" style="background-image:url('${s.image}')"></div>
@@ -141,7 +135,6 @@
         </div>
       </section>
 
-      
       <section class="block block-recommend" id="recommendSection">
         <div class="course-head" style="margin-bottom: 20px;">
           <div class="course-head-left block-head">
@@ -180,15 +173,11 @@
           </button>
         </div>
       </section>
-</div>
+    </div>
   </section>
 </main>
 
-<!-- auth modal은 공통 스크립트(auth-modal.js)에서 data-auth-open으로 열림 -->
-
-
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
-
 
 </body>
 </html>

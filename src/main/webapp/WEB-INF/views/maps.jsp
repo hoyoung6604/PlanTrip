@@ -410,6 +410,14 @@
 	      e.preventDefault();
 	      searchPlace();
 	    });
+		
+		// ✅ 엔터만 눌러도 검색되게
+		document.getElementById("keyword").addEventListener("keydown", function(e){
+		  if(e.key === "Enter"){
+		    e.preventDefault();   // 엔터로 폼 제출/페이지 튐 방지
+		    searchPlace();        // 기존 검색 함수 실행
+		  }
+		});
 
 	});
 </script>

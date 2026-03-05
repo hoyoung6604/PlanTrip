@@ -541,4 +541,81 @@ a{ color:inherit; text-decoration:none; }
   to{ opacity:1; transform: translate(-50%, -50%); }
 }
 
+/* =========================================================
+   [수정] 햄버거 메뉴 버튼 -> 마이페이지 스타일 프로필 아바타로 변경
+   ========================================================= */
+
+/* 1. ✅ 기존 햄버거 잔재(검은 선, SVG, span, ::before) 완벽하게 숨기기 */
+.btn-menu *, 
+.header-menu-btn *,
+.hamburger-btn * { 
+  display: none !important; /* 내부의 모든 태그(선) 삭제 */
+}
+.btn-menu::before, 
+.header-menu-btn::before,
+.hamburger-btn::before {
+  display: none !important;
+  content: none !important; /* ::before로 만든 선 삭제 */
+}
+
+/* 2. 버튼 자체를 동그란 아바타 틀로 변경 + 내부 정렬 기준점 설정 */
+.btn-menu, 
+.header-menu-btn,
+.hamburger-btn {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 50% !important; 
+  background: linear-gradient(135deg, #e0f2fe, #dbeafe) !important; 
+  border: 1px solid rgba(47,111,237,.15) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+  display: inline-block !important; 
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  /* 글씨 등 잔여물 투명화 */
+  color: transparent !important;
+  font-size: 0 !important;
+  
+  /* 위치 교정 */
+  margin: 0 0 0 16px !important;
+  position: relative !important;
+  line-height: 0 !important; 
+  overflow: hidden !important; 
+  vertical-align: middle !important;
+  top: auto !important;
+  bottom: auto !important;
+  right: auto !important;
+  transform: none !important; 
+}
+
+/* 3. 마우스 올렸을 때(Hover) 액션 */
+.btn-menu:hover, 
+.header-menu-btn:hover,
+.hamburger-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(50, 100, 255, 0.15) !important;
+}
+
+/* 4. 사람 모양 아이콘을 동그라미 안에 완벽한 중앙 배치 */
+.btn-menu::after, 
+.header-menu-btn::after,
+.hamburger-btn::after {
+  content: "" !important;
+  display: block !important;
+  width: 28px !important; 
+  height: 28px !important;
+  
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2360a5fa'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important; 
+}
+
 

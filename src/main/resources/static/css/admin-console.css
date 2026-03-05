@@ -100,7 +100,7 @@ body.admin-page{
 
 .admin-brand__logo{
   /* ✅ (요청) Admin 사이드바 로고를 훨씬 더 크게 */
-  height: var(--pt-logo-h, 122px);
+  height: var(--pt-logo-h, 220px);
   width: auto;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
   max-width: 246px;

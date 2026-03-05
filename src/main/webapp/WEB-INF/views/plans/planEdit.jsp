@@ -39,7 +39,7 @@
 <div class="wrap">
 
   <h2>여행 계획 수정</h2>
-  <p class="muted">기본 정보(제목/날짜/도시/목적)를 수정한 뒤 저장하면, 다음 단계로 장소 선택/경로 수정 화면으로 이동해.</p>
+  <p class="muted">기본 정보(제목/날짜/도시/목적)를 수정한 뒤 저장하면, 장소 선택/경로 수정 화면으로 이동합니다.</p>
 
   <div class="card">
     <form id="planForm" method="post" action="${pageContext.request.contextPath}/plans/edit">
@@ -52,7 +52,7 @@
         <input type="text" id="planName" name="planName"
                placeholder="예) 3월 제주 여행" maxlength="50" required
                value="<c:out value='${plan.pTitle}'/>" />
-        <div class="muted">내 계획 목록에서 보여줄 이름이야.</div>
+        <div class="muted">내 계획 목록에서 보여줄 이름입니다.</div>
       </div>
 
       <!-- 도시 -->
@@ -139,12 +139,6 @@
     </form>
   </div>
 
-  <div class="card">
-    <b>다음 단계</b>
-    <p class="muted" style="margin-top: 8px;">
-      저장되면 route 페이지로 이동해서, 기존에 저장된 장소를 불러오고 수정할 수 있게 수정할 수 있습니다.
-    </p>
-  </div>
 
 </div>
 

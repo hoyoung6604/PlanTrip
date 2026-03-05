@@ -22,17 +22,17 @@ public class ReviewPhotoService {
 
     private final ReviewPhotoRepository reviewPhotoRepository;
 
-    // ✅ (매우 중요) 한글 사용자명("이은아")에서 발생하는 파일 저장 에러 방지
-    // user.home 대신 현재 프로젝트 실행 경로(user.dir)에 폴더를 만듭니다.
+    // ✅ 팀원 간 사진 공유 및 폴더 에러 방지를 위해 프로젝트 내부 경로(user.dir)로 지정
     private final Path uploadRoot = Paths.get(
             System.getProperty("user.dir"),
             "uploads",
             "reviews"
     );
     
+    // 과거 버전 호환 경로
     private final Path legacyUploadRoot = Paths.get(
             System.getProperty("user.home"),
-            "plantrip_uploads",
+            "literaryplanner_uploads",
             "reviews"
     );
 
@@ -57,13 +57,9 @@ public class ReviewPhotoService {
 		}
 
         String stored = UUID.randomUUID() + ext;
-
         Path target = uploadRoot.resolve(stored);
 
-        // 부모 폴더 무조건 생성
         Files.createDirectories(target.getParent());
-
-        // 파일 물리적 저장
         file.transferTo(target.toFile());
 
         ReviewPhoto photo = new ReviewPhoto();
@@ -91,7 +87,6 @@ public class ReviewPhotoService {
         if (legacyRes.exists() && legacyRes.isReadable()) {
             return legacyRes;
         }
-
         return null;
     }
 
@@ -101,39 +96,44 @@ public class ReviewPhotoService {
 
     public void delete(Integer rpIdx) {
         ReviewPhoto photo = reviewPhotoRepository.findById(rpIdx).orElseThrow();
-
         try {
             Path filePath = uploadRoot.resolve(photo.getRpStoredName());
             Files.deleteIfExists(filePath);
         } catch (Exception ignored) {}
-
         reviewPhotoRepository.deleteById(rpIdx);
     }
 
     public void saveAll(Integer rvIdx, MultipartFile[] files) throws Exception {
-        if (files == null || files.length == 0) {
-			return;
-		}
+        if (files == null || files.length == 0) return;
 
         for (MultipartFile f : files) {
-            if (f == null || f.isEmpty()) {
-				continue;
-			}
+            if (f == null || f.isEmpty()) continue;
+            
+            //  [핵심 방어선 1] 실제 이미지 파일이 아니면 무조건 차단! (깨진 사진 원천 방지)
+            String contentType = f.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                continue; 
+            }
+            
             save(rvIdx, f); 
         }
     }
 
     public void saveMany(Integer rvIdx, MultipartFile[] photos) throws Exception {
-        if (photos == null) {
-			return;
-		}
+        if (photos == null) return;
+        
         for (MultipartFile f : photos) {
-            if (f == null || f.isEmpty()) {
-				continue;
-			}
+            if (f == null || f.isEmpty()) continue;
+            
+            // 🚨 [핵심 방어선 2] 실제 이미지 파일이 아니면 무조건 차단!
+            String contentType = f.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                continue; 
+            }
+
             try {
                 save(rvIdx, f);
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {}
         }
     }
 

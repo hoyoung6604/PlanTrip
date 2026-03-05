@@ -5,17 +5,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.exam.literaryplanner.domain.*;
+import com.exam.literaryplanner.domain.Member;
+import com.exam.literaryplanner.domain.PlanDetail;
+import com.exam.literaryplanner.domain.Spot;
+import com.exam.literaryplanner.domain.TravelPlan;
 import com.exam.literaryplanner.dto.RouteSpotDto;
 import com.exam.literaryplanner.dto.SpotDistanceDto;
-import com.exam.literaryplanner.repository.*;
+import com.exam.literaryplanner.repository.CityRepository;
+import com.exam.literaryplanner.repository.PlanDetailRepository;
 import com.exam.literaryplanner.repository.SpotRepository;
-import com.exam.literaryplanner.service.*;
+import com.exam.literaryplanner.repository.TravelPlanRepository;
+import com.exam.literaryplanner.service.KakaoDirectionsService;
+import com.exam.literaryplanner.service.PlanService;
+import com.exam.literaryplanner.service.RouteService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +54,7 @@ public class RouteController {
     public String createPlanRoute(
             @RequestParam String planName,
             @RequestParam Integer cId,
-            @RequestParam(name="purposes") List<String> purposes,
+            @RequestParam(name = "purposes") List<String> purposes,
             @RequestParam String startDate,
             @RequestParam String endDate,
             HttpSession session
@@ -67,11 +75,8 @@ public class RouteController {
                 + "&purpose=" + String.join("&purpose=", purposes);
     }
 
-    
     // ==========================
     // (추가) 계획 기본정보 수정 화면
-    //  - 마이페이지 상세보기의 "수정" 버튼이 여기로 들어온다.
-    //  - 저장된 장소/도시/목적을 최대한 추론해서 form 기본값으로 복원한다.
     // ==========================
     @GetMapping("/edit")
     public String editPlanPage(@RequestParam Integer pIdx, HttpSession session, Model model) {
@@ -81,7 +86,6 @@ public class RouteController {
         TravelPlan plan = travelPlanRepository.findMyPlan(pIdx, loginMember.getMIdx())
                 .orElseThrow(() -> new IllegalArgumentException("해당 계획이 존재하지 않습니다. pIdx=" + pIdx));
 
-        // 저장된 장소 기반으로 도시/목적을 추론(없으면 null)
         List<PlanDetail> savedDetails = planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
         List<Integer> savedSpotIds = savedDetails.stream()
                 .map(PlanDetail::getsIdx)
@@ -114,7 +118,7 @@ public class RouteController {
             @RequestParam Integer pIdx,
             @RequestParam String planName,
             @RequestParam Integer cId,
-            @RequestParam(name="purposes") List<String> purposes,
+            @RequestParam(name = "purposes", required = false) List<String> purposes, // ✅ 방어
             @RequestParam String startDate,
             @RequestParam String endDate,
             HttpSession session,
@@ -133,23 +137,26 @@ public class RouteController {
             return "redirect:/plans/edit?pIdx=" + pIdx;
         }
 
-        // ✅ 기본정보 업데이트
+        List<String> safePurposes = (purposes == null) ? new ArrayList<>() : purposes.stream()
+                .filter(v -> v != null && !v.isBlank())
+                .toList();
+
         plan.setPTitle(planName);
         plan.setTpTitle(planName);
         plan.setPStart(start);
         plan.setPEnd(end);
         travelPlanRepository.save(plan);
 
-        // ✅ 다음 단계(장소 선택/경로 수정)로 이동
-        //    route.jsp가 오른쪽 목록을 채우려면 cityId/purpose가 필요해서 같이 넘김
-        return "redirect:/plans/route?pIdx=" + pIdx
-                + "&cityId=" + cId
-                + "&purpose=" + String.join("&purpose=", purposes);
+        String redirect = "redirect:/plans/route?pIdx=" + pIdx + "&cityId=" + cId;
+        if (!safePurposes.isEmpty()) {
+            redirect += "&purpose=" + String.join("&purpose=", safePurposes);
+        }
+        return redirect;
     }
-// ==========================
+
+    // ==========================
     // 2. 루트 페이지
     // ==========================
-    
     @GetMapping("/route")
     public String routePage(
             @RequestParam Integer pIdx,
@@ -159,26 +166,18 @@ public class RouteController {
     ) {
         model.addAttribute("pIdx", pIdx);
 
-        // ✅ 서버에 저장된 기존 선택 데이터(마이페이지 수정 진입 시 복원용)
-        List<PlanDetail> savedDetails =
-                planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
+        List<PlanDetail> savedDetails = planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
         model.addAttribute("savedDetails", savedDetails);
 
-        // ✅ savedDetails에 해당하는 Spot 정보도 같이 내려줘야 route.jsp에서 복원 가능
         List<Integer> savedSpotIds = savedDetails.stream()
                 .map(PlanDetail::getsIdx)
                 .filter(Objects::nonNull)
                 .distinct()
                 .toList();
 
-        List<Spot> savedSpots = savedSpotIds.isEmpty()
-                ? List.of()
-                : spotRepository.findAllById(savedSpotIds);
-
+        List<Spot> savedSpots = savedSpotIds.isEmpty() ? List.of() : spotRepository.findAllById(savedSpotIds);
         model.addAttribute("savedSpots", savedSpots);
 
-        // ✅ 쿼리스트링(cityId/purpose)이 없더라도, 기존 저장 데이터로 기본값을 추론해서
-        //    "장소 리스트(오른쪽 목록)"이 비어 보이는 문제를 방지
         if (cityId == null && !savedSpots.isEmpty() && savedSpots.get(0).getCity() != null) {
             cityId = savedSpots.get(0).getCity().getId();
         }
@@ -188,15 +187,12 @@ public class RouteController {
                     .filter(Objects::nonNull)
                     .filter(cat -> !cat.equalsIgnoreCase("STAY"))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-            if (!inferred.isEmpty()) {
-                purpose = new ArrayList<>(inferred);
-            }
+            if (!inferred.isEmpty()) purpose = new ArrayList<>(inferred);
         }
 
         List<Spot> spots = List.of();
         if (cityId != null && purpose != null && !purpose.isEmpty()) {
-            spots = spotRepository
-                    .findByCity_IdAndCatCodeInOrderByNameAsc(cityId, purpose);
+            spots = spotRepository.findByCity_IdAndCatCodeInOrderByNameAsc(cityId, purpose);
         }
 
         model.addAttribute("cityId", cityId);
@@ -207,36 +203,86 @@ public class RouteController {
     }
 
     // ==========================
-    // 3. 루트 저장
+    // 3. 루트 저장 (핵심 수정)
     // ==========================
+    @Transactional
     @PostMapping("/route/save")
     public String saveRoute(
             @RequestParam Integer pIdx,
-            @RequestParam Integer cityId,
-            @RequestParam List<String> purpose,
-            @RequestParam(name="sIdx") List<Integer> sIdx,
-            @RequestParam(name="pDay") List<Integer> pDay,
-            @RequestParam(name="pMemo", required=false) List<String> pMemo,
-            RedirectAttributes redirectAttributes
+            @RequestParam(required = false) Integer cityId,                 // ✅ 방어
+            @RequestParam(name = "purpose", required = false) List<String> purpose, // ✅ 방어
+            @RequestParam(name = "sIdx") List<Integer> sIdx,
+            @RequestParam(name = "pDay") List<Integer> pDay,
+            @RequestParam(name = "pMemo", required = false) List<String> pMemo,
+            HttpSession session,
+            RedirectAttributes ra
     ) {
-        planDetailRepository.deleteByPIdx(pIdx);
-
-        for (int i = 0; i < sIdx.size(); i++) {
-            PlanDetail d = new PlanDetail();
-            d.setpIdx(pIdx);
-            d.setsIdx(sIdx.get(i));
-            d.setpDay(pDay.get(i));
-            d.setpSeq(i + 1);
-
-            if (pMemo != null && pMemo.size() > i) {
-                d.setpMemo(pMemo.get(i));
-            }
-
-            planDetailRepository.save(d);
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("saveErr", "로그인이 필요합니다.");
+            return "redirect:/members/login";
         }
 
-        redirectAttributes.addFlashAttribute("saveMsg", "계획이 저장되었습니다.");
-        return "redirect:/";
+        // ✅ 내 계획인지 확인 (권한 방어)
+        travelPlanRepository.findMyPlan(pIdx, loginMember.getMIdx())
+                .orElseThrow(() -> new IllegalArgumentException("권한이 없거나 존재하지 않는 계획입니다. pIdx=" + pIdx));
+
+        // ✅ 최소 선택 검증
+        if (sIdx == null || sIdx.isEmpty()) {
+            ra.addFlashAttribute("saveErr", "저장할 장소가 없습니다.");
+            return redirectBackToRoute(pIdx, cityId, purpose);
+        }
+        if (pDay == null || pDay.size() != sIdx.size()) {
+            ra.addFlashAttribute("saveErr", "저장 데이터 형식이 올바르지 않습니다. (DAY 누락)");
+            return redirectBackToRoute(pIdx, cityId, purpose);
+        }
+
+        // ✅ cityId가 비었으면 첫 장소로 추정
+        if (cityId == null) {
+            try {
+                Spot first = spotRepository.findById(sIdx.get(0)).orElse(null);
+                if (first != null && first.getCity() != null) cityId = first.getCity().getId();
+            } catch (Exception ignore) {}
+        }
+
+        List<String> safePurpose = (purpose == null) ? List.of() : purpose.stream()
+                .filter(v -> v != null && !v.isBlank())
+                .toList();
+
+        try {
+            // ✅ 기존 route 전체 삭제 후 재저장 (트랜잭션이라 중간에 터지면 롤백됨)
+            planDetailRepository.deleteByPIdx(pIdx);
+
+            for (int i = 0; i < sIdx.size(); i++) {
+                PlanDetail d = new PlanDetail();
+                d.setpIdx(pIdx);
+                d.setsIdx(sIdx.get(i));
+                d.setpDay(pDay.get(i));
+                d.setpSeq(i + 1);
+
+                if (pMemo != null && pMemo.size() > i) d.setpMemo(pMemo.get(i));
+
+                planDetailRepository.save(d);
+            }
+
+            // ✅ 저장 성공 → 마이페이지 상세보기로
+            ra.addFlashAttribute("saveMsg", "저장 완료");
+            return "redirect:/members/mypage/plans/view?pIdx=" + pIdx;
+
+        } catch (Exception e) {
+            // ✅ 저장 실패 → route로 복귀
+            ra.addFlashAttribute("saveErr", "저장 실패 (서버 로그 확인 필요)");
+            return redirectBackToRoute(pIdx, cityId, safePurpose);
+        }
+    }
+
+    private String redirectBackToRoute(Integer pIdx, Integer cityId, List<String> purpose) {
+        String redirect = "redirect:/plans/route?pIdx=" + pIdx;
+        if (cityId != null) redirect += "&cityId=" + cityId;
+        if (purpose != null && !purpose.isEmpty()) {
+            redirect += "&purpose=" + String.join("&purpose=", purpose);
+        }
+        return redirect;
     }
 
     // ==========================
@@ -265,8 +311,7 @@ public class RouteController {
     @GetMapping("/stay")
     public String stayPage(@RequestParam Integer pIdx, Model model) {
 
-        List<PlanDetail> details =
-                planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
+        List<PlanDetail> details = planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
 
         Map<Integer, List<PlanDetail>> byDay =
                 details.stream().collect(Collectors.groupingBy(PlanDetail::getpDay));
@@ -302,26 +347,19 @@ public class RouteController {
     // ==========================
     @ResponseBody
     @GetMapping("/api/stays")
-    public List<SpotDistanceDto> nearbyStays(
-            @RequestParam double lat,
-            @RequestParam double lng
-    ) {
+    public List<SpotDistanceDto> nearbyStays(@RequestParam double lat, @RequestParam double lng) {
         return spotRepository.findNearestStay(lat, lng);
     }
-    
+
     @ResponseBody
     @GetMapping("/api/stays/byRoute")
     public List<SpotDistanceDto> staysByRoute(@RequestParam Integer pIdx) {
 
-        List<PlanDetail> details =
-                planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
-
+        List<PlanDetail> details = planDetailRepository.findByPIdxOrderByPDayAscPSeqAsc(pIdx);
         if (details.isEmpty()) return List.of();
 
         List<Spot> spots = spotRepository.findAllById(
-                details.stream()
-                        .map(PlanDetail::getsIdx)
-                        .toList()
+                details.stream().map(PlanDetail::getsIdx).toList()
         );
 
         double avgLat = spots.stream().mapToDouble(Spot::getLat).average().orElse(0);
@@ -329,8 +367,6 @@ public class RouteController {
 
         return spotRepository.findNearestStay(avgLat, avgLng);
     }
-    
-    
 
     // ==========================
     // 공통 유틸

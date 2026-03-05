@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -10,10 +11,12 @@
   <link rel="stylesheet" href="/css/header.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
   <link rel="stylesheet" href="/css/redesign.css" />
+  <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a3ff57f5cf42d50dce5ccbd693ebcf24&autoload=false"></script>
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
+  <script defer src="/js/ui-toast.js"></script>
 
   <style>
     body.plan-view-page .mp-card,
@@ -257,7 +260,31 @@
     </section>
   </main>
 </div>
+<!-- ✅ flash 메시지: JS로 안전하게 전달 -->
+<script id="toastMsg" type="application/json">
+  {
+    "saveMsg": ${empty saveMsg ? "null" : "\"" += fn:escapeXml(saveMsg) += "\""},
+    "saveErr": ${empty saveErr ? "null" : "\"" += fn:escapeXml(saveErr) += "\""}
+  }
+</script>
 
+<script>
+(function(){
+  // UIToast가 없으면 조용히 종료
+  if (typeof UIToast === 'undefined') return;
+
+  var el = document.getElementById('toastMsg');
+  if (!el) return;
+
+  try {
+    var data = JSON.parse(el.textContent || "{}");
+
+    if (data.saveMsg) UIToast.show(data.saveMsg, { type: 'success' });
+    if (data.saveErr) UIToast.show(data.saveErr, { type: 'error' });
+
+  } catch(e) {}
+})();
+</script>
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 <%@ include file="/WEB-INF/views/common/authModal.jspf" %>
 </body>

@@ -2,6 +2,7 @@
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <j:set var="isSupport" value="${fn:contains(pageContext.request.requestURI, '/support')}" />
+<j:set var="isMyPage" value="${fn:contains(pageContext.request.requestURI, '/members/mypage')}" />
 
 <header class="header${isSupport ? ' is-support' : ''}" id="header">
   <div class="container header-inner">
@@ -16,7 +17,6 @@
       <a href="${pageContext.request.contextPath}/plans/planRoute" class="pt-wave">여행 계획</a>
       <a href="${pageContext.request.contextPath}/community" class="pt-wave">커뮤니티</a>
       <a href="${pageContext.request.contextPath}/maps" class="pt-wave">지도</a>
-
       <a href="${pageContext.request.contextPath}/transport/flight" class="pt-wave">교통수단</a>
 
       <j:if test="${not empty sessionScope.loginMember}">
@@ -31,13 +31,14 @@
       </j:if>
 
       <j:if test="${not empty sessionScope.loginMember}">
-        <a class="header-link" href="${pageContext.request.contextPath}/reservations">내 예약</a>
-
+        <%-- <a class="header-link" href="${pageContext.request.contextPath}/reservations">내 예약</a> --%>
+		
         <div class="hamburger" id="hmWrap">
-          <button class="hamburger-btn" type="button" id="hmBtn"
-                  aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
-            <span></span><span></span><span></span>
-          </button>
+          <j:if test="${not isMyPage}">
+            <button class="hamburger-btn ${sessionScope.loginMember.MRole == 9 ? 'is-admin' : ''} ${not empty sessionScope.loginMember.snsId ? 'is-social' : ''}" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+          </j:if>
 
           <div class="hamburger-menu" id="hm" role="menu" aria-label="메뉴">
             <div class="hm-title">
@@ -49,23 +50,21 @@
                 </j:choose>
               </span>
             </div>
+			
             <j:if test="${sessionScope.loginMember.MRole == 9}">
               <a class="menu-item" href="${pageContext.request.contextPath}/admin">관리자</a>
             </j:if>
             <a class="menu-item" href="${pageContext.request.contextPath}/members/mypage">마이페이지</a>
-            <a class="menu-item" href="${pageContext.request.contextPath}/plan">내 여행 계획</a>
+            
 
             <div class="hm-divider"></div>
 
             <form action="${pageContext.request.contextPath}/members/logout" method="post" style="margin:0;">
               <button class="menu-btn" type="submit">로그아웃</button>
             </form>
-          </div></div>
+          </div>
         </div>
       </j:if>
-
-      <%-- 다크/라이트 토글은 임시 보류(주석 유지) --%>
-      <%-- <button type="button" class="theme-toggle" id="themeToggle">🌓</button> --%>
     </div>
   </div>
 </header>
@@ -120,25 +119,23 @@
     });
 
     // 5) ✅ 현재 페이지 active 표시 (컨텍스트 경로 포함 href 정상 처리)
-    const currentPath = window.location.pathname; // 예: /plantrip/community 또는 /community (환경별)
+    const currentPath = window.location.pathname; 
     const navLinks = document.querySelectorAll('.pt-nav a.pt-wave');
-    const ctx = '${pageContext.request.contextPath}'; // 예: /plantrip 또는 ""
+    const ctx = '${pageContext.request.contextPath}'; 
 
     function normalize(path) {
       if (!path) return '/';
-      // 컨텍스트 경로가 있으면 제거해서 순수 경로만 비교
       if (ctx && path.startsWith(ctx)) return path.substring(ctx.length) || '/';
       return path;
     }
 
-    const now = normalize(currentPath); // 예: /community
+    const now = normalize(currentPath); 
 
     // a 링크 active 처리
     navLinks.forEach(link => {
       const href = link.getAttribute('href');
       if (!href) return;
 
-      // href를 pathname으로 안전하게 파싱 (상대/절대 모두 대응)
       let linkPath = '/';
       try {
         linkPath = new URL(href, window.location.origin).pathname;
@@ -162,5 +159,4 @@
   });
 </script>
 
-<!-- 공통: 스크롤 시 헤더 숨김/표시 -->
 <script src="${pageContext.request.contextPath}/js/header-scroll.js"></script>

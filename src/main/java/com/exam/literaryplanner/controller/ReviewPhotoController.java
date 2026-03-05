@@ -52,7 +52,7 @@ public class ReviewPhotoController {
         try {
             ReviewPhoto photo = reviewPhotoService.getPhoto(photoId);
 
-            // ✅ Service와 동일하게 user.dir 로 맞춤
+            // ✅ Service와 동일하게 프로젝트 기준 경로 설정
             Path uploadRoot = Paths.get(System.getProperty("user.dir"), "uploads", "reviews");
             Path filePath = uploadRoot.resolve(photo.getRpStoredName());
 
@@ -101,7 +101,6 @@ public class ReviewPhotoController {
         }
 
         reviewPhotoService.saveAll(rvIdx, photos);
-
         return "redirect:" + redirectBase + rvIdx;
     }
 
@@ -138,9 +137,9 @@ public class ReviewPhotoController {
     @GetMapping("/name/{storedName:.+}")
     public ResponseEntity<Resource> serveByStoredName(@PathVariable String storedName) {
         try {
-            // ✅ Service와 동일하게 user.dir 로 맞춤
+            // ✅ Service와 동일하게 프로젝트 기준 경로 설정
             Path root = Paths.get(System.getProperty("user.dir"), "uploads", "reviews");
-            Path legacyRoot = Paths.get(System.getProperty("user.home"), "plantrip_uploads", "reviews");
+            Path legacyRoot = Paths.get(System.getProperty("user.home"), "literaryplanner_uploads", "reviews");
 
             Path filePath = root.resolve(storedName);
             if (!Files.exists(filePath)) {
@@ -200,7 +199,6 @@ public class ReviewPhotoController {
 		}
 
         reviewPhotoService.saveMany(rvIdx, photos);
-
         return "redirect:/community/view?rvIdx=" + rvIdx;
     }
 }
