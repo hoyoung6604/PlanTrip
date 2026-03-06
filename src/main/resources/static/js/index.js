@@ -266,93 +266,121 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 1) 공통 찜(하트) 토글 기능
   window.toggleWish = function(event, sIdx, btn){
-    if(event){ event.preventDefault(); event.stopPropagation(); }
+    event = event || window.event;
+    try{
+      if(event){
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }catch(e){}
 
     fetch(ctx() + "/api/wish/toggle", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sIdx: sIdx })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data && data.success){
+    .then(function(res){
+      if(res.status === 401){
+        // 비회원일 때 전용 로그인 안내 UI
+        if(window.LoginRequiredPrompt && typeof window.LoginRequiredPrompt.open === "function"){
+          window.LoginRequiredPrompt.open({
+            message: "로그인이 필요한 서비스입니다.\n계속하려면 로그인해 주세요.",
+            onConfirm: function(){
+              if(window.AuthModal && typeof window.AuthModal.open === "function"){
+                window.AuthModal.open("login");
+              }
+            }
+          });
+        }else if(window.AuthModal && typeof window.AuthModal.open === "function"){
+          // fallback: 프롬프트 UI가 없어도 로그인 모달은 열기
+          window.AuthModal.open("login");
+        }else{
+          alert("로그인이 필요한 서비스입니다.");
+        }
+        return null;
+      }
+      return res.json();
+    })
+    .then(function(data){
+      if(!data) return;
+
+      if(data.success){
         btn.textContent = data.isHearted ? "❤️" : "🤍";
         btn.classList.toggle("active", !!data.isHearted);
       }
     })
-    .catch(err => console.error("Wish toggle error:", err));
+    .catch(function(err){
+      console.error("Wish toggle error:", err);
+      alert("처리 중 오류가 발생했습니다.");
+    });
   };
 
   // 2) 맞춤형 추천 카드 로드 & 렌더링 (깜빡임 방지 & 부드러운 전환 적용)
-    window.loadRecommend = function(category, btn){
-      var wrap = document.getElementById("recommendCards");
-      if(!wrap) return;
+  window.loadRecommend = function(category, btn){
+    var wrap = document.getElementById("recommendCards");
+    if(!wrap) return;
 
-      // 활성화된 버튼 색상 변경
-      document.querySelectorAll(".block-recommend .seg-btn").forEach(b => b.classList.remove("active"));
-      if(btn) btn.classList.add("active");
+    document.querySelectorAll(".block-recommend .seg-btn").forEach(function(b){
+      b.classList.remove("active");
+    });
+    if(btn) btn.classList.add("active");
 
-      // ✅ 1. 기존 카드를 싹 지우는 대신, 스르륵 투명해지는 애니메이션(Fade-out)을 줍니다.
-      wrap.style.transition = "opacity 0.2s ease-in-out";
-      wrap.style.opacity = "0";
+    wrap.style.transition = "opacity 0.2s ease-in-out";
+    wrap.style.opacity = "0";
 
-      // 서버에 데이터 요청
-      fetch(ctx() + "/spots/api/recommend?category=" + encodeURIComponent(category), {
-        headers: { "Accept": "application/json" }
-      })
-      .then(res => res.json())
-      .then(data => {
-        // ✅ 2. 투명해지는 시간(0.2초)을 잠시 기다렸다가 내용을 새로운 카드로 교체합니다.
-        setTimeout(() => {
-          if(!data || !data.length){
-            wrap.innerHTML = "<div style='padding:12px 4px; color:#888;'>추천 결과가 없습니다.</div>";
-          } else {
-            wrap.innerHTML = data.map(item => {
-              var id = item.id;
-              var name = item.name || "";
-              var city = item.cityName || "";
+    fetch(ctx() + "/spots/api/recommend?category=" + encodeURIComponent(category), {
+      headers: { "Accept": "application/json" }
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      setTimeout(function(){
+        if(!data || !data.length){
+          wrap.innerHTML = "<div style='padding:12px 4px; color:#888;'>추천 결과가 없습니다.</div>";
+        } else {
+          wrap.innerHTML = data.map(function(item){
+            var id = item.id;
+            var name = item.name || "";
+            var city = item.cityName || "";
 
-              // 사진 경로
-              var img = ctx() + "/img/spot/" + id + "_1.jpg";
-              var fallback = ctx() + "/img/hero.jpg"; 
+            var img = ctx() + "/img/spot/" + id + "_1.jpg";
+            var fallback = ctx() + "/img/hero.jpg";
 
-              return `
-                <a class="post-card post-card--overlay" href="${ctx()}/spots/detail/${id}">
-                  <img class="card-bg" src="${img}" alt="${name}" onerror="this.onerror=null;this.src='${fallback}';">
-                  <div class="card-grad"></div>
+            return `
+              <a class="post-card post-card--overlay" href="${ctx()}/spots/detail/${id}">
+                <img class="card-bg" src="${img}" alt="${name}" onerror="this.onerror=null;this.src='${fallback}';">
+                <div class="card-grad"></div>
 
-                  <button class="wish-btn ${item.isHearted ? "active" : ""}" onclick="toggleWish(event, ${id}, this)">
-                    ${item.isHearted ? "❤️" : "🤍"}
-                  </button>
+                <button class="wish-btn ${item.isHearted ? "active" : ""}" onclick="toggleWish(event, ${id}, this)">
+                  ${item.isHearted ? "❤️" : "🤍"}
+                </button>
 
-                  <div class="card-body">
-                    <div class="card-title">${name}</div>
-                    <div class="card-sub">${city} · 추천</div>
-                  </div>
-                </a>
-              `;
-            }).join("");
-          }
-          
-          // ✅ 3. 내용 교체가 끝나면 다시 스르륵 선명하게 나타나도록(Fade-in) 합니다.
-          wrap.style.opacity = "1";
-        }, 200);
-      })
-      .catch(() => {
-        setTimeout(() => {
-          wrap.innerHTML = "<div style='padding:12px 4px; color:#ef4444;'>추천 데이터를 불러오지 못했습니다.</div>";
-          wrap.style.opacity = "1";
-        }, 200);
-      });
-    };
+                <div class="card-body">
+                  <div class="card-title">${name}</div>
+                  <div class="card-sub">${city} · 추천</div>
+                </div>
+              </a>
+            `;
+          }).join("");
+        }
+
+        wrap.style.opacity = "1";
+      }, 200);
+    })
+    .catch(function(){
+      setTimeout(function(){
+        wrap.innerHTML = "<div style='padding:12px 4px; color:#ef4444;'>추천 데이터를 불러오지 못했습니다.</div>";
+        wrap.style.opacity = "1";
+      }, 200);
+    });
+  };
 
   // 3) 추천 덱 좌우 스크롤(화살표 버튼) 동작
   window.scrollRecommend = function(dir){
     var el = document.getElementById("recommendCards");
     if(!el) return;
-    
-    var cardW = 380; // home.css에 설정된 카드 폭
-    var gap = 20;    // 카드 사이 간격
+
+    var cardW = 380;
+    var gap = 20;
     el.scrollBy({ left: dir * (cardW + gap), behavior: "smooth" });
   };
 

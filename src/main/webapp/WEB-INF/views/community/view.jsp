@@ -45,21 +45,24 @@
 			        <c:choose>
 		            <c:when test="${not empty photos}">
 		              <div class="rv-photo">
-		                <div class="rv-photo-main">
-		                  <img id="rvMainImg" src="${pageContext.request.contextPath}/review-photos/file/${photos[0].rpIdx}" alt="후기 사진" />
-		                  <button class="rv-nav rv-prev" type="button" aria-label="이전">‹</button>
-		                  <button class="rv-nav rv-next" type="button" aria-label="다음">›</button>
-		                  <div class="rv-photo-count" id="rvPhotoCount">1 / ${fn:length(photos)}</div>
-		                </div>
+						<div class="rv-photo-main">
+						    <img id="rvMainImg" src="${pageContext.request.contextPath}/uploads/reviews/${photos[0].rpStoredName}" alt="후기 사진" 
+						         onerror="this.src='${pageContext.request.contextPath}/img/hero.jpg';"/>
+						    <button class="rv-nav rv-prev" type="button" aria-label="이전">‹</button>
+						    <button class="rv-nav rv-next" type="button" aria-label="다음">›</button>
+						    <div class="rv-photo-count" id="rvPhotoCount">1 / ${fn:length(photos)}</div>
+						</div>
 
-		                <div class="rv-thumbs">
-		                  <c:forEach var="p" items="${photos}" varStatus="st">
-		                    <c:url var="pSrc" value="/review-photos/file/${p.rpIdx}"/>
-		                    <button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}" data-idx="${st.index}" data-src="${pSrc}">
-		                      <img src="${pSrc}" alt="thumb"/>
-		                    </button>
-		                  </c:forEach>
-		                </div>
+						<div class="rv-thumbs">
+						    <c:forEach var="p" items="${photos}" varStatus="st">
+						        <%-- ✅ 경로를 /uploads/reviews/ 로 정확히 맞춥니다 --%>
+						        <c:url var="pSrc" value="/uploads/reviews/${p.rpStoredName}"/>
+								<button type="button" class="rv-thumb ${st.index==0 ? 'is-active' : ''}" 
+								        data-idx="${st.index}" data-src="${pSrc}">
+								    <img src="${pSrc}" alt="thumb" onerror="this.closest('.rv-thumb').remove();"/>
+								</button>
+						    </c:forEach>
+						</div>
 		              </div>
 		            </c:when>
 

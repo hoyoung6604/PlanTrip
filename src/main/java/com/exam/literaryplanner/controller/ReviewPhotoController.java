@@ -40,6 +40,8 @@ public class ReviewPhotoController {
         this.reviewPhotoService = reviewPhotoService;
         this.reviewRepository = reviewRepository;
     }
+    
+   
 
     @GetMapping("/list")
     @ResponseBody
@@ -49,7 +51,8 @@ public class ReviewPhotoController {
 
     @GetMapping({"/raw/{photoId}", "/file/{photoId}"})
     public ResponseEntity<Resource> file(@PathVariable("photoId") Integer photoId) {
-        try {
+    	System.out.println("현재 서버의 실행 위치(user.dir): " + System.getProperty("user.dir"));    
+    	try {
             ReviewPhoto photo = reviewPhotoService.getPhoto(photoId);
 
             // ✅ Service와 동일하게 프로젝트 기준 경로 설정

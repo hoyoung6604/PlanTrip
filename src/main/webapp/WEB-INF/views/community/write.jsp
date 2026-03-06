@@ -215,32 +215,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     renderStars(5);
 
-    // 2. 사진 첨부 미리보기 및 숨김 파일 필터링 로직
-    const photosInput = document.getElementById('photosInput');
-    const photoGrid = document.getElementById('photoGrid');
-    const addBtn = document.getElementById('photoAddBtn');
-    const countSpan = document.getElementById('photoCountSpan');
-    let selectedFiles = [];
+	// 2. 사진 첨부 미리보기 및 숨김 파일 필터링 로직
+	        const photosInput = document.getElementById('photosInput');
+	        const photoGrid = document.getElementById('photoGrid');
+	        const addBtn = document.getElementById('photoAddBtn');
+	        const countSpan = document.getElementById('photoCountSpan');
+	        let selectedFiles = [];
 
-    if(photosInput) {
-        photosInput.addEventListener('change', (e) => {
-            const newFiles = Array.from(e.target.files);
-            
-            // 프론트엔드 필터링: 진짜 이미지 파일만 추출 (시스템 숨김 파일 원천 차단)
-            const imageFiles = newFiles.filter(file => file.type.startsWith('image/'));
-            if (newFiles.length !== imageFiles.length) {
-                alert("이미지 파일만 첨부할 수 있습니다.\\n(시스템 숨김 파일은 자동으로 제외되었습니다.)");
-            }
+	        if(photosInput) {
+	            photosInput.addEventListener('change', (e) => {
+	                const newFiles = Array.from(e.target.files);
+	                
+	                // 필터링: 이미지 타입이고, 이름이 '.'으로 시작하지 않는 파일만 통과
+	                const validFiles = newFiles.filter(file => {
+	                    const isImage = file.type && file.type.startsWith('image/');
+	                    const isSystemFile = file.name.startsWith('.'); 
+	                    return isImage && !isSystemFile;
+	                });
 
-            if(selectedFiles.length + imageFiles.length > 10) {
-                alert("사진은 최대 10장까지 첨부할 수 있습니다.");
-                return;
-            }
-            
-            selectedFiles = selectedFiles.concat(imageFiles);
-            updatePhotoGrid();
-        });
-    }
+	                // 걸러진 파일이 있다면 사용자에게 알림
+	                if (newFiles.length !== validFiles.length) {
+	                    alert("이미지 파일만 첨부할 수 있습니다.\n(시스템 파일이나 이미지 형식이 아닌 파일은 제외되었습니다.)");
+	                }
+
+	                // 중복 방지: 이미 selectedFiles에 들어있는 파일은 빼고 새로 추가된 것만 담기
+	                const uniqueFiles = validFiles.filter(vf => 
+	                    !selectedFiles.some(sf => sf.name === vf.name && sf.size === vf.size)
+	                );
+
+	                if(selectedFiles.length + uniqueFiles.length > 10) {
+	                    alert("사진은 최대 10장까지 첨부할 수 있습니다.");
+	                    return;
+	                }
+	                
+	                selectedFiles = selectedFiles.concat(uniqueFiles);
+	                updatePhotoGrid();
+	            });
+	        }
 
     function updatePhotoGrid() {
         if(!photoGrid) return;
