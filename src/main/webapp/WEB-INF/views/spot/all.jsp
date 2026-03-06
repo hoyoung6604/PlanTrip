@@ -123,9 +123,13 @@
 			                ${s.isHearted ? '❤️' : '🤍'}
 			            </button>
 			            
-			            <%-- ✅ 여기를 수정했어요! s.id를 이용해 첫 번째 사진(_1.jpg)을 불러옵니다. --%>
-			            <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg');"></div>
-			            
+						<%-- ✅ 사진을 <img> 태그로 직접 불러오고, 사진이 없을 시 hero.jpg로 대체되도록 안전장치 추가 --%>
+						<div class="img-box" style="overflow: hidden;">
+						    <img src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg" 
+						         alt="${s.name}" 
+						         style="width: 100%; height: 100%; object-fit: cover;"
+						         onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/img/hero.jpg';">
+						</div>
 			            <div class="info-box">
 			                <div class="spot-title">${s.name}</div>
 			                <div class="spot-addr">${s.addr}</div>
@@ -183,5 +187,48 @@
 	    });
 	}
 	
+	// =========================================================
+		// ✅ 전체보기(all.jsp) 사이드바 카테고리 클릭 시 깜빡임 없이 부드러운 화면 전환
+		// =========================================================
+		document.addEventListener("DOMContentLoaded", function() {
+		    const menuLinks = document.querySelectorAll('.menu-item a');
+		    const contentArea = document.querySelector('.content-area');
+
+		    menuLinks.forEach(link => {
+		        link.addEventListener('click', function(e) {
+		            e.preventDefault(); // 기본 새로고침 멈춤
+		            const url = this.href;
+
+		            // 1. 사이드바 활성화 버튼 색상 즉시 변경
+		            document.querySelectorAll('.menu-item').forEach(li => li.classList.remove('active'));
+		            this.closest('.menu-item').classList.add('active');
+
+		            // 2. 오른쪽 카드 영역을 스르륵 투명하게 만들기 (Fade-out)
+		            contentArea.style.transition = "opacity 0.2s ease-in-out";
+		            contentArea.style.opacity = "0";
+
+		            // 3. 서버에서 새 카테고리 페이지 몰래 가져오기 (AJAX)
+		            fetch(url)
+		            .then(res => res.text())
+		            .then(html => {
+		                // 가져온 새 페이지에서 '.content-area' 안쪽 알맹이만 쏙 빼오기
+		                const parser = new DOMParser();
+		                const doc = parser.parseFromString(html, "text/html");
+		                const newContent = doc.querySelector('.content-area').innerHTML;
+
+		                // 0.2초 기다렸다가 알맹이 교체 후 다시 선명하게 만들기 (Fade-in)
+		                setTimeout(() => {
+		                    contentArea.innerHTML = newContent;
+		                    contentArea.style.opacity = "1";
+		                    // 브라우저 주소창 URL도 자연스럽게 업데이트 (뒤로가기 지원)
+		                    window.history.pushState(null, '', url); 
+		                }, 200);
+		            })
+		            .catch(err => {
+		                window.location.href = url; // 혹시나 에러 나면 기존 방식대로 이동
+		            });
+		        });
+		    });
+		});
 </script>
 </html>
