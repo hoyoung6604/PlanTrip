@@ -1,47 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>내 여행 계획</title>
   
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/header.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-
+  <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
 
-<c:set var="displayName" value="사용자" />
-<c:choose>
-  <c:when test="${not empty sessionScope.loginUserName}">
-    <c:set var="displayName" value="${sessionScope.loginUserName}" />
-  </c:when>
-  <c:when test="${not empty sessionScope.loginMember and not empty sessionScope.loginMember.MName}">
-    <c:set var="displayName" value="${sessionScope.loginMember.MName}" />
-  </c:when>
-  <c:when test="${not empty sessionScope.member and not empty sessionScope.member.MName}">
-    <c:set var="displayName" value="${sessionScope.member.MName}" />
-  </c:when>
-  <c:when test="${not empty pageContext.request.userPrincipal}">
-    <c:set var="displayName" value="${pageContext.request.userPrincipal.name}" />
-  </c:when>
-</c:choose>
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="mp-shell">
-
   <aside class="mp-side">
-    <div class="mp-brand">
-      <div class="mp-logo"></div>
-      <div class="mp-brand-name"><c:out value="${displayName}"/></div>
-    </div>
-
-    <div class="sec">
-      <div class="sec-title">OVERVIEW</div>
+    <div class="sec" style="padding-top: 20px;">
       <nav class="mp-nav">
         <a href="${pageContext.request.contextPath}/members/mypage">
           <span class="mp-ico" aria-hidden="true">
@@ -63,138 +46,112 @@
             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </span>내 여행 후기
         </a>
-      </nav>
-    </div>
-
-    <div class="sec sec-bottom">
-      <div class="sec-title">SETTINGS</div>
-      <nav class="mp-nav">
-        <button class="menu-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/'">
+        <a href="${pageContext.request.contextPath}/members/mypage/wishlist">
           <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>메인으로
-        </button>
-
-        <form action="${pageContext.request.contextPath}/members/logout" method="post" style="margin:0;">
-          <button class="menu-btn danger" type="submit">
-            <span class="mp-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M10 17l-1 0a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </span>로그아웃
-          </button>
-        </form>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </span>내 찜 목록
+        </a>
       </nav>
     </div>
   </aside>
 
   <main class="mp-main">
-    <div class="mp-topbar">
-      <div class="mp-search">
-        <span class="sico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <input type="text" placeholder="Search your travel..." />
-      </div>
-    </div>
-
-    <section class="mp-card">
-      <div class="mp-card-head">
+    <section class="mp-card mp-grow" style="width: 100%;">
+      <div class="mp-card-head" style="display: flex; justify-content: space-between; align-items: center;">
         <div>
           <div class="mp-card-title">내 여행 계획</div>
-          <div class="mp-card-sub">작성한 계획 목록</div>
+          <div class="mp-card-sub">작성한 계획 목록입니다.</div>
         </div>
-        <button class="mp-btn" type="button">새 계획</button>
+        <div style="font-size: 14px; color: #555;">
+          총 <b style="color: #3264ff;"><c:out value="${fn:length(plans)}"/></b>건
+        </div>
       </div>
 
-	  <div class="mp-card-body">
+      <div class="mp-card-body" style="width: 100%;">
+        
+        <c:if test="${empty plans}">
+          <div style="padding: 60px 20px; text-align: center; color: #888;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; opacity: 0.5;">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <p>아직 작성한 여행 계획이 없습니다.<br>새로운 여행을 계획해 보세요!</p>
+          </div>
+        </c:if>
 
-	    <table class="data-table">
-	      <thead>
-	        <tr>
-	          <th>여행 제목</th>
-	          <th>여행지</th>
-	          <th>출발일</th>
-	          <th>종료일</th>
-	          <th>관리</th>
-	        </tr>
-	      </thead>
+        <c:if test="${not empty plans}">
+          <table class="mp-table" id="plansTable">
+            <thead>
+              <tr>
+                <th style="width: 80px;">번호</th>
+                <th>계획 제목</th>
+                <th style="width: 140px;">작성일</th>
+                <th style="width: 200px;">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <c:forEach var="p" items="${plans}">
+                <tr>
+                  <td>${p.no}</td>
+                  <td class="td-title">${p.title}</td>
+                  <td style="color: #888;">${p.regDate}</td>
+                  <td>
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                        <a href="${pageContext.request.contextPath}/members/mypage/plans/view?pIdx=${p.pIdx}" class="btn-view">상세보기</a>
+                        <form action="${pageContext.request.contextPath}/members/mypage/plans/delete" method="get" style="margin: 0;">
+                            <input type="hidden" name="pIdx" value="${p.pIdx}">
+                            <button type="submit" class="btn-delete" onclick="return confirm('정말 이 계획을 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </div>
+                  </td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
 
-	      <tbody>
-	        <c:choose>
-	          <c:when test="${empty plans}">
-	            <tr>
-	              <td colspan="5">등록된 여행 계획이 없습니다.</td>
-	            </tr>
-	          </c:when>
+          <div class="mp-pagination" id="plansPagination" aria-label="페이지네이션"></div>
+          <script>
+            (function(){
+              const table = document.getElementById('plansTable');
+              if(!table) return;
+              const tbody = table.querySelector('tbody');
+              if(!tbody) return;
+              const rows = Array.from(tbody.querySelectorAll('tr'));
+              const pager = document.getElementById('plansPagination');
+              const pageSize = 10;
+              const total = rows.length;
+              const pages = Math.max(1, Math.ceil(total / pageSize));
+              let current = 1;
 
-	          <c:otherwise>
-	            <c:forEach var="plan" items="${plans}">
-	              <tr>
-	                <td><c:out value="${plan.title}"/></td>
-	                <td><c:out value="${plan.destination}"/></td>
-	                <td><c:out value="${plan.startDate}"/></td>
-	                <td><c:out value="${plan.endDate}"/></td>
-	                <td>
-	                  <button type="button"
-	                          onclick="location.href='${pageContext.request.contextPath}/members/mypage/plans/edit/${plan.id}'">
-	                    수정
-	                  </button>
-	                  <button type="button"
-	                          onclick="if(confirm('삭제하시겠습니까?')) location.href='${pageContext.request.contextPath}/members/mypage/plans/delete/${plan.id}'">
-	                    삭제
-	                  </button>
-	                </td>
-	              </tr>
-	            </c:forEach>
-	          </c:otherwise>
-	        </c:choose>
-	      </tbody>
-	    </table>
+              function render(){
+                rows.forEach((r, idx)=>{
+                  const p = Math.floor(idx / pageSize) + 1;
+                  r.style.display = (p === current) ? '' : 'none';
+                });
+                if(!pager) return;
+                pager.innerHTML = '';
+                if(pages <= 1) return; // 1페이지뿐이면 버튼 숨김
 
-	  </div>
+                for(let p=1; p<=pages; p++){
+                  const b = document.createElement('button');
+                  b.type = 'button';
+                  b.className = 'mp-page' + (p === current ? ' is-active' : '');
+                  b.textContent = p;
+                  b.addEventListener('click', ()=>{ current = p; render(); });
+                  pager.appendChild(b);
+                }
+              }
+              render();
+            })();
+          </script>
+        </c:if>
 
+      </div>
     </section>
   </main>
-
-  <aside class="mp-right">
-    <section class="mp-profile">
-      <div class="mp-profile-top">
-        <div class="ttl">내 계정</div>
-        <div class="mp-mini"></div>
-      </div>
-
-      <div class="name"><c:out value="${displayName}"/></div>
-      <div class="desc">계정 정보 및 여행 기록을 확인할 수 있어요</div>
-
-      <div class="mp-list">
-        <div class="mp-row">
-          <div class="left">
-            <div class="ttl">회원정보 수정</div>
-            <div class="sub">비밀번호 확인 후 수정</div>
-          </div>
-          <span class="mp-pill" onclick="location.href='${pageContext.request.contextPath}/members/mypage/check'">이동</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="mp-card">
-      <div class="mp-card-head">
-        <div>
-          <div class="mp-card-title">추후 확장</div>
-          <div class="mp-card-sub">일정 상세/예산/체크리스트 기능을 카드로 추가 가능해요</div>
-        </div>
-      </div>
-      <div class="mp-card-body">
-        <div class="mp-card-sub">현재는 UI만 만들어 둔 상태예요.</div>
-      </div>
-    </section>
-  </aside>
-
 </div>
 
-
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

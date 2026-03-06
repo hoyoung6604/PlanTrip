@@ -78,7 +78,10 @@
                 
                 <a href="${pageContext.request.contextPath}/spots/detail/${spot.id}" class="wish-link-wrapper">
                   <c:set var="defaultImg" value="${pageContext.request.contextPath}/img/hero.jpg" />
-                  <div class="thumb" style="background-image: url('${not empty spot.image ? spot.image : defaultImg}');"></div>
+				  <div class="thumb" 
+				       style="background-image: url('${pageContext.request.contextPath}/img/spot/${spot.id}_1.jpg'), url('${defaultImg}'); 
+				              background-size: cover; background-position: center;">
+				  </div>
                   <div class="meta">
                     <div class="tag-wrap">
                       <span class="tag-city">${spot.city != null ? spot.city.name : '기타'}</span>

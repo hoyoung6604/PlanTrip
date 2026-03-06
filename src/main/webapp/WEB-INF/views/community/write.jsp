@@ -20,7 +20,7 @@
 <body class="page-solid">
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
-<div class="cm-shell">
+<div class="cm-shell cm-shell--write">
 <main class="cm-main">
     <section class="mp-card">
       <div class="mp-card-head">

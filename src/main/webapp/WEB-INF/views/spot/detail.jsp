@@ -133,22 +133,23 @@
 			<jsp:include page="/WEB-INF/views/common/header.jsp" />
 			<div class="container">
 				<%-- 1. 이미지 갤러리 (로컬 이미지 연결) --%>
-					<div class="image-gallery">
-						<%-- 메인 이미지는 hero.jpg로 설정해봅니다 --%>
-							<div class="main-img"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg'); background-size: cover; background-position: center;">
-							</div>
+				<%-- 1. 이미지 갤러리 (로컬 이미지 연결) --%>
+				<div class="image-gallery">
+				    <%-- ✅ 메인 이미지: 장소번호_1.jpg --%>
+				    <div class="main-img"
+				        style="background-image: url('${pageContext.request.contextPath}/img/spot/${spot.id}_1.jpg'); background-size: cover; background-position: center;">
+				    </div>
 
-							<div class="sub-imgs">
-								<%-- 서브 이미지는 mountain.jpg와 sea.jpg --%>
-									<div
-										style="background-image: url('${pageContext.request.contextPath}/img/mountain.jpg'); background-size: cover; background-position: center;">
-									</div>
-									<div
-										style="background-image: url('${pageContext.request.contextPath}/img/sea.jpg'); background-size: cover; background-position: center;">
-									</div>
-							</div>
-					</div>
+				    <div class="sub-imgs">
+				        <%-- ✅ 서브 이미지 1: 장소번호_2.jpg --%>
+				        <div style="background-image: url('${pageContext.request.contextPath}/img/spot/${spot.id}_2.jpg'); background-size: cover; background-position: center;">
+				        </div>
+				        
+				        <%-- ✅ 서브 이미지 2: 장소번호_3.jpg --%>
+				        <div style="background-image: url('${pageContext.request.contextPath}/img/spot/${spot.id}_3.jpg'); background-size: cover; background-position: center;">
+				        </div>
+				    </div>
+				</div>
 
 					<div class="content-wrapper">
 						<%-- 2. 상세 정보 영역 --%>

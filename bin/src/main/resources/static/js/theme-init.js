@@ -1,11 +1,22 @@
 (function(){
   try{
     var key = "plantrip-theme";
-    var t = localStorage.getItem(key) || "dark";
+
+    /* =====================================================
+       ✅ 테마(라이트/다크) 기능 임시 보류 (2026-02-25)
+       - 전체 페이지를 'light'로 고정
+       - 기존 로직은 아래 주석에 보관 (다시 살릴 때 참고)
+       ===================================================== */
+
+    // [기존]
+    // var t = localStorage.getItem(key) || "dark";
+    // document.documentElement.dataset.theme = t;
+
+    var t = "light";
+    try{ localStorage.setItem(key, t); }catch(e){}
     document.documentElement.dataset.theme = t;
 
     // 페이지별 스타일 분기용(배경/카드 톤 등)
-    // - JSP를 대량 수정하지 않고도 support/admin 등 페이지에 맞춰 CSS를 조정하기 위해 사용
     var p = (location && location.pathname) ? location.pathname : "";
     var page = "default";
     if(p === "/" || p === "" || p.indexOf("/index") === 0){

@@ -11,7 +11,7 @@ resources/static
 │   ├── 📄 signup.css           (회원가입 페이지 전용 스타일)
 │   ├── 📄 auth-modal.css       (로그인/회원가입 모달 UI + flip/전환 애니메이션)
 │   ├── 📄 ui-toast.css         (토스트 알림 공통 UI)
-│   ├── 📄 theme-sky.css        (하늘 테마(배경/그라데이션) 스킨)
+│   ├── (삭제) theme-sky.css    (하늘 테마(배경/그라데이션) 스킨)
 │   ├── 📄 admin-theme.css      (관리자 라이트/다크 토큰 + 기본 테마 변수)
 │   ├── 📄 admin-components.css (관리자 카드/테이블/버튼 등 컴포넌트 스타일)
 │   └── 📄 admin-console.css    (관리자 대시보드/사이드바/페이지 레이아웃)

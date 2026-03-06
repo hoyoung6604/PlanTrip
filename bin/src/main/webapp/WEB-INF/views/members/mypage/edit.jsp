@@ -8,99 +8,42 @@
   <meta charset="UTF-8">
   <title>회원정보 수정</title>
   
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/header.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mypage.css">
+  <link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
-
+  <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
 
-<c:set var="displayName" value="사용자" />
-<c:choose>
-  <c:when test="${not empty sessionScope.loginUserName}">
-    <c:set var="displayName" value="${sessionScope.loginUserName}" />
-  </c:when>
-  <c:when test="${not empty sessionScope.loginMember and not empty sessionScope.loginMember.MName}">
-    <c:set var="displayName" value="${sessionScope.loginMember.MName}" />
-  </c:when>
-  <c:when test="${not empty sessionScope.member and not empty sessionScope.member.MName}">
-    <c:set var="displayName" value="${sessionScope.member.MName}" />
-  </c:when>
-  <c:when test="${not empty pageContext.request.userPrincipal}">
-    <c:set var="displayName" value="${pageContext.request.userPrincipal.name}" />
-  </c:when>
-</c:choose>
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div class="mp-shell">
-
   <aside class="mp-side">
-    <div class="mp-brand">
-      <div class="mp-logo"></div>
-      <div class="mp-brand-name"><c:out value="${displayName}"/></div>
-    </div>
-
-    <div class="sec">
-      <div class="sec-title">OVERVIEW</div>
-      <nav class="mp-nav">
-        <a href="${pageContext.request.contextPath}/members/mypage">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>대시보드
-        </a>
-        <a class="active" href="${pageContext.request.contextPath}/members/mypage/check">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>회원정보 수정
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/plans">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>내 여행 계획
-        </a>
-        <a href="${pageContext.request.contextPath}/members/mypage/reviews">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>내 여행 후기
-        </a>
-      </nav>
-    </div>
-
-    <div class="sec sec-bottom">
-      <div class="sec-title">SETTINGS</div>
-      <nav class="mp-nav">
-        <button class="menu-btn" type="button" onclick="location.href='${pageContext.request.contextPath}/'">
-          <span class="mp-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>메인으로
-        </button>
-
-        <form action="${pageContext.request.contextPath}/members/logout" method="post" style="margin:0;">
-          <button class="menu-btn danger" type="submit">
-            <span class="mp-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M10 17l-1 0a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </span>로그아웃
-          </button>
-        </form>
-      </nav>
-    </div>
+    <nav class="mp-nav">
+      <a href="${pageContext.request.contextPath}/members/mypage">
+        <span class="mp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9Zm9 7h7V11h-7v9ZM4 20h7v-5H4v5Zm9-16v5h7V4h-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>대시보드
+      </a>
+      <a class="active" href="${pageContext.request.contextPath}/members/mypage/check">
+        <span class="mp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>회원정보 수정
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/plans">
+        <span class="mp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3v3M17 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 8h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>내 여행 계획
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/reviews">
+        <span class="mp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>내 여행 후기
+      </a>
+      <a href="${pageContext.request.contextPath}/members/mypage/wishlist">
+        <span class="mp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg></span>내 찜 목록
+      </a>
+    </nav>
   </aside>
 
   <main class="mp-main">
-    <div class="mp-topbar">
-      <div class="mp-search">
-        <span class="sico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <input type="text" placeholder="Search your travel..." />
-      </div>
-    </div>
-
-    <section class="mp-card">
+    <section class="mp-card mp-grow" style="width: 100%;">
       <div class="mp-card-head">
         <div>
           <div class="mp-card-title">회원정보 수정</div>
@@ -108,80 +51,45 @@
         </div>
       </div>
 
-      <div class="mp-card-body">
+      <div class="mp-card-body" style="width: 100%; text-align: center; padding: 50px 20px;">
         <c:if test="${not empty error}">
-          <div class="mp-error"><c:out value="${error}"/></div>
+          <div class="mp-error-text" style="color: #ef4444; font-size: 14px; font-weight: 600; margin-bottom: 12px; display: block;"><c:out value="${error}"/></div>
         </c:if>
+        
 		<form class="mp-form" action="${pageContext.request.contextPath}/members/mypage/edit" method="post">
 
-		  <!-- 이름 -->
-		  <div class="mp-field">
-		    <label>이름</label>
-		    <input type="text" name="mName" value="${member.MName}" required />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">이름</label>
+		    <input type="text" name="mName" value="${member.MName}" required style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <!-- 이메일 -->
-		  <div class="mp-field">
-		    <label>이메일</label>
-		    <input type="email" name="mEmail" value="${member.MEmail}" required />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">이메일</label>
+		    <input type="email" name="mEmail" value="${member.MEmail}" required style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <!-- 새 비밀번호 -->
-		  <div class="mp-field">
-		    <label>새 비밀번호</label>
-		    <input type="password" name="mPw" placeholder="새 비밀번호" />
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">새 비밀번호</label>
+		    <input type="password" name="mPw" placeholder="변경할 경우에만 입력하세요" style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
+		  </div>
+		  
+		  <div class="mp-field" style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+		    <label style="font-weight: 700; font-size: 14px;">새 비밀번호 확인</label>
+		    <input type="password" name="mPwConfirm" placeholder="새 비밀번호를 한 번 더 입력하세요" style="padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px;" />
 		  </div>
 
-		  <!-- 새 비밀번호 확인 -->
-		  <div class="mp-field">
-		    <label>새 비밀번호 확인</label>
-		    <input type="password" name="mPwConfirm" placeholder="새 비밀번호 확인" />
-		  </div>
+          <div class="mp-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+            <button class="mp-btn danger" type="button" onclick="location.href='${pageContext.request.contextPath}/members/mypage'" style="flex: 1; padding: 15px; background: #fff; color: #555; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 800;">취소</button>
+            <button class="mp-btn" type="submit" style="flex: 1; padding: 15px; background: #3264ff; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: 800;">수정하기</button>
+          </div>
 
-		  <div class="mp-actions">
-		    <button class="mp-submit" type="submit">저장</button>
-		    <button class="mp-cancel" type="button" onclick="history.back()">취소</button>
-		  </div>
 		</form>
-
       </div>
     </section>
   </main>
-
-  <aside class="mp-right">
-    <section class="mp-profile">
-      <div class="mp-profile-top">
-        <div class="ttl">내 계정</div>
-        <div class="mp-mini"></div>
-      </div>
-
-      <div class="name"><c:out value="${displayName}"/></div>
-      <div class="desc">계정 정보 및 여행 기록을 확인할 수 있어요</div>
-
-      <div class="mp-list">
-        <div class="mp-row">
-          <div class="left">
-            <div class="ttl">회원정보 수정</div>
-            <div class="sub">비밀번호 확인 후 수정</div>
-          </div>
-          <span class="mp-pill" onclick="location.href='${pageContext.request.contextPath}/members/mypage/check'">이동</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="mp-card">
-      <div class="mp-card-head">
-        <div>
-          <div class="mp-card-title">안내</div>
-          <div class="mp-card-sub">비밀번호는 입력한 경우에만 변경돼요</div>
-        </div>
-      </div>
-    </section>
-  </aside>
-
 </div>
 
-
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

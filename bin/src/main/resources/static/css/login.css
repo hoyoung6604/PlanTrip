@@ -16,7 +16,7 @@
 }
 
 /* ===== Dark theme override (auth pages) ===== */
-:root[data-theme="dark"]{
+:root[data-theme="dark_disabled"]{
   --bg: #0b1220;
   --text: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.62);
@@ -24,23 +24,23 @@
   --darkBtn: #ffffff;
 }
 
-:root[data-theme="dark"] body{
+:root[data-theme="dark_disabled"] body{
   background: var(--bg);
   color: var(--text);
 }
 
-:root[data-theme="dark"] .input{
+:root[data-theme="dark_disabled"] .input{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
 }
 
-:root[data-theme="dark"] .primary-btn{
+:root[data-theme="dark_disabled"] .primary-btn{
   background: #fff;
   color: #111;
 }
 
-:root[data-theme="dark"] .social-btn{
+:root[data-theme="dark_disabled"] .social-btn{
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
@@ -205,6 +205,26 @@ a{ color: inherit; text-decoration:none; }
   background: #fff;
   font-weight: 800;
   cursor: pointer;
+
+  /* ✅ 추가: a(인라인)도 버튼처럼 박스/중앙정렬되게 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* ✅ a 밑줄/색 깨짐 방지 */
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ✅ 새 마크업용(네가 추가한 social-icon/text) */
+.social-icon{
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.social-text{
+  line-height: 1; /* 글자 눌림 방지 */
 }
 .social-btn:hover{ background:#f3f4f6; }
 .social-dot{
@@ -213,10 +233,11 @@ a{ color: inherit; text-decoration:none; }
   height:10px;
   border-radius:999px;
   background:#e5e7eb;
-  margin-right: 8px;
-  vertical-align: middle;
-}
 
+  /* ✅ 기존 margin-right/vertical-align 제거(겹침 원인) */
+  margin-right: 0;
+  vertical-align: baseline;
+}
 /*  브라우저 기본 alert 대신 페이지 내부 토스트 알림을 표시 */
 .toast-wrap{
   position: fixed;
@@ -251,7 +272,7 @@ a{ color: inherit; text-decoration:none; }
   transform: translateY(0);
 }
 
-:root[data-theme="dark"] .toast{
+:root[data-theme="dark_disabled"] .toast{
   background: rgba(255,255,255,.92);
   color: #111;
 }

@@ -7,15 +7,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>비밀번호 재설정 | 여행 플래너</title>
+
+  <link rel="stylesheet" href="/css/header.css" />
   
 <link rel="stylesheet" href="/css/login.css">
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
 
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
   <div class="auth-wrap">
     <div class="auth-left">
@@ -68,6 +73,8 @@
   <!-- eye(비밀번호 보기) 토글: login.css와 동일 UX 원하면 아래 JS로 동작 -->
   
 
+
+  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 
 </body>

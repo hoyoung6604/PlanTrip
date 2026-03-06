@@ -9,15 +9,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>나의 문의 내역 | 고객센터</title>
 
-  <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/header.css" />
   <link rel="stylesheet" href="/css/support-console.css" />
+  <link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
+    <script defer src="/js/nav-wave.js"></script>
 </head>
-<body>
+<body class="page-solid">
 
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <c:set var="supportActive" value="home" />
 
 <div class="support-shell">
@@ -75,10 +79,10 @@
               <td class="support-ellipsis">
                 <a class="support-link" href="${pageContext.request.contextPath}/support/qna/${q['qIdx']}">${q['qTitle']}</a>
               </td>
-              <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}}</td>
+              <td class="support-muted">${fn:replace(fn:substring(q['qRegDate'],0,10),'-','.')}</td>
               <td>
                 <c:choose>
-                  <c:when test="${not empty q['qAnswer']}">
+                  <c:when test="${q['qStatus'] == 1}">
                     <span class="support-pill is-done">답변완료</span>
                   </c:when>
                   <c:otherwise>
@@ -101,6 +105,8 @@
   </main>
 
 </div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 
 </body>

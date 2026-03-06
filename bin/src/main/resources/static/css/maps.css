@@ -72,21 +72,21 @@ body.maps-page::after{ background:none !important; }
   color:#0f172a;
   border:1px solid rgba(0,0,0,.10);
 }
-:root[data-theme="dark"] body.maps-page .map-search{
+:root[data-theme="dark_disabled"] body.maps-page .map-search{
   background: rgba(15,23,42,.60);
   border: 1px solid rgba(255,255,255,.12);
 }
-:root[data-theme="dark"] body.maps-page .map-search input{
+:root[data-theme="dark_disabled"] body.maps-page .map-search input{
   background: rgba(2,6,23,.55);
   border: 1px solid rgba(255,255,255,.14);
   color: rgba(255,255,255,.92);
 }
-:root[data-theme="dark"] body.maps-page .map-search select{
+:root[data-theme="dark_disabled"] body.maps-page .map-search select{
   background: rgba(2,6,23,.55);
   color: rgba(255,255,255,.92);
   border: 1px solid rgba(255,255,255,.14);
 }
-:root[data-theme="dark"] body.maps-page .map-search option{
+:root[data-theme="dark_disabled"] body.maps-page .map-search option{
   background: #0b1220;
   color: rgba(255,255,255,.92);
 }

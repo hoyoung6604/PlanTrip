@@ -1,4 +1,11 @@
 (function(){
+  // ✅ admin 화면은 별도 권한/레이아웃을 쓰는 경우가 많아서 가드에서 제외
+  try{
+    if(location && location.pathname && location.pathname.indexOf('/admin') === 0){
+      return;
+    }
+  }catch(e){}
+
   var cache = { value: null, ts: 0 };
   var TTL = 5000;
 
@@ -7,12 +14,38 @@
     /^\/community\/my-reviews(\b|\/|\?|#)/,
     /^\/community\/edit(\b|\/|\?|#)/,
     /^\/members\/mypage(\b|\/|\?|#)/,
+    // ✅ 여행 계획(비회원 접근 차단)
+    /^\/plans(\b|\/|\?|#)/,
+    /^\/plan(\b|\/|\?|#)/,
     /^\/support\/qna(\b|\/|\?|#)/,
     /^\/support\/qna\/new(\b|\/|\?|#)/
   ];
 
+  function getCtx(){
+    try{
+      var c = document && document.body ? document.body.getAttribute('data-ctx') : '';
+      if(!c) return '';
+      // '/'는 컨텍스트 경로로 쓰지 않음
+      if(c === '/') return '';
+      return c;
+    }catch(e){
+      return '';
+    }
+  }
+
+  function normalizePath(path){
+    var ctx = getCtx();
+    if(!ctx) return path;
+    // 예: ctx='/plantrip' , path='/plantrip/plans/planRoute' -> '/plans/planRoute'
+    if(path && path.indexOf(ctx) === 0){
+      return path.substring(ctx.length) || '/';
+    }
+    return path;
+  }
+
   function isProtectedPath(path){
-    return PROTECTED.some(function(rx){ return rx.test(path); });
+    var p = normalizePath(path);
+    return PROTECTED.some(function(rx){ return rx.test(p); });
   }
 
   function getPathFromHref(href){

@@ -122,7 +122,10 @@
 			                    style="position: absolute; top: 15px; left: 15px; z-index: 10; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
 			                ${s.isHearted ? '❤️' : '🤍'}
 			            </button>
-			            <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');"></div>
+			            
+			            <%-- ✅ 여기를 수정했어요! s.id를 이용해 첫 번째 사진(_1.jpg)을 불러옵니다. --%>
+			            <div class="img-box" style="background-image: url('${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg');"></div>
+			            
 			            <div class="info-box">
 			                <div class="spot-title">${s.name}</div>
 			                <div class="spot-addr">${s.addr}</div>

@@ -38,11 +38,11 @@
             </c:otherwise>
           </c:choose>
         </span>
-        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+        <%-- <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
           <span class="tt-icon" aria-hidden="true">☀️</span>
           <span class="tt-icon" aria-hidden="true">🌙</span>
           <span class="tt-indicator" aria-hidden="true"></span>
-        </button>
+        </button> --%>
         <a class="admin-btn is-primary" href="${pageContext.request.contextPath}/admin/notice">+ 공지 작성</a>
       </div>
     </div>

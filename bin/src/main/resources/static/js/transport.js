@@ -2,6 +2,52 @@
 // - (A) native date input(data-tp-date): change 시 hidden(YYYYMMDD) 세팅 + 자동 submit
 // - (B) custom date input(data-tp-date-text): 팝업 캘린더를 input 바로 아래에 띄우고 선택 시 동일 처리
 (function () {
+  /* =========================================
+     Toast + Shake UX
+     - 출발/도착(또는 출발/도착 공항) 동일 선택 시 안내
+     ========================================= */
+  let __tpToastEl = null;
+  let __tpToastTimer = null;
+
+  function ensureToast(){
+    if (__tpToastEl) return __tpToastEl;
+    const el = document.createElement('div');
+    el.className = 'tp-toast';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+    el.innerHTML = '<div class="tp-toast__msg"></div>';
+    document.body.appendChild(el);
+    __tpToastEl = el;
+    return el;
+  }
+
+  function showToast(msg){
+    const el = ensureToast();
+    const msgEl = el.querySelector('.tp-toast__msg');
+    if (msgEl) msgEl.textContent = msg;
+
+    el.classList.add('is-show');
+    clearTimeout(__tpToastTimer);
+    __tpToastTimer = setTimeout(function(){
+      el.classList.remove('is-show');
+    }, 1600);
+  }
+
+  function shake(el){
+    if (!el) return;
+    el.classList.remove('tp-shake');
+    // reflow
+    void el.offsetWidth;
+    el.classList.add('tp-shake');
+    setTimeout(function(){ el.classList.remove('tp-shake'); }, 420);
+  }
+
+  function warnSameRoute(targetEl, otherEl){
+    showToast('출발/도착은 같을 수 없어요');
+    shake(targetEl);
+    shake(otherEl);
+  }
+
   function toYYYYMMDD(iso) { return iso ? iso.replaceAll('-', '') : ''; }
   function toISO(yyyymmdd) {
     if (!yyyymmdd) return '';
@@ -73,26 +119,32 @@
   }
 
   async function ensureArrivalValid(){
-    const dep = document.getElementById('depAirportId');
-    const arr = document.getElementById('arrAirportId');
-    const dateHidden = document.getElementById('depPlandTime');
-    if (!dep || !arr || !dateHidden) return;
+  const dep = document.getElementById('depAirportId');
+  const arr = document.getElementById('arrAirportId');
+  const dateHidden = document.getElementById('depPlandTime');
+  if (!dep || !arr || !dateHidden) return;
 
-    const allowed = await fetchFlightArrivals(dep.value, dateHidden.value);
-    if (Array.isArray(allowed) && allowed.length > 0){
-      applyArrivalVisibility(allowed);
+  const allowed = await fetchFlightArrivals(dep.value, dateHidden.value);
 
-      if (!allowed.includes(arr.value)){
-        arr.value = allowed[0];
-        const arrRow = document.querySelector('[data-tp-air-chips="arrAirportId"]');
-        setActiveInRow(arrRow, arr.value);
-      }
-    }else{
-      // no filtering info -> show all
-      applyArrivalVisibility([]);
+  // When swap just happened, don't auto-reset the arrival value.
+  const swapped = !!window.__tpSwapJustHappened;
+  if (swapped) window.__tpSwapJustHappened = false;
+
+  if (Array.isArray(allowed) && allowed.length > 0){
+    applyArrivalVisibility(allowed);
+
+    // If current arrival is not allowed, only auto-fix when it wasn't a swap action.
+    if (!allowed.includes(arr.value) && !swapped){
+      arr.value = allowed[0];
+      const arrRow = document.querySelector('[data-tp-air-chips="arrAirportId"]');
+      setActiveInRow(arrRow, arr.value);
     }
-    updateSummaries();
+  }else{
+    // no filtering info -> show all
+    applyArrivalVisibility([]);
   }
+  updateSummaries();
+}
 
   async function autoSubmitFlight(){
     const dep = document.getElementById('depAirportId');
@@ -322,6 +374,11 @@
       const otherId = hiddenId === 'depAirportId' ? 'arrAirportId' : 'depAirportId';
       const other = document.getElementById(otherId);
       if (other && other.value === id) {
+        // UX: 출발/도착 공항 동일 선택 안내
+        const otherRow = row.parentElement.querySelector('[data-tp-air-chips="'+otherId+'"]');
+        const otherActive = otherRow ? otherRow.querySelector('button.tp-chip.is-active') : null;
+        warnSameRoute(btn, otherActive || (otherId === 'depAirportId' ? document.getElementById('tpDepAirportText') : document.getElementById('tpArrAirportText')));
+
         // 다른 쪽 첫 번째 버튼으로 자동 변경
         const alt = row.parentElement.querySelector('[data-tp-air-chips="'+otherId+'"] button[data-air-id]:not([data-air-id="'+id+'"])');
         if (alt) {
@@ -358,6 +415,9 @@
       const arr = document.getElementById('arrAirportId');
       if (!dep || !arr) return;
 
+      // mark swap so arrival auto-filter won't overwrite user intention
+      window.__tpSwapJustHappened = true;
+
       const tmp = dep.value;
       dep.value = arr.value;
       arr.value = tmp;
@@ -380,83 +440,158 @@
 
   
 
-  /* Bus/Train: 출발 변경 시 도착을 자동으로 맞추기 + 터미널 파라미터 초기화 */
-  function initBusTrainSmartCities(){
+  
+  /* Bus/Train: 도시 칩 선택 & 스왑 버튼 로직 (URL 의존 X) */
+  function initBusTrainCityUI(){
     const mode = document.body && document.body.dataset ? document.body.dataset.tpMode : '';
     if (mode !== 'expbus' && mode !== 'train') return;
+
+    const panel = document.querySelector('.tp-form-panel');
+    const form = panel ? panel.closest('form') : document.querySelector('form');
+    if (!form) return;
+
+    const depHidden = document.getElementById('depCityHidden') || form.querySelector('input[name="depCity"]');
+    const arrHidden = document.getElementById('arrCityHidden') || form.querySelector('input[name="arrCity"]');
+    if (!depHidden || !arrHidden) return;
+
+    const depText = document.getElementById('tpDepCityText') || form.querySelector('.tp-searchbar__loc .tp-field:nth-child(1) .tp-field__input');
+    const arrText = document.getElementById('tpArrCityText') || form.querySelector('.tp-searchbar__loc .tp-field:nth-child(3) .tp-field__input');
+
+    const depTerminalHidden = document.getElementById('depTerminalIdHidden') || form.querySelector('input[name="depTerminalId"]');
+    const arrTerminalHidden = document.getElementById('arrTerminalIdHidden') || form.querySelector('input[name="arrTerminalId"]');
+    const depSubTerminalHidden = document.getElementById('depSubTerminalIdHidden') || form.querySelector('input[name="depSubTerminalId"]');
+    const arrSubTerminalHidden = document.getElementById('arrSubTerminalIdHidden') || form.querySelector('input[name="arrSubTerminalId"]');
 
     const depRow = document.querySelector('[data-tp-city-row="dep"]');
     const arrRow = document.querySelector('[data-tp-city-row="arr"]');
-    if (!depRow || !arrRow) return;
 
-    const depChips = Array.from(depRow.querySelectorAll('a.tp-chip'));
-    if (depChips.length === 0) return;
+    function norm(s){ return (s || '').toString().trim(); }
 
-    const cities = depChips.map(a => (a.textContent || '').trim()).filter(Boolean);
-    function pickAltCity(dep, currentArr){
-      if (currentArr && currentArr !== dep) return currentArr;
-      for (const c of cities) {
-        if (c !== dep) return c;
+    function readCityList(){
+      const base = depRow ? Array.from(depRow.querySelectorAll('.tp-chip')).map(el => norm(el.textContent)) : [];
+      return base.filter(Boolean);
+    }
+    const cities = readCityList();
+
+    function firstDifferent(target){
+      const t = norm(target);
+      for (const c of cities){
+        if (norm(c) !== t) return c;
       }
-      return currentArr || dep;
+      return t;
     }
 
-    depChips.forEach(function(a){
-      a.addEventListener('click', function(e){
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
+    function clearTerminals(){
+      if (depTerminalHidden) depTerminalHidden.value = '';
+      if (arrTerminalHidden) arrTerminalHidden.value = '';
+      if (depSubTerminalHidden) depSubTerminalHidden.value = '';
+      if (arrSubTerminalHidden) arrSubTerminalHidden.value = '';
+    }
 
-        const current = new URL(window.location.href);
-        const curArr = current.searchParams.get('arrCity') || '';
-
-        const url = new URL(this.href, window.location.origin);
-        const depCity = url.searchParams.get('depCity') || '';
-        const nextArr = pickAltCity(depCity, curArr);
-
-        url.searchParams.set('arrCity', nextArr);
-
-        // 터미널/역 선택 값은 도시 변경 시 깨지기 쉬워서 초기화
-        url.searchParams.delete('depTerminalId');
-        url.searchParams.delete('arrTerminalId');
-        url.searchParams.delete('depSubTerminalId');
-        url.searchParams.delete('arrSubTerminalId');
-
-        window.location.href = url.toString();
+    function setActive(row, value){
+      if (!row) return;
+      const v = norm(value);
+      row.querySelectorAll('.tp-chip').forEach(function(chip){
+        chip.classList.toggle('is-active', norm(chip.textContent) === v);
       });
-    });
-  }
+    }
 
-  // E) swap dep/arr cities (bus/train)
-  function initSwapCities(){
-    const mode = document.body && document.body.dataset ? document.body.dataset.tpMode : '';
-    if (mode !== 'expbus' && mode !== 'train') return;
+    function syncBar(){
+      if (depText) depText.value = norm(depHidden.value);
+      if (arrText) arrText.value = norm(arrHidden.value);
+      setActive(depRow, depHidden.value);
+      setActive(arrRow, arrHidden.value);
+    }
 
+    function safeSetDep(city){
+      const next = norm(city);
+      const conflict = norm(arrHidden.value) === next && next;
+      depHidden.value = next;
+      if (conflict){
+        // keep service usable by auto-fixing the other side, but notify user
+        arrHidden.value = firstDifferent(depHidden.value);
+      }
+      return conflict;
+    }
+
+    function safeSetArr(city){
+      const next = norm(city);
+      const conflict = norm(depHidden.value) === next && next;
+      arrHidden.value = next;
+      if (conflict){
+        depHidden.value = firstDifferent(arrHidden.value);
+      }
+      return conflict;
+    }
+
+    // Intercept city chip clicks (anchors or buttons)
+    function bindRow(row, which){
+      if (!row) return;
+      row.addEventListener('click', function(e){
+        const chip = e.target.closest('.tp-chip');
+        if (!chip) return;
+
+        // prevent navigation when it's an anchor
+        if (chip.tagName === 'A') e.preventDefault();
+
+        const city = norm(chip.textContent);
+        if (!city) return;
+
+        clearTerminals();
+        let conflicted = false;
+        if (which === 'dep') {
+          conflicted = safeSetDep(city);
+          if (conflicted) {
+            const otherActive = arrRow ? arrRow.querySelector('.tp-chip.is-active') : null;
+            warnSameRoute(chip, otherActive || arrText);
+            shake(depText);
+            shake(arrText);
+          }
+        } else {
+          conflicted = safeSetArr(city);
+          if (conflicted) {
+            const otherActive = depRow ? depRow.querySelector('.tp-chip.is-active') : null;
+            warnSameRoute(chip, otherActive || depText);
+            shake(depText);
+            shake(arrText);
+          }
+        }
+
+        syncBar();
+        form.submit();
+      });
+    }
+    bindRow(depRow, 'dep');
+    bindRow(arrRow, 'arr');
+
+    // Swap button in search bar
     document.querySelectorAll('[data-tp-swap-city]').forEach(function(btn){
       btn.addEventListener('click', function(e){
         e.preventDefault();
-        const url = new URL(window.location.href);
-        const dep = (url.searchParams.get('depCity') || '').trim();
-        const arr = (url.searchParams.get('arrCity') || '').trim();
-        if (!dep || !arr) return;
+        const d = norm(depHidden.value);
+        const a = norm(arrHidden.value);
+        if (!d || !a) return;
 
-        url.searchParams.set('depCity', arr);
-        url.searchParams.set('arrCity', dep);
+        clearTerminals();
+        depHidden.value = a;
+        arrHidden.value = d;
 
-        // paging/terminal params reset
-        url.searchParams.delete('page');
-        url.searchParams.delete('depTerminalId');
-        url.searchParams.delete('arrTerminalId');
-        url.searchParams.delete('depSubTerminalId');
-        url.searchParams.delete('arrSubTerminalId');
+        // final guard (dep==arr)
+        if (norm(depHidden.value) === norm(arrHidden.value)){
+          arrHidden.value = firstDifferent(depHidden.value);
+        }
 
-        window.location.href = url.toString();
+        syncBar();
+        form.submit();
       });
     });
+
+    // Initial sync on load
+    syncBar();
   }
 
-  initBusTrainSmartCities();
-  initSwapCities();
-  
+  initBusTrainCityUI();
+
   document.querySelectorAll('input[data-tp-date-text]').forEach(initCustomDate);
   // initial sync (flight)
   updateSummaries();

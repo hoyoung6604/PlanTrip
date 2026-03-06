@@ -32,19 +32,14 @@
         <p class="tp-sub">제주 ↔ 국내 전 공항 운항편을 날짜 기준으로 확인할 수 있습니다.</p>
       </div>
 </div>
-
-    <div class="tp-tabs">
-      <a class="tp-tab is-active" href="${pageContext.request.contextPath}/transport/flight">항공권</a>
-      <a class="tp-tab" href="${pageContext.request.contextPath}/transport/expbus">버스</a>
-      <a class="tp-tab" href="${pageContext.request.contextPath}/transport/train">기차</a>
-    </div>
-
-    <!-- 검색 -->
+<!-- 검색 -->
     <div class="tp-card">
-      <div class="tp-card-h">
-        <p class="tp-card-title">검색</p>
-      </div>
-      <div class="tp-body">
+<div class="tp-tabs2" role="tablist" aria-label="교통수단">
+  <a class="tp-tab2 is-active" href="${pageContext.request.contextPath}/transport/flight?depAirport=${depAirport}&arrAirport=${arrAirport}&depPlandTime=${depPlandTime}"><span class="tp-tab2__icon"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span class="tp-tab2__label">항공권</span></a>
+  <a class="tp-tab2" href="${pageContext.request.contextPath}/transport/expbus?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}"><span class="tp-tab2__icon"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v11a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 19.5v1.5M16.5 19.5v1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/></svg></span><span class="tp-tab2__label">버스</span></a>
+  <a class="tp-tab2" href="${pageContext.request.contextPath}/transport/train?depCity=${depCity}&arrCity=${arrCity}&depPlandTime=${depPlandTime}"><span class="tp-tab2__icon"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v10a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 19l-2 2M16 19l2 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7 8h10M7 12h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="16" r="1" fill="currentColor"/><circle cx="15" cy="16" r="1" fill="currentColor"/></svg></span><span class="tp-tab2__label">기차</span></a>
+</div>
+<div class="tp-body">
         
         <form method="get" action="${pageContext.request.contextPath}/transport/flight/search">
           <div class="tp-form-panel">
@@ -128,11 +123,7 @@
 
     <!-- 결과 -->
     <div class="tp-card">
-      <div class="tp-card-h">
-        <p class="tp-card-title">조회 결과</p>
-        
-      </div>
-      <div class="tp-body">
+<div class="tp-body">
         <j:if test="${empty result}">
           <div class="tp-empty">조회 결과가 없습니다.</div>
         </j:if>

@@ -8,11 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip | 회원가입</title>
 
+  <link rel="stylesheet" href="/css/header.css" />
+
   
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
+  <script defer src="/js/nav-wave.js"></script>
   <script defer src="/js/pages/register-page.js"></script>
 
   <style>
@@ -44,6 +47,8 @@
   </style>
 </head>
 <body>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
   <div class="auth-page-fallback">
     <a class="auth-page-home" href="/">← 홈으로</a>
   </div>
@@ -51,6 +56,8 @@
   <c:if test="${not empty error}">
     <div id="serverAuthError" style="display:none;"><c:out value="${error}" /></div>
   </c:if>
+
+  <%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 </body>
 </html>

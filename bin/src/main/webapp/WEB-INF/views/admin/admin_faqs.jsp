@@ -36,11 +36,11 @@
             <c:otherwise>ADMIN</c:otherwise>
           </c:choose>
         </span>
-        <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
+        <%-- <button type="button" class="theme-toggle theme-toggle--pill" id="themeToggle" aria-label="테마 전환">
           <span class="tt-icon" aria-hidden="true">☀️</span>
           <span class="tt-icon" aria-hidden="true">🌙</span>
           <span class="tt-indicator" aria-hidden="true"></span>
-        </button>
+        </button> --%>
         <a class="admin-btn is-primary" href="${pageContext.request.contextPath}/admin/faq">+ FAQ 작성</a>
       </div>
     </div>
@@ -72,7 +72,7 @@
                 </tr>
               </c:forEach>
 
-              <c:if test="${empty faqs}">
+              <c:if test="${empty faqList}">
                 <tr>
                   <td colspan="3" class="admin-empty">등록된 FAQ가 없습니다.</td>
                 </tr>

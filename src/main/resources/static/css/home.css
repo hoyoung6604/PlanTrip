@@ -1,8 +1,8 @@
-
 :root{
   --homeCardW: 380px; /* 인기/맞춤 카드 공통 폭 */
   --homeCardGap: 20px;
-  --homeCardImgH: 270px; /* 이미지 영역 높이 */
+  --homeCardImgH: 310px; /* ✅ 카드 이미지 영역 높이(세로 더 길게) */
+  --homeCardH: 420px;    /* ✅ 오버레이 카드 전체 높이(세로 더 길게) */
 }
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 
@@ -315,18 +315,24 @@ a{ color:inherit; text-decoration:none; }
   left:50%;
   top:50%;
   transform:translate(-50%, -50%);
-  z-index:3;
+
+  z-index:1;  /* ✅ 6 → 1 (sheet가 위에서 덮도록) */
+
   text-align:center;
   width:min(980px, calc(100% - 48px));
   pointer-events:none;
 
-  /* intro motion (triple 느낌) */
   opacity:0;
   translate: 0 18px;
   animation: heroIntroUp .9s cubic-bezier(.2,.8,.2,1) both;
 }
 .hero-copy--center{ top:50%; }
-.hero-copy--top{ top: 28vh; } /* (구버전 클래스가 남아있어도 깨지지 않게 유지) */
+.hero-copy--top{ top: 28vh; }
+
+@keyframes heroIntroUp{
+  from{ opacity:0; translate: 0 18px; }
+  to{ opacity:1; translate: 0 0; }
+}
 
 .hero-title{
   font-family:var(--scriptFont);
@@ -336,6 +342,13 @@ a{ color:inherit; text-decoration:none; }
   text-shadow:0 8px 26px rgba(0,0,0,.35);
 }
 
+.hero-pill{ display:inline-block; }
+
+.hero-copy.is-hidden{
+  opacity:0;
+  transform: translate(-50%, -50%) translateY(-10px);
+  transition: opacity .22s ease, transform .22s ease;
+}
 
 /* ✅ hero 타이틀 래퍼(구조상 hero-pill이 남아있어도 동일하게 보이게) */
 .hero-pill{ display:inline-block; }
@@ -444,6 +457,7 @@ a{ color:inherit; text-decoration:none; }
   background: rgba(47, 111, 237, 0.08); padding: 4px 10px; border-radius: 8px;
 }
 
+
 /* ============================================================
    ✅ 4. Marquee & Slider (문법 에러 수정 + 화살표 버튼 유지)
 ============================================================ */
@@ -533,13 +547,80 @@ a{ color:inherit; text-decoration:none; }
 .seg-btn { padding: 10px 20px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-weight: 600; color: #64748b; }
 .seg-btn.active { background: #2f6fed; color: #fff; border-color: #2f6fed; }
 
-/* ✅ 공통 찜(하트) 버튼 */
-.wish-btn{position:absolute;top:15px;right:15px;z-index:999;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:35px;height:35px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.wish-btn.active{filter:drop-shadow(0 4px 10px rgba(0,0,0,.15));}
-@keyframes heroIntroUp{
-  from{ opacity:0; transform: translate(-50%, calc(-50% + 18px)); }
-  to{ opacity:1; transform: translate(-50%, -50%); }
+/* ============================================================
+   ✅ 5. (추가) 메인(index.jsp / index.js) 오버레이 카드 공통 스타일
+============================================================ */
+.post-card.post-card--overlay{
+  position: relative;
+  display: block;
+  height: var(--homeCardH);
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
 }
+
+.post-card--overlay .card-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: cover;
+  z-index:1;
+}
+
+.post-card--overlay .card-grad{
+  position:absolute; inset:0;
+  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 60%);
+  z-index:2;
+  pointer-events:none;
+}
+
+.post-card--overlay .card-body{
+  position:absolute; left:0; right:0; bottom:0;
+  padding: 22px;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.post-card--overlay .card-title{
+  font-size:22px;
+  font-weight:800;
+  color:#fff;
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.post-card--overlay .card-sub{
+  font-size:14px;
+  color: rgba(255,255,255,.92);
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+
+.wish-btn{
+  position:absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  line-height:1;
+  font-size: 18px;
+  padding:0;
+}
+.wish-btn:active{ transform: scale(.96); }
+.wish-btn.active{ background: rgba(255,255,255,.98); }
 
 /* =========================================================
    [수정] 햄버거 메뉴 버튼 -> 마이페이지 스타일 프로필 아바타로 변경

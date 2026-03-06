@@ -85,7 +85,6 @@
     <div class="hero-copy hero-copy--center">
       <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
-
     <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
   </section>
 
@@ -101,33 +100,42 @@
         <div class="marquee" data-marquee>
           <div class="marquee__track" data-marquee-track>
             <j:forEach var="s" items="${popularSpots}">
-              <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}" style="position: relative;">
-                <button class="wish-btn" data-sidx="${s.id}" onclick="toggleWish(event, ${s.id}, this)"
-                        style="position:absolute; top:15px; right:15px; z-index:10; background:rgba(255,255,255,0.8); border:none; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+              <a class="post-card post-card--overlay" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+                <img class="card-bg"
+                     src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+                     alt="${s.name}"
+                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+                <div class="card-grad"></div>
+
+                <button class="wish-btn ${s.isHearted ? 'active' : ''}" data-sidx="${s.id}"
+                        onclick="toggleWish(event, ${s.id}, this)">
                   ${s.isHearted ? '❤️' : '🤍'}
                 </button>
-                <div class="post-img" style="background-image:url('${s.image}')"></div>
-                <div class="post-body">
-                  <div class="post-title">${s.name}</div>
-                  <div class="post-meta">${s.city.name} · 인기</div>
-                  <div class="post-tags">
-                    <span class="tag">#${s.city.name}</span>
-                    <span class="tag">#추천</span>
-                  </div>
+
+                <div class="card-body">
+                  <div class="card-title">${s.name}</div>
+                  <div class="card-sub">${s.city.name} · 인기</div>
                 </div>
               </a>
             </j:forEach>
 
+            <!-- 기존처럼 2번 반복(무한 루프용) 유지 -->
             <j:forEach var="s" items="${popularSpots}">
-              <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
-                <div class="post-img" style="background-image:url('${s.image}')"></div>
-                <div class="post-body">
-                  <div class="post-title">${s.name}</div>
-                  <div class="post-meta">${s.city.name} · 인기</div>
-                  <div class="post-tags">
-                    <span class="tag">#${s.city.name}</span>
-                    <span class="tag">#추천</span>
-                  </div>
+              <a class="post-card post-card--overlay" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+                <img class="card-bg"
+                     src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+                     alt="${s.name}"
+                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+                <div class="card-grad"></div>
+
+                <button class="wish-btn ${s.isHearted ? 'active' : ''}" data-sidx="${s.id}"
+                        onclick="toggleWish(event, ${s.id}, this)">
+                  ${s.isHearted ? '❤️' : '🤍'}
+                </button>
+
+                <div class="card-body">
+                  <div class="card-title">${s.name}</div>
+                  <div class="card-sub">${s.city.name} · 인기</div>
                 </div>
               </a>
             </j:forEach>
@@ -136,9 +144,10 @@
       </section>
 
       <section class="block block-recommend" id="recommendSection">
+        <!-- (기존 추천 섹션 구조 그대로) -->
         <div class="course-head" style="margin-bottom: 20px;">
           <div class="course-head-left block-head">
-            <h2 class="block-title">맞춤형 여행 추천</h2>
+            <h2 class="block-title">오늘의 맞춤형 여행 코스</h2>
           </div>
         </div>
 
@@ -158,21 +167,22 @@
         <div class="recommend-wrap">
           <button class="arrow-btn arrow-left" type="button" aria-label="이전" onclick="scrollRecommend(-1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
 
-          <div class="cards" id="recommendCards"></div>
+          <div class="recommend-cards" id="recommendCards"></div>
 
           <button class="arrow-btn arrow-right" type="button" aria-label="다음" onclick="scrollRecommend(1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
         </div>
       </section>
+
     </div>
   </section>
 </main>

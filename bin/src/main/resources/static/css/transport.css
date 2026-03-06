@@ -24,11 +24,11 @@
 .tp-tab.is-active{ background:#0c5cff; border-color:#0c5cff; color:#fff; }
 
 .tp-card{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.06);
-  overflow:visible;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 
   position: relative;
 }
@@ -42,7 +42,7 @@
 .tp-card-title{ font-size:16px; font-weight:800; color:#0f172a; margin:0; }
 .tp-card-tools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-.tp-body{ padding:16px; }
+.tp-body{ padding: 28px 0 0; }
 
 .tp-grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; }
 .tp-col-12{ grid-column: span 12; }
@@ -208,7 +208,8 @@
   background: #f8fbff;
   border: 1px solid #e8eefb;
   border-radius: 14px;
-  padding: 12px;
+  padding: 18px 12px 12px;
+  margin-top: 28px;
 }
 
 /* 테이블 헤더/구분감 */
@@ -556,4 +557,128 @@
   .tp-searchbar{ flex-direction:column; }
   .tp-searchbar__date, .tp-searchbar__action{ width:100%; }
   .tp-searchbar__loc{ width:100%; }
+}
+
+/* ==============================
+   동일 출발/도착 선택 UX
+   - shake 애니메이션 + 상단 토스트
+   ============================== */
+@keyframes tpShake{
+  0%{ transform: translateX(0); }
+  20%{ transform: translateX(-4px); }
+  40%{ transform: translateX(4px); }
+  60%{ transform: translateX(-3px); }
+  80%{ transform: translateX(3px); }
+  100%{ transform: translateX(0); }
+}
+
+.tp-shake{ animation: tpShake .38s ease-in-out; }
+
+.tp-toast{
+  position: fixed;
+  left: 50%;
+  top: 82px;
+  transform: translate(-50%, -10px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.tp-toast.is-show{
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.tp-toast__msg{
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+  max-width: min(92vw, 520px);
+  text-align: center;
+}
+
+
+/* -------- 교통수단 탭(아이콘) : 검색바와 연결 -------- */
+.tp-card{ position:relative; }
+
+.tp-tabs2{
+  padding-left: 0;
+  position:absolute;
+  top:0;
+  left: 0;
+  display:flex;
+  gap:8px;
+  z-index:5;
+}
+
+.tp-tab2{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:42px;
+  padding:0 16px;
+  border-radius:14px 14px 0 0;
+  border:1px solid #e8eefb;
+  border-bottom: none;
+  background: #eef3ff;
+  color:#0f172a;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:none;
+}
+
+.tp-tab2:hover{ border-color:#cbd5e1; }
+
+.tp-tab2.is-active{
+  background:#ffffff;
+  color:#0c5cff;
+  border-color:#cfe0ff;
+  border-bottom: none;
+  box-shadow:none;
+}
+
+.tp-tab2__icon{
+  width:18px;
+  height:18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.tp-tab2__icon svg{
+  /* 다른 전역 CSS(svg {width:100%...})가 있어도 아이콘 크기가 깨지지 않게 강제 */
+  width:18px !important;
+  height:18px !important;
+  max-width:18px;
+  max-height:18px;
+  display:block;
+}
+
+.tp-tab2__label{ line-height:1; }
+
+@media (max-width: 720px){
+  .tp-tabs2{
+    top:-16px;
+    left:12px;
+    gap:6px;
+  }
+  .tp-tab2{
+    height:36px;
+    padding:0 12px;
+    font-size:13px;
+  }
+}
+
+.tp-tabs2::after{
+  content:'';
+  position:absolute;
+  left:-12px;
+  right:-12px;
+  bottom:-1px;
+  height:1px;
+  background:#e8eefb;
 }

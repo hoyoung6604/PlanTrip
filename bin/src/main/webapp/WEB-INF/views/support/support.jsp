@@ -9,16 +9,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>고객센터</title>
 
-  <link rel="stylesheet" href="/css/home.css" />
-  <link rel="stylesheet" href="/css/support-console.css" />
+    <link rel="stylesheet" href="/css/header.css" />
+<link rel="stylesheet" href="/css/support-console.css" />
+<link rel="stylesheet" href="/css/redesign.css" />
   <link rel="stylesheet" href="/css/ui-toast.css" />
 
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
+    <script defer src="/js/nav-wave.js"></script>
 </head>
 
-<body>
+<body class="page-solid">
 
+
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <c:set var="supportActive" value="home" />
 
 <div class="support-shell">
@@ -133,6 +137,8 @@
   </main>
 
 </div>
+
+<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 
 
 </body>
