@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="j" uri="jakarta.tags.core" %>
-<%@ include file="/WEB-INF/views/common/theme.jspf" %>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -8,13 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PlanTrip</title>
 
-  <!-- welcome to the PlanTrip 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
-  <script defer src="${pageContext.request.contextPath}/js/theme.js"></script>
   <script defer src="${pageContext.request.contextPath}/js/nav-wave.js"></script>
   <script defer src="${pageContext.request.contextPath}/js/index.js"></script>
 </head>
@@ -48,10 +45,10 @@
       </j:if>
 
       <j:if test="${not empty sessionScope.loginMember}">
-        <a class="header-link" href="/reservations">내 예약</a>
+        <%-- <a class="header-link" href="/reservations">내 예약</a> --%>
 
         <div class="hamburger" id="hmWrap">
-          <button class="hamburger-btn" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
+          <button class="hamburger-btn ${sessionScope.loginMember.MRole == 9 ? 'is-admin' : ''} ${not empty sessionScope.loginMember.snsId ? 'is-social' : ''}" type="button" id="hmBtn" aria-label="메뉴" aria-haspopup="true" aria-expanded="false">
             <span></span><span></span><span></span>
           </button>
 
@@ -69,7 +66,7 @@
             </j:if>
 
             <a class="menu-item" href="/members/mypage">마이페이지</a>
-            <a class="menu-item" href="/plan">내 여행 계획</a>
+            
 
             <div class="hm-divider"></div>
 
@@ -84,13 +81,10 @@
 </header>
 
 <main>
-  <!-- ✅ 메인 화면: welcome + 스크롤 화살표는 유지, 검색바만 제거 -->
   <section class="hero">
     <div class="hero-copy hero-copy--center">
       <div class="hero-pill hero-title">Welcome to the PlanTrip</div>
     </div>
-
-    <!-- ✅ 움직이는 화살표 박스(아래로 이동) -->
     <a class="scroll-down" href="#sheet" aria-label="아래로 스크롤"></a>
   </section>
 
@@ -106,34 +100,42 @@
         <div class="marquee" data-marquee>
           <div class="marquee__track" data-marquee-track>
             <j:forEach var="s" items="${popularSpots}">
-              <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}" style="position: relative;">
-                <button class="wish-btn" data-sidx="${s.id}" onclick="toggleWish(event, ${s.id}, this)"
-                        style="position:absolute; top:15px; right:15px; z-index:10; background:rgba(255,255,255,0.8); border:none; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+              <a class="post-card post-card--overlay" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+                <img class="card-bg"
+                     src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+                     alt="${s.name}"
+                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+                <div class="card-grad"></div>
+
+                <button class="wish-btn ${s.isHearted ? 'active' : ''}" data-sidx="${s.id}"
+                        onclick="toggleWish(event, ${s.id}, this)">
                   ${s.isHearted ? '❤️' : '🤍'}
                 </button>
-                <div class="post-img" style="background-image:url('${s.image}')"></div>
-                <div class="post-body">
-                  <div class="post-title">${s.name}</div>
-                  <div class="post-meta">${s.city.name} · 인기</div>
-                  <div class="post-tags">
-                    <span class="tag">#${s.city.name}</span>
-                    <span class="tag">#추천</span>
-                  </div>
+
+                <div class="card-body">
+                  <div class="card-title">${s.name}</div>
+                  <div class="card-sub">${s.city.name} · 인기</div>
                 </div>
               </a>
             </j:forEach>
 
-            <!-- 무한 루프용 복제 -->
+            <!-- 기존처럼 2번 반복(무한 루프용) 유지 -->
             <j:forEach var="s" items="${popularSpots}">
-              <a class="post-card" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
-                <div class="post-img" style="background-image:url('${s.image}')"></div>
-                <div class="post-body">
-                  <div class="post-title">${s.name}</div>
-                  <div class="post-meta">${s.city.name} · 인기</div>
-                  <div class="post-tags">
-                    <span class="tag">#${s.city.name}</span>
-                    <span class="tag">#추천</span>
-                  </div>
+              <a class="post-card post-card--overlay" href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+                <img class="card-bg"
+                     src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+                     alt="${s.name}"
+                     onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+                <div class="card-grad"></div>
+
+                <button class="wish-btn ${s.isHearted ? 'active' : ''}" data-sidx="${s.id}"
+                        onclick="toggleWish(event, ${s.id}, this)">
+                  ${s.isHearted ? '❤️' : '🤍'}
+                </button>
+
+                <div class="card-body">
+                  <div class="card-title">${s.name}</div>
+                  <div class="card-sub">${s.city.name} · 인기</div>
                 </div>
               </a>
             </j:forEach>
@@ -141,11 +143,11 @@
         </div>
       </section>
 
-      
       <section class="block block-recommend" id="recommendSection">
+        <!-- (기존 추천 섹션 구조 그대로) -->
         <div class="course-head" style="margin-bottom: 20px;">
           <div class="course-head-left block-head">
-            <h2 class="block-title">맞춤형 여행 추천</h2>
+            <h2 class="block-title">오늘의 맞춤형 여행 코스</h2>
           </div>
         </div>
 
@@ -165,30 +167,27 @@
         <div class="recommend-wrap">
           <button class="arrow-btn arrow-left" type="button" aria-label="이전" onclick="scrollRecommend(-1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
 
-          <div class="cards" id="recommendCards"></div>
+          <div class="recommend-cards" id="recommendCards"></div>
 
           <button class="arrow-btn arrow-right" type="button" aria-label="다음" onclick="scrollRecommend(1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
         </div>
       </section>
-</div>
+
+    </div>
   </section>
 </main>
 
-<!-- auth modal은 공통 스크립트(auth-modal.js)에서 data-auth-open으로 열림 -->
-
-
 <%@ include file="/WEB-INF/views/common/footer.jspf" %>
-
 
 </body>
 </html>

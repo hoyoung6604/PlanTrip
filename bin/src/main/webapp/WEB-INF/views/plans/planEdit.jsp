@@ -30,6 +30,7 @@
     button { padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; background:#fff; cursor:pointer; }
     button.primary { border-color:#222; font-weight: 800; }
   </style>
+<script src="/js/ui-toast.js"></script>
 </head>
 <body>
 
@@ -38,20 +39,20 @@
 <div class="wrap">
 
   <h2>여행 계획 수정</h2>
-  <p class="muted">기본 정보(제목/날짜/도시/목적)를 수정한 뒤 저장하면, 다음 단계로 장소 선택/경로 수정 화면으로 이동해.</p>
+  <p class="muted">기본 정보(제목/날짜/도시/목적)를 수정한 뒤 저장하면, 장소 선택/경로 수정 화면으로 이동합니다.</p>
 
   <div class="card">
     <form id="planForm" method="post" action="${pageContext.request.contextPath}/plans/edit">
       <!-- ✅ 어떤 계획을 수정할지 필수 -->
-      <input type="hidden" name="pIdx" value="${plan.PIdx}" />
+      <input type="hidden" name="pIdx" value="${plan.pIdx}" />
 
       <!-- 계획 이름 -->
       <div style="margin-bottom: 14px;">
         <label for="planName">계획 이름</label>
         <input type="text" id="planName" name="planName"
                placeholder="예) 3월 제주 여행" maxlength="50" required
-               value="<c:out value='${plan.PTitle}'/>" />
-        <div class="muted">내 계획 목록에서 보여줄 이름이야.</div>
+               value="<c:out value='${plan.pTitle}'/>" />
+        <div class="muted">내 계획 목록에서 보여줄 이름입니다.</div>
       </div>
 
       <!-- 도시 -->
@@ -72,10 +73,10 @@
           </c:forEach>
         </select>
 
-        <div class="muted">도시/목적은 계획 테이블에 저장돼 있어야 자동 선택이 가능해.</div>
+        <div class="muted">도시/목적은 계획 테이블에 저장돼 있어야 자동 선택이 가능합니다.</div>
 
         <c:if test="${empty cities}">
-          <div class="warn">⚠ 도시 목록이 비어있어. cityT에 데이터가 들어있는지 확인해줘.</div>
+          <div class="warn">⚠ 도시 목록이 비어 있습니다. cityT에 데이터가 들어있는지 확인해 주세요.</div>
         </c:if>
       </div>
 
@@ -85,14 +86,14 @@
         <div class="row">
           <div>
             <div class="muted" style="margin:0 0 6px;">시작일</div>
-            <input type="date" id="startDate" name="startDate" required value="${plan.PStart}" />
+            <input type="date" id="startDate" name="startDate" required value="${plan.pStart}" />
           </div>
           <div>
             <div class="muted" style="margin:0 0 6px;">종료일</div>
-            <input type="date" id="endDate" name="endDate" required value="${plan.PEnd}" />
+            <input type="date" id="endDate" name="endDate" required value="${plan.pEnd}" />
           </div>
         </div>
-        <div class="muted">시작일 ≤ 종료일로 선택해줘.</div>
+        <div class="muted">시작일 ≤ 종료일로 선택해 주세요.</div>
       </div>
 
       <!-- 목적(복수) -->
@@ -124,7 +125,7 @@
           </label>
         </div>
 
-        <div class="muted">하나 이상 선택해줘. (예: 관광+맛집)</div>
+        <div class="muted">하나 이상 선택해 주세요. (예: 관광+맛집)</div>
       </div>
 
       <div class="btns">
@@ -138,12 +139,6 @@
     </form>
   </div>
 
-  <div class="card">
-    <b>다음 단계</b>
-    <p class="muted" style="margin-top: 8px;">
-      저장되면 route 페이지로 이동해서, 기존에 저장된 장소를 불러오고 수정할 수 있게 만들 거야.
-    </p>
-  </div>
 
 </div>
 
@@ -167,11 +162,11 @@
     const startDate = startEl.value;
     const endDate = endEl.value;
 
-    if (!planName) { e.preventDefault(); alert('계획 이름을 입력해줘!'); return; }
-    if (!cId) { e.preventDefault(); alert('도시를 선택해줘!'); return; }
-    if (!startDate || !endDate) { e.preventDefault(); alert('여행 날짜를 선택해줘!'); return; }
-    if (endDate < startDate) { e.preventDefault(); alert('종료일은 시작일보다 빠를 수 없어!'); return; }
-    if (!checked.length) { e.preventDefault(); alert('여행 목적을 최소 1개 선택해줘!'); return; }
+    if (!planName) { e.preventDefault(); UIToast.show('계획 이름을 입력해 주세요.', { type: 'warning' }); return; }
+    if (!cId) { e.preventDefault(); UIToast.show('도시를 선택해 주세요.', { type: 'warning' }); return; }
+    if (!startDate || !endDate) { e.preventDefault(); UIToast.show('여행 날짜를 선택해 주세요.', { type: 'warning' }); return; }
+    if (endDate < startDate) { e.preventDefault(); UIToast.show('종료일은 시작일보다 빠를 수 없습니다.', { type: 'warning' }); return; }
+    if (!checked.length) { e.preventDefault(); UIToast.show('여행 목적을 최소 1개 선택해 주세요.', { type: 'warning' }); return; }
   });
 </script>
 

@@ -18,6 +18,7 @@
         </div>
 
         <form class="form" action="/members/register" method="post">
+          <!-- (예외 상황용) 공통 에러: 박스 없이 텍스트만 출력 -->
           <div class="form-error" data-auth-error style="display:none;"></div>
 
           <div class="label">이름</div>
@@ -25,9 +26,13 @@
 
           <div class="label">아이디</div>
           <input class="input" name="mId" type="text" placeholder="아이디" required />
+          <!-- ✅ 중복 아이디/형식 에러 -->
+          <div class="field-error" data-auth-field-error="mId"></div>
 
           <div class="label">이메일</div>
           <input class="input" name="mEmail" type="email" placeholder="이메일" required />
+          <!-- ✅ 중복 이메일/형식 에러 -->
+          <div class="field-error" data-auth-field-error="mEmail"></div>
 
          <div class="label">비밀번호</div>
 <div class="input-row">
@@ -51,6 +56,8 @@
     </svg>
   </button>
 </div>
+          <!-- ✅ 비밀번호 관련 에러(필요 시) -->
+          <div class="field-error" data-auth-field-error="mPw"></div>
           <button class="primary-btn" type="submit">회원가입</button>
 
           <div class="auth-footer">

@@ -226,55 +226,48 @@
 					}
 				}
 
-				.spot-badge {
-					position: absolute;
-					left: 12px;
-					top: 12px;
-					z-index: 3;
-					display: inline-flex;
-					align-items: center;
-					gap: 6px;
-					padding: 6px 10px;
-					border-radius: 12px;
-					background: rgba(255, 255, 255, .92);
-					font-weight: 800;
-					font-size: 12px;
-					color: #1a1a1a;
-					box-shadow: 0 8px 18px rgba(0, 0, 0, .12);
-				}
-
-				.spot-badge::before {
-					content: '';
-					width: 7px;
-					height: 7px;
+				/* 기본 하트 버튼 스타일 (메인 및 상세 공통) */
+				.wish-btn {
+					position: absolute !important;
+					top: 12px !important;
+					right: 12px !important;
+					z-index: 100 !important;
+					background: rgba(255, 255, 255, 0.9) !important;
+					border: none;
 					border-radius: 50%;
-					background: #ff5b5b;
-					box-shadow: 0 0 0 3px rgba(255, 91, 91, .18);
-				}
-
-				.spot-heart {
-					position: absolute;
-					right: 12px;
-					top: 12px;
-					z-index: 3;
-					width: 34px;
-					height: 34px;
-					border-radius: 999px;
-					background: rgba(255, 255, 255, .92);
+					width: 36px;
+					height: 36px;
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					font-size: 16px;
-					font-weight: 700;
-					color: #111;
-					box-shadow: 0 8px 18px rgba(0, 0, 0, .12);
+					box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+					cursor: pointer;
+					font-size: 18px;
+					visibility: visible !important;
 				}
 
-				/* 기존 카드(.card) 스타일은 사용 안 하도록 최소화 */
-				.card {
-					background: transparent;
-					box-shadow: none;
-					border-radius: 0;
+				.wish-btn,
+				.wish-btn-large {
+					transition: all 0.2s ease;
+					outline: none;
+				}
+
+				.wish-btn:hover,
+				.wish-btn-large:hover {
+					background-color: #f9f9f9;
+					transform: scale(1.1);
+					box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+				}
+
+				.wish-btn:active,
+				.wish-btn-large:active {
+					transform: scale(0.9);
+				}
+
+				.wish-btn.active,
+				.wish-btn-large.active {
+					border-color: #ff4b4b;
+					color: #ff4b4b;
 				}
 
 				.nav-btn {
@@ -300,72 +293,30 @@
 					gap: 10px;
 				}
 
-
-				/* ✅ Trip.Best 배지 / 하트 숨김 */
-				/*.spot-badge,
-				.spot-heart {
-					display: none !important;
-				}*/
-
-
-
-				/* 기본 하트 버튼 스타일 (메인 및 상세 공통) */
-				.wish-btn {
-					position: absolute !important;
-					top: 12px !important;
-					right: 12px !important;
-					z-index: 100 !important;
-					/* 이미지(.spot-img)보다 훨씬 높은 값을 줌 */
-					background: rgba(255, 255, 255, 0.9) !important;
-					border: none;
-					border-radius: 50%;
-					width: 36px;
-					height: 36px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-					cursor: pointer;
-					font-size: 18px;
-					visibility: visible !important;
-					/* 강제 표시 */
+				/* ✅ 슬라이더 내용이 교체될 때 화면이 위아래로 덜컹거리는 현상 방지 */
+				#tour-slider,
+				#stay-slider,
+				#act-slider,
+				#food-slider {
+					min-height: 330px;
 				}
 
-
-				.wish-btn,
-				.wish-btn-large {
-					transition: all 0.2s ease;
-					/* 부드러운 애니메이션 효과 */
-					outline: none;
+				/* ✅ 화살표 클릭 시 부드럽게 스크롤 되도록 smooth 속성 */
+				.card-container {
+				    scroll-behavior: smooth !important;
 				}
 
-				/* 1. 마우스를 올렸을 때 (Hover) */
-				.wish-btn:hover,
-				.wish-btn-large:hover {
-					background-color: #f9f9f9;
-					/* 배경색이 아주 연한 회색으로 변경 */
-					transform: scale(1.1);
-					/* 크기가 10% 커짐 */
-					box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-					/* 그림자가 더 진해져서 떠오르는 느낌 */
-				}
-
-				/* 2. 클릭하는 순간 (Active - 물리적 피드백) */
-				.wish-btn:active,
-				.wish-btn-large:active {
-					transform: scale(0.9);
-					/* 누를 때 살짝 작아짐 */
-				}
-
-				/* 3. 찜이 된 상태일 때 (Active 클래스가 붙었을 때) */
-				/* 자바스크립트에서 btn.classList.toggle('active')를 쓸 경우 유용합니다 */
-				.wish-btn.active,
-				.wish-btn-large.active {
-					border-color: #ff4b4b;
-					/* 테두리를 빨간색으로 */
-					color: #ff4b4b;
-					/* 아이콘이 텍스트라면 색상 변경 */
-				}
+				
+				/* ✅ 슬라이더 내용 교체 시 높이가 0으로 무너지는 덜컹거림 방지 */
+				        .slider-wrapper {
+				            min-height: 350px; 
+				        }
+				        .city-btn:focus {
+				            outline: none !important; /* 클릭 시 버튼 테두리 및 강제 스크롤 방지 */
+				        }
+						.city-btn span {
+						            pointer-events: none !important;
+						        }
 			</style>
 		</head>
 
@@ -375,47 +326,19 @@
 				<h1 style="font-size: 32px; font-weight: 800; margin-top: 50px; margin-left: 60px;">대한민국에서 놓치면 안 될 인기 도시
 				</h1>
 
-				<%-- 1. 도시 선택 버튼 (4개씩 슬라이더 버전) --%>
+				<%-- 1. 도시 선택 버튼 --%>
 					<div class="slider-wrapper" style="margin-top: 40px; margin-bottom: 50px;">
 						<button class="nav-btn" onclick="sideScroll('city-slider', 'left')">‹</button>
 
 						<div class="card-container" id="city-slider">
-							<button type="button" onclick="loadCity(4, this)"
-								class="card-item city-btn ${selectedCity == 4 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>서울</span>
-							</button>
-							<button type="button" onclick="loadCity(1, this)"
-								class="card-item city-btn ${selectedCity == 1 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>부산</span>
-							</button>
-							<button type="button" onclick="loadCity(2, this)"
-								class="card-item city-btn ${selectedCity == 2 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>제주도</span>
-							</button>
-							<button type="button" onclick="loadCity(7, this)"
-								class="card-item city-btn ${selectedCity == 7 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>강릉</span>
-							</button>
-							<button type="button" onclick="loadCity(5, this)"
-								class="card-item city-btn ${selectedCity == 5 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>경주</span>
-							</button>
-							<button type="button" onclick="loadCity(3, this)"
-								class="card-item city-btn ${selectedCity == 3 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>수원</span>
-							</button>
-							<button type="button" onclick="loadCity(6, this)"
-								class="card-item city-btn ${selectedCity == 6 ? 'active' : ''}"
-								style="background-image: url('${pageContext.request.contextPath}/img/hero.jpg');">
-								<span>속초</span>
-							</button>
-						</div>
+									    <button type="button" onclick="loadCity(4, this)" class="card-item city-btn ${selectedCity == 4 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/4.jpg');"><span>서울</span></button>
+									    <button type="button" onclick="loadCity(1, this)" class="card-item city-btn ${selectedCity == 1 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/1.jpg');"><span>부산</span></button>
+									    <button type="button" onclick="loadCity(2, this)" class="card-item city-btn ${selectedCity == 2 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/2.jpg');"><span>제주도</span></button>
+									    <button type="button" onclick="loadCity(7, this)" class="card-item city-btn ${selectedCity == 7 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/7.jpg');"><span>강릉</span></button>
+									    <button type="button" onclick="loadCity(5, this)" class="card-item city-btn ${selectedCity == 5 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/5.jpg');"><span>경주</span></button>
+									    <button type="button" onclick="loadCity(3, this)" class="card-item city-btn ${selectedCity == 3 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/3.jpg');"><span>수원</span></button>
+									    <button type="button" onclick="loadCity(6, this)" class="card-item city-btn ${selectedCity == 6 ? 'active' : ''}" style="background-image: url('${pageContext.request.contextPath}/img/city/6.jpg');"><span>속초</span></button>
+									</div>
 
 						<button class="nav-btn" onclick="sideScroll('city-slider', 'right')">›</button>
 					</div>
@@ -436,18 +359,24 @@
 									<p style="padding: 20px; color: #999;">등록된 관광지가 없습니다.</p>
 								</j:if>
 								<j:forEach var="s" items="${tourList}">
-									<div class="card-item">
-										<a href="${pageContext.request.contextPath}/spots/detail/${s.id}"
-											style="text-decoration:none; color:inherit;">
-											<div class="card">
-												<div
-													style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative;">
-													🏛️
-												</div>
-												<div style="padding: 20px;">
-													<div style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
-														${s.name}</div>
-													<div style="font-size: 13px; color: #777;">${s.addr}</div>
+									<div class="card-item" style="position: relative;">
+										<button class="wish-btn ${s.isHearted ? 'active' : ''}" type="button"
+											onclick="toggleWish(event, ${s.id}, this)">
+											${s.isHearted ? '❤️' : '🤍'}
+										</button>
+										<a class="spot-link"
+											href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+											<div class="spot-card">
+												<div class="spot-thumb">
+													<img class="spot-img"
+														src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+														alt="${s.name}"
+														onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+													<div class="spot-overlay"></div>
+													<div class="spot-text">
+														<div class="spot-title" data-marquee-text>${s.name}</div>
+														<div class="spot-addr" data-marquee-text>${s.addr}</div>
+													</div>
 												</div>
 											</div>
 										</a>
@@ -472,17 +401,27 @@
 										<p style="padding: 20px; color: #999;">등록된 숙소가 없습니다.</p>
 									</j:if>
 									<j:forEach var="s" items="${stayList}">
-										<div class="card-item">
-											<div class="card">
-												<div
-													style="height: 200px; background: #eef2ff; display: flex; align-items: center; justify-content: center; font-size: 50px;">
+										<div class="card-item" style="position: relative;">
+											<button class="wish-btn ${s.isHearted ? 'active' : ''}" type="button"
+												onclick="toggleWish(event, ${s.id}, this)">
+												${s.isHearted ? '❤️' : '🤍'}
+											</button>
+											<a class="spot-link"
+												href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+												<div class="spot-card">
+													<div class="spot-thumb">
+														<img class="spot-img"
+															src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+															alt="${s.name}"
+															onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+														<div class="spot-overlay"></div>
+														<div class="spot-text">
+															<div class="spot-title" data-marquee-text>${s.name}</div>
+															<div class="spot-addr" data-marquee-text>${s.addr}</div>
+														</div>
+													</div>
 												</div>
-												<div style="padding: 20px;">
-													<div style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
-														${s.name}</div>
-													<div style="font-size: 13px; color: #777;">${s.addr}</div>
-												</div>
-											</div>
+											</a>
 										</div>
 									</j:forEach>
 								</div>
@@ -493,10 +432,9 @@
 								<div
 									style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 65px;">
 									<h2 style="margin: 0;">문화/액티비티</h2>
-									<%-- catCode를 STAY로 바꿔서 넣어주세요! --%>
-										<a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=ACT"
-											class="all-link" data-cat="ACT"
-											style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
+									<a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=ACT"
+										class="all-link" data-cat="ACT"
+										style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
 								</div>
 								<div class="slider-wrapper">
 									<button class="nav-btn" onclick="sideScroll('act-slider', 'left')">‹</button>
@@ -505,18 +443,28 @@
 											<p style="padding: 20px; color: #999;">등록된 액티비티가 없습니다.</p>
 										</j:if>
 										<j:forEach var="s" items="${actList}">
-											<div class="card-item">
-												<div class="card">
-													<div
-														style="height: 200px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; font-size: 50px;">
+											<div class="card-item" style="position: relative;">
+												<button class="wish-btn ${s.isHearted ? 'active' : ''}" type="button"
+													onclick="toggleWish(event, ${s.id}, this)">
+													${s.isHearted ? '❤️' : '🤍'}
+												</button>
+												<a class="spot-link"
+													href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+													<div class="spot-card">
+														<div class="spot-thumb">
+															<img class="spot-img"
+																src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+																alt="${s.name}"
+																onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+															<div class="spot-overlay"></div>
+															<div class="spot-text">
+																<div class="spot-title" data-marquee-text>${s.name}
+																</div>
+																<div class="spot-addr" data-marquee-text>${s.addr}</div>
+															</div>
+														</div>
 													</div>
-													<div style="padding: 20px;">
-														<div
-															style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
-															${s.name}</div>
-														<div style="font-size: 13px; color: #777;">${s.addr}</div>
-													</div>
-												</div>
+												</a>
 											</div>
 										</j:forEach>
 									</div>
@@ -527,10 +475,9 @@
 									<div
 										style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 65px;">
 										<h2 style="margin: 0;">추천 맛집</h2>
-										<%-- catCode를 STAY로 바꿔서 넣어주세요! --%>
-											<a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=FOOD"
-												class="all-link" data-cat="FOOD"
-												style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
+										<a href="${pageContext.request.contextPath}/spots/all?cityId=${selectedCity}&catCode=FOOD"
+											class="all-link" data-cat="FOOD"
+											style="color: #888; text-decoration: none; font-size: 14px;">전체보기 ></a>
 									</div>
 									<div class="slider-wrapper">
 										<button class="nav-btn" onclick="sideScroll('food-slider', 'left')">‹</button>
@@ -539,18 +486,29 @@
 												<p style="padding: 20px; color: #999;">등록된 맛집이 없습니다.</p>
 											</j:if>
 											<j:forEach var="s" items="${foodList}">
-												<div class="card-item">
-													<div class="card">
-														<div
-															style="height: 200px; background: #fff5f5; display: flex; align-items: center; justify-content: center; font-size: 50px;">
+												<div class="card-item" style="position: relative;">
+													<button class="wish-btn ${s.isHearted ? 'active' : ''}"
+														type="button" onclick="toggleWish(event, ${s.id}, this)">
+														${s.isHearted ? '❤️' : '🤍'}
+													</button>
+													<a class="spot-link"
+														href="${pageContext.request.contextPath}/spots/detail/${s.id}">
+														<div class="spot-card">
+															<div class="spot-thumb">
+																<img class="spot-img"
+																	src="${pageContext.request.contextPath}/img/spot/${s.id}_1.jpg"
+																	alt="${s.name}"
+																	onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+																<div class="spot-overlay"></div>
+																<div class="spot-text">
+																	<div class="spot-title" data-marquee-text>${s.name}
+																	</div>
+																	<div class="spot-addr" data-marquee-text>${s.addr}
+																	</div>
+																</div>
+															</div>
 														</div>
-														<div style="padding: 20px;">
-															<div
-																style="font-weight: 800; font-size: 17px; margin-bottom: 8px;">
-																${s.name}</div>
-															<div style="font-size: 13px; color: #777;">${s.addr}</div>
-														</div>
-													</div>
+													</a>
 												</div>
 											</j:forEach>
 										</div>
@@ -558,46 +516,102 @@
 									</div>
 
 									<script>
-
 										const CONTEXT_PATH = "${pageContext.request.contextPath}";
-										// 1. 데이터를 불러오고 화면을 갱신하는 핵심 함수
-										function loadCity(cityId, btn) {
-											if (!btn) return;
 
-											sessionStorage.setItem("lastCityId", cityId);
+										// ✅ 부드러운 화면 전환(Fade-in/out) 및 튕김 방지
+										            function loadCity(cityId, btn) {
+										                if (!btn) return;
 
-											document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
-											btn.classList.add('active');
+										                // 클릭 즉시 포커스 해제 (브라우저 강제 스크롤 차단)
+										                btn.blur();
 
-											const contextPath = CONTEXT_PATH;
+										                sessionStorage.setItem("lastCityId", cityId);
 
-											// 전체보기 링크 갱신
-											document.querySelectorAll('.all-link').forEach(link => {
-												const catCode = link.getAttribute('data-cat');
-												link.href = contextPath + "/spots/all?cityId=" + cityId + "&catCode=" + catCode;
-											});
+										                document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+										                btn.classList.add('active');
 
-											fetch(contextPath + "/spots/api/contents?cityId=" + cityId)
-												.then(res => res.json())
-												.then(data => {
-													// 데이터가 넘어오는지 콘솔에서 확인
-													console.log("실제 데이터 구조:", data.tourList[0]);
-													console.log("Fetched Data:", data);
+										                // 전체보기 링크 갱신
+										                document.querySelectorAll('.all-link').forEach(link => {
+										                    const catCode = link.getAttribute('data-cat');
+										                    link.href = CONTEXT_PATH + "/spots/all?cityId=" + cityId + "&catCode=" + catCode;
+										                });
 
-													renderSection('tour-slider', data.tourList, '🏛️');
-													renderSection('stay-slider', data.stayList, '🛌');
-													renderSection('act-slider', data.actList, '🏄');
-													renderSection('food-slider', data.foodList, '🍱');
-												})
-												.catch(err => console.error("데이터 로딩 실패:", err));
-										}
+										                // 교체할 알맹이 슬라이더들 (도시 버튼은 건드리지 않음!)
+										                const targetIds = ['tour-slider', 'stay-slider', 'act-slider', 'food-slider'];
 
-										// 2. 섹션 그리기 함수 (JSP 충돌 방지 처리가 완료된 버전)
+										                // 1. 데이터 영역 스르륵 투명하게 (Fade-out)
+										                targetIds.forEach(id => {
+										                    const el = document.getElementById(id);
+										                    if(el) {
+										                        el.style.transition = "opacity 0.2s ease-in-out";
+										                        el.style.opacity = "0";
+										                    }
+										                });
 
-										// ✅ 카드 제목/주소가 길면 자동 마키(옆으로 흐름) 적용
+										                fetch(CONTEXT_PATH + "/spots/api/contents?cityId=" + cityId)
+										                    .then(res => res.json())
+										                    .then(data => {
+										                        // 2. 0.2초 대기 후 카드 교체하고 다시 선명하게 (Fade-in)
+										                        setTimeout(() => {
+										                            renderSection('tour-slider', data.tourList);
+										                            renderSection('stay-slider', data.stayList);
+										                            renderSection('act-slider', data.actList);
+										                            renderSection('food-slider', data.foodList);
+
+										                            targetIds.forEach(id => {
+										                                const el = document.getElementById(id);
+										                                if(el) el.style.opacity = "1";
+										                            });
+										                        }, 200);
+										                    })
+										                    .catch(err => {
+										                        console.error("데이터 로딩 실패:", err);
+										                        targetIds.forEach(id => {
+										                            const el = document.getElementById(id);
+										                            if(el) el.style.opacity = "1";
+										                        });
+										                    });
+										            }
+
+													// ✅ 화살표 클릭 시 부드럽게(smooth) 이동하도록 JS에서 제어
+													function sideScroll(elementId, direction) {
+													    const container = document.getElementById(elementId);
+													    if (!container) return;
+													    
+													    const card = container.querySelector('.card-item');
+													    if (!card) return;
+													    
+													    const scrollAmount = card.clientWidth + 20;
+													    
+													    container.scrollBy({
+													        left: direction === 'left' ? -scrollAmount : scrollAmount,
+													        behavior: 'smooth'
+													    });
+													}
+
+										            // 초기 로딩 시 호출 방식 변경
+										            document.addEventListener("DOMContentLoaded", function () {
+										                const savedCityId = sessionStorage.getItem("lastCityId") || "4";
+										                const buttons = document.querySelectorAll('.city-btn');
+										                let targetBtn = null;
+
+										                buttons.forEach(btn => {
+										                    if (btn.getAttribute('onclick').includes(savedCityId)) {
+										                        targetBtn = btn;
+										                    }
+										                });
+
+										                // 초기 로드 시에는 클릭 이벤트(event)가 없으므로 null 전달
+										                if (targetBtn) {
+										                    loadCity(null, savedCityId, targetBtn);
+										                } else if (buttons.length > 0) {
+										                    loadCity(null, "4", buttons[0]);
+										                }
+										            });
+
+										// ✅ 마키(옆으로 흐름) 적용
 										function initSpotMarquee(scopeEl) {
 											if (!scopeEl) return;
-
 											const nodes = scopeEl.querySelectorAll('[data-marquee-text]');
 											nodes.forEach(el => {
 												if (el.dataset && el.dataset.marqueeInit === "1") return;
@@ -605,7 +619,6 @@
 												const txt = (el.textContent || '').trim();
 												if (!txt) return;
 
-												// 렌더 직후 overflow 계산을 위해 한 프레임 뒤에 처리
 												requestAnimationFrame(() => {
 													const need = el.scrollWidth > el.clientWidth + 2;
 													if (!need) {
@@ -629,9 +642,8 @@
 													track.appendChild(a);
 													track.appendChild(b);
 
-													// 거리/시간 계산 (너무 빠르지 않게)
-													const dist = a.getBoundingClientRect().width + 22; // gap 포함
-													const speed = 50; // px/s
+													const dist = a.getBoundingClientRect().width + 22;
+													const speed = 50;
 													const dur = Math.max(6, dist / speed);
 
 													track.style.setProperty('--spotMarqueeDist', dist + 'px');
@@ -645,70 +657,54 @@
 											});
 										}
 
-
-										function renderSection(containerId, list, emoji) {
+										function renderSection(containerId, list) {
 											const container = document.getElementById(containerId);
 											if (!container) return;
 
 											container.innerHTML = '';
-
 											if (!list || list.length === 0) {
 												container.innerHTML = '<p style="padding:40px; color:#999; text-align:center; width:100%;">등록된 정보가 없습니다. 😊</p>';
 												return;
 											}
 
-											// 이미지 URL 정규화(상대/절대/외부링크 모두 대응)
-											const resolveImg = (raw) => {
-												if (!raw) return CONTEXT_PATH + '/img/hero.jpg'; // 기본 이미지
-												const s = String(raw).trim();
-												if (!s) return CONTEXT_PATH + '/img/hero.jpg';
-												if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:')) return s;
-												if (s.startsWith(CONTEXT_PATH + '/')) return s;
-												if (s.startsWith('/')) return CONTEXT_PATH + s;
-												return CONTEXT_PATH + '/' + s.replace(/^\/+/, '');
-											};
-
-											// renderSection 함수 내부의 list.forEach 부분을 찾아서 아래와 같이 수정하세요.
 											list.forEach(s => {
 												const spotId = s.id || s.s_idx || s.sIdx;
 												const spotName = s.name || s.s_name || s.sname || '이름 없음';
 												const spotAddr = s.addr || s.s_addr || s.saddr || '주소 정보 없음';
-												const isHearted = s.isHearted || false; // 서버에서 넘어온 찜 상태
+												const isHearted = s.isHearted || false;
 
-												const rawImg = s.img || s.sImg || s.s_img || s.image || s.imageUrl;
-												const spotImg = resolveImg(rawImg);
+												// DB 데이터에 상관없이 무조건 '번호_1.jpg' 경로 생성
+												const spotImg = CONTEXT_PATH + '/img/spot/' + spotId + '_1.jpg';
 
 												const cardHtml = `
-					        <div class="card-item" style="position: relative;">
-					            <button class="wish-btn \${isHearted ? 'active' : ''}" 
-					                    type="button" 
-					                    onclick="toggleWish(event, \${spotId}, this)" 
-					                    style="position: absolute; top: 12px; right: 12px; z-index: 10;">
-					                \${isHearted ? '❤️' : '🤍'}
-					            </button>
-
-					            <a class="spot-link" href="${pageContext.request.contextPath}/spots/detail/\${spotId}">
-					                <div class="spot-card">
-					                    <div class="spot-thumb">
-					                        <img class="spot-img" src="\${spotImg}" alt="\${spotName}"
-					                             onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
-					                        <div class="spot-overlay"></div>
-					                        <div class="spot-text">
-					                            <div class="spot-title" data-marquee-text>\${spotName}</div>
-					                            <div class="spot-addr" data-marquee-text>\${spotAddr}</div>
-					                        </div>
-					                    </div>
-					                </div>
-					            </a>
-					        </div>
-					    `;
+                    <div class="card-item" style="position: relative;">
+                        <button class="wish-btn \${isHearted ? 'active' : ''}" 
+                                type="button" 
+                                onclick="toggleWish(event, \${spotId}, this)" 
+                                style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                            \${isHearted ? '❤️' : '🤍'}
+                        </button>
+                        <a class="spot-link" href="${pageContext.request.contextPath}/spots/detail/\${spotId}">
+                            <div class="spot-card">
+                                <div class="spot-thumb">
+                                    <img class="spot-img" src="\${spotImg}" alt="\${spotName}"
+                                         onerror="this.onerror=null; this.src='${pageContext.request.contextPath}/img/hero.jpg';" />
+                                    <div class="spot-overlay"></div>
+                                    <div class="spot-text">
+                                        <div class="spot-title" data-marquee-text>\${spotName}</div>
+                                        <div class="spot-addr" data-marquee-text>\${spotAddr}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    `;
 												container.insertAdjacentHTML('beforeend', cardHtml);
 											});
 
 											initSpotMarquee(container);
 										}
 
-										// 3. 슬라이더 이동 함수
 										function sideScroll(elementId, direction) {
 											const container = document.getElementById(elementId);
 											const card = container.querySelector('.card-item');
@@ -718,7 +714,6 @@
 											else container.scrollLeft += scrollAmount;
 										}
 
-										// 4. 페이지 진입 시 실행 로직
 										document.addEventListener("DOMContentLoaded", function () {
 											const savedCityId = sessionStorage.getItem("lastCityId") || "4";
 											const buttons = document.querySelectorAll('.city-btn');
@@ -735,16 +730,11 @@
 											} else if (buttons.length > 0) {
 												loadCity("4", buttons[0]);
 											}
-
-
 										});
 
 										function toggleWish(event, sIdx, btn) {
-											// 1. 상세 페이지 이동 방지
 											event.preventDefault();
 											event.stopPropagation();
-
-											// 2. 서버 통신
 											fetch('/api/wish/toggle', {
 												method: 'POST',
 												headers: {
@@ -754,7 +744,7 @@
 											})
 												.then(response => {
 													if (response.status === 401) {
-														if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { if (window.LoginRequiredPrompt) { window.LoginRequiredPrompt.open(); } else { alert('로그인이 필요한 서비스입니다.'); } }
+														if (window.LoginRequiredPrompt) {window.LoginRequiredPrompt.open();} else {alert('로그인이 필요한 서비스입니다.');}
 														return;
 													}
 													return response.json();
@@ -762,8 +752,6 @@
 												.then(data => {
 													if (data && data.success) {
 														btn.innerText = data.isHearted ? '❤️' : '🤍';
-
-														// CSS의 .active 스타일을 적용/해제함
 														if (data.isHearted) {
 															btn.classList.add('active');
 														} else {
@@ -776,12 +764,9 @@
 													alert('처리 중 오류가 발생했습니다.');
 												});
 										}
-
 									</script>
-
-									</div>
-
-<%@ include file="/WEB-INF/views/common/footer.jspf" %>
+			</div>
+			<%@ include file="/WEB-INF/views/common/footer.jspf" %>
 		</body>
 
 		</html>

@@ -97,12 +97,13 @@
           <c:if test="${not empty photos}">
             <div class="cm-photo-grid" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
               <c:forEach var="p" items="${photos}">
-                <div class="cm-photo-item" style="position:relative; width:120px; height:90px; border-radius:12px; overflow:hidden; background:#f3f4f6;">
-                  <img
-                    src="${pageContext.request.contextPath}/review-photos/file/${p.rpIdx}"
-                    alt="후기 사진"
-                    style="width:100%; height:100%; object-fit:cover;"
-                  />
+				<div class="cm-photo-item" style="position:relative; width:120px; height:90px; border-radius:12px; overflow:hidden; background:#f3f4f6;">
+					<img
+					  src="${pageContext.request.contextPath}/uploads/reviews/${p.rpStoredName}"
+					  alt="후기 사진"
+					  style="width:100%; height:100%; object-fit:cover;"
+					  onerror="this.closest('.cm-photo-item').remove();"
+					/>
 
                   <!-- ✅ 사진 삭제 폼 (단독 form) -->
                   <form method="post"

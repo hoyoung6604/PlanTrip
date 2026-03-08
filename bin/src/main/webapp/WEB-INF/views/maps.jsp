@@ -256,49 +256,48 @@
 	            });
 
 	            kakao.maps.event.addListener(marker, 'click', function () {
-	                var imgSrc = spot.image ? spot.image : '${pageContext.request.contextPath}/img/hero.jpg';
-	                
-	                var sidebarHtml = `
-	                    <div style="position: relative; width: 100%; height: 230px;">
-	                        <img src="\${imgSrc}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${pageContext.request.contextPath}/img/hero.jpg'">
-	                        <button onclick="closeSidebar()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.4); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
-	                    </div>
-	                    
-	                    <div style="padding: 24px;">
-	                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;">
-	                            <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: #111;">\${spot.name}</h2>
-	                            <span style="font-size: 14px; color: #777;">\${style.name}</span>
-	                        </div>
-	                        
-	                        <div style="font-size: 14px; color: #555; margin-bottom: 18px;">
-	                            <span style="color: #ffc107;">★</span> \${spot.price} 
-	                            <span style="color: #ddd; margin: 0 6px;">
-	                        </div>
+					var imgSrc = '${pageContext.request.contextPath}/img/spot/' + spot.id + '_1.jpg'; // spot.id를 사용해야 합니다
 
-	                        <div style="display: flex; gap: 10px; margin-bottom: 24px;">
-	                            <a href="${pageContext.request.contextPath}/spots/detail/\${spot.id}" style="flex: 1; padding: 14px; border-radius: 8px; background: #eef2ff; color: #3264ff; text-align: center; font-weight: bold; text-decoration: none; font-size: 15px;">상세보기</a>
-	                            <a href="${pageContext.request.contextPath}/plans/planRoute" style="flex: 1; padding: 14px; border-radius: 8px; background: #3264ff; color: #fff; text-align: center; font-weight: bold; text-decoration: none; font-size: 15px;">일정 추가</a>
-	                        </div>
+					var sidebarHtml = `
+					    <div style="position: relative; width: 100%; height: 230px;">
+					        <img src="\${imgSrc}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${pageContext.request.contextPath}/img/hero.jpg'">
+					        <button onclick="closeSidebar()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.4); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+					    </div>
+					    
+					    <div style="padding: 24px;">
+					        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;">
+					            <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: #111;">\${spot.name}</h2>
+					            <span style="font-size: 14px; color: #777;">\${spot.catCode}</span>
+					        </div>
+					        
+					        <div style="font-size: 14px; color: #555; margin-bottom: 18px;">
+					            <span style="color: #ffc107;">★</span> \${spot.price} 
+					        </div>
 
-	                        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #333;">
-	                            <div style="display: flex; gap: 12px; align-items: flex-start;">
-	                                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">📌</span>
-	                                <span style="line-height: 1.5;">\${spot.addr}</span>
-	                            </div>
-	                            <div style="display: flex; gap: 12px; align-items: flex-start;">
-	                                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">🕒</span>
-	                                <span style="line-height: 1.5;">
-	                                    \${spot.hours}<br>
-	                                    <span style="color: #ef4444; font-size: 13px;">\${spot.holiday}</span>
-	                                </span>
-	                            </div>
-	                            <div style="display: flex; gap: 12px; align-items: flex-start;">
-	                                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">📝</span>
-	                                <span style="line-height: 1.6; word-break: keep-all; color:#555;">\${spot.info}</span>
-	                            </div>
-	                        </div>
-	                    </div>
-	                `;
+					        <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+					            <a href="${pageContext.request.contextPath}/spots/detail/\${spot.id}" style="flex: 1; padding: 14px; border-radius: 8px; background: #eef2ff; color: #3264ff; text-align: center; font-weight: bold; text-decoration: none; font-size: 15px;">상세보기</a>
+					            <a href="${pageContext.request.contextPath}/plans/planRoute" style="flex: 1; padding: 14px; border-radius: 8px; background: #3264ff; color: #fff; text-align: center; font-weight: bold; text-decoration: none; font-size: 15px;">일정 추가</a>
+					        </div>
+
+					        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #333;">
+					            <div style="display: flex; gap: 12px; align-items: flex-start;">
+					                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">📌</span>
+					                <span style="line-height: 1.5;">\${spot.addr}</span>
+					            </div>
+					            <div style="display: flex; gap: 12px; align-items: flex-start;">
+					                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">🕒</span>
+					                <span style="line-height: 1.5;">
+					                    \${spot.hours}<br>
+					                    <span style="color: #ef4444; font-size: 13px;">\${spot.holiday}</span>
+					                </span>
+					            </div>
+					            <div style="display: flex; gap: 12px; align-items: flex-start;">
+					                <span style="color: #aaa; font-size: 16px; margin-top: 2px;">📝</span>
+					                <span style="line-height: 1.6; word-break: keep-all; color:#555;">\${spot.info}</span>
+					            </div>
+					        </div>
+					    </div>
+					`;
 
 	                document.getElementById('defaultSidebar').style.display = 'none';
 	                document.getElementById('sidebarContent').innerHTML = sidebarHtml;
@@ -410,6 +409,14 @@
 	      e.preventDefault();
 	      searchPlace();
 	    });
+		
+		// ✅ 엔터만 눌러도 검색되게
+				document.getElementById("keyword").addEventListener("keydown", function(e){
+				  if(e.key === "Enter"){
+				    e.preventDefault();   // 엔터로 폼 제출/페이지 튐 방지
+				    searchPlace();        // 기존 검색 함수 실행
+				  }
+				});
 
 	});
 </script>

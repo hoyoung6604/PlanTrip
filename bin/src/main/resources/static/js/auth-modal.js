@@ -146,6 +146,32 @@
     return q('[data-auth-error]', modal);
   }
 
+  function fieldErrorEl(modal, field){
+    if(!modal || !field) return null;
+    return q(`[data-auth-field-error="${field}"]`, modal);
+  }
+
+  function clearFieldErrors(modal){
+    if(!modal) return;
+    qa('[data-auth-field-error]', modal).forEach(function(el){
+      el.textContent = '';
+      el.classList.remove('is-show');
+    });
+  }
+
+  function setFieldError(modal, field, message){
+    const el = fieldErrorEl(modal, field);
+    if(!el) return false;
+    const msg = message ? String(message) : '';
+    el.textContent = msg;
+    if(msg){
+      el.classList.add('is-show');
+    }else{
+      el.classList.remove('is-show');
+    }
+    return true;
+  }
+
   function setError(modal, message){
     const box = errorBox(modal);
     if(!box) return;
@@ -212,6 +238,7 @@
 
     // 열릴 때 이전 에러 메시지 정리
     setError(modal, null);
+    clearFieldErrors(modal);
 
     const dialog = q('.auth-modal__dialog', modal);
 
@@ -475,6 +502,7 @@
     const id = (new FormData(form).get('id') || '').toString().trim();
 
     setError(modal, null);
+    clearFieldErrors(modal);
 
     return fetch(action, {
       method: 'POST',
@@ -485,9 +513,21 @@
       credentials: 'same-origin',
       body: toParams(form)
     }).then(async function(res){
-      const data = await res.json().catch(function(){
- return {}; });
-      if(res.ok && data.ok){
+      // ✅ 프로젝트에 따라 /members/login 이 (AJAX용 JSON이 아니라) 302 redirect + HTML로 응답할 수 있음.
+      //    이 경우 fetch는 redirect를 따라가며 res.ok=true지만 JSON 파싱이 실패해서
+      //    "로그인 실패" 문구가 뜨는 문제가 발생함.
+      //    - JSON(ok:true)이면 그대로 성공 처리
+      //    - redirect 발생(res.redirected=true)이면 성공으로 간주
+      const ctype = (res.headers.get('content-type') || '').toLowerCase();
+      let data = {};
+      if(ctype.includes('application/json')){
+        data = await res.json().catch(function(){ return {}; });
+      }
+
+      const isJsonSuccess = (res.ok && data && data.ok);
+      const isRedirectSuccess = (res.ok && res.redirected);
+
+      if(isJsonSuccess || isRedirectSuccess){
         // 로그인 성공 시에는 authRedirect 값을 사용해야 하므로, 닫을 때 제거하지 않도록 keepRedirect 유지
         closeModalAnimated(modal, { keepRedirect: true });
         // ✅ 로그인 성공 토스트는 "현재 페이지 유지"를 위해 새로고침/리다이렉트 이후에 보여줌
@@ -500,17 +540,18 @@
         // - 모달 로그인은 페이지 이동 없이 header 상태만 갱신하면 되므로 reload로 처리
         // - 단, 현재가 로그인 페이지면 redirectTo(또는 "/")로 이동
         const curPath = (location.pathname || '');
-        if(curPath.startsWith('/members/login') || curPath.startsWith('/members/join') || curPath.startsWith('/members/register')){
+        // JSON 성공이면 redirectTo를 활용, redirect 성공(HTML)인 경우엔 현재 페이지 유지 reload로 통일
+        if(isJsonSuccess && (curPath.startsWith('/members/login') || curPath.startsWith('/members/join') || curPath.startsWith('/members/register'))){
           location.href = readRedirect(data.redirectTo) || '/';
         }else{
           location.reload();
         }
+		return;
       }
-      return;
 
       if(res.status === 401){
         if(!id){
-          setError(modal, '아이디를 입력해 주세요.');
+          setFieldError(modal, 'id', '아이디를 입력해 주세요.');
           return;
         }
         // 아이디/비밀번호 구분
@@ -520,10 +561,15 @@
           .catch(function(){
  return false; });
 
-        setError(modal, exists ? '비밀번호가 틀렸습니다.' : '존재 하지 않는 아이디 입니다.');
+        if(exists){
+          setFieldError(modal, 'password', '비밀번호가 틀렸습니다.');
+        }else{
+          setFieldError(modal, 'id', '존재 하지 않는 아이디 입니다.');
+        }
         return;
       }
 
+      // 기타 에러는 공통 영역에(텍스트만) 표시
       setError(modal, data.message || '로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.');
     }).catch(function(){
 
@@ -534,6 +580,7 @@
   function registerAjax(form, modal){
     const action = form.getAttribute('action') || '/members/register';
     setError(modal, null);
+    clearFieldErrors(modal);
 
     return fetch(action, {
       method: 'POST',
@@ -553,7 +600,14 @@
         location.href = readRedirect(data.redirectTo);
         return;
       }
-      setError(modal, data.message || '회원가입에 실패했습니다. 입력값을 다시 확인해 주세요.');
+
+      const msg = (data && data.message) ? String(data.message) : '';
+      // ✅ 요청: 중복 아이디/이메일 문구는 각 필드 옆에 표시
+      if(msg.includes('아이디') && setFieldError(modal, 'mId', msg)) return;
+      if(msg.includes('이메일') && setFieldError(modal, 'mEmail', msg)) return;
+      if(msg.includes('비밀번호') && setFieldError(modal, 'mPw', msg)) return;
+
+      setError(modal, msg || '회원가입에 실패했습니다. 입력값을 다시 확인해 주세요.');
     }).catch(function(){
 
       setError(modal, '회원가입에 실패했습니다. 네트워크 상태를 확인해 주세요.');
@@ -616,6 +670,10 @@
     const modal = input.closest('.auth-modal');
     if(!modal) return;
     if(input.closest('[data-auth-error]')) return;
+
+    // 입력한 필드의 에러만 지움(레이아웃 흔들림 최소화)
+    const name = input.getAttribute('name');
+    if(name) setFieldError(modal, name, null);
     setError(modal, null);
   }, true);
 

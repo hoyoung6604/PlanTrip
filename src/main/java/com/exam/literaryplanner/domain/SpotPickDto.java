@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor  // 🔥 이거 핵심 (생성자 자동 생성)
+@AllArgsConstructor  //  (생성자 자동 생성)
 public class SpotPickDto {
 
     private Integer id;

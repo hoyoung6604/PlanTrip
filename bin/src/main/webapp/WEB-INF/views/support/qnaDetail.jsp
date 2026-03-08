@@ -36,9 +36,9 @@
         <a class="support-tab" role="tab" aria-selected="false" href="${pageContext.request.contextPath}/support/faq">자주 묻는 질문</a>
       </div>
 
-      <div class="support-actions">
+      <!--<div class="support-actions">
         <a class="btn" href="${pageContext.request.contextPath}/support/qna">목록</a>
-      </div>
+      </div>-->
     </div>
 
     <section class="support-card" aria-label="문의 상세">

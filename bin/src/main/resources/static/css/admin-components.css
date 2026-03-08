@@ -158,6 +158,24 @@ html[data-theme="dark_disabled"] .theme-toggle.theme-toggle--pill .tt-indicator{
   color: var(--admin-danger);
 }
 
+/* text */
+.admin-muted{
+  color: rgba(2,6,23,.55);
+  font-weight: 800;
+}
+:root[data-theme="dark_disabled"] .admin-muted{
+  color: rgba(255,255,255,.55);
+}
+
+/* 대시보드 빈 상태 문구에서 링크가 위로 뜨는 현상 방지 */
+.admin-linktext{
+  display:inline;
+  vertical-align: baseline;
+  line-height: inherit;
+  font-weight: 900;
+  color: var(--admin-primary);
+}
+
 /* inputs */
 .admin-input,
 .admin-textarea,
@@ -257,3 +275,22 @@ html[data-theme="dark_disabled"] .theme-toggle.theme-toggle--pill .tt-indicator{
   border: 1px solid var(--admin-border);
   color: var(--admin-muted);
 }
+
+/* ==============================
+   Admin Modal (회원 삭제 확인)
+   ============================== */
+.admin-modal{ position: fixed; inset: 0; z-index: 9999; display:none; }
+.admin-modal.is-open{ display:block; }
+.admin-modal__dim{ position:absolute; inset:0; background: rgba(0,0,0,.45); }
+.admin-modal__panel{
+  position: relative;
+  width: min(520px, calc(100% - 32px));
+  margin: 18vh auto 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 22px 70px rgba(0,0,0,.28);
+  padding: 18px 18px 16px;
+}
+.admin-modal__title{ margin: 0 0 8px; font-size: 18px; font-weight: 900; }
+.admin-modal__desc{ margin: 0 0 16px; color:#4b5563; line-height: 1.45; }
+.admin-modal__actions{ display:flex; justify-content:flex-end; gap:10px; align-items:center; }

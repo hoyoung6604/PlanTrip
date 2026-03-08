@@ -16,19 +16,11 @@
   <script defer src="/js/ui-toast.js"></script>
   <script defer src="/js/theme.js"></script>
   <script defer src="/js/nav-wave.js"></script>
-
-  <style>
-    /* ✅ 헤더(고정) + 로고 돌출 높이만큼 콘텐츠를 아래로 내림 (이 JSP 전용) */
-    body{ padding-top: 0 !important; }
-    .cm-shell{
-      margin-top: calc(var(--headerH, 72px) + var(--logoOffset, 35px) - 20px) !important;
-    }
-  </style>
 </head>
 <body class="page-solid">
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
-<div class="cm-shell">
+<div class="cm-shell cm-shell--write">
 <main class="cm-main">
     <section class="mp-card">
       <div class="mp-card-head">
@@ -147,7 +139,7 @@
                 <div class="rv-photo-sub">여행 사진을 공유해보세요!</div>
               </div>
               <div class="rv-photo-grid" id="photoGrid" data-empty="true">
-                <div class="rv-photo-add" id="photoAddBtn" role="button" tabindex="0" aria-label="사진 추가">
+                <div class="rv-photo-add" id="photoAddBtn" role="button" tabindex="0" aria-label="사진 추가" onclick="document.getElementById('photosInput').click()">
                   <div class="rv-photo-add-ico" aria-hidden="true"></div>
                   <div class="rv-photo-count"><span id="photoCountSpan">0</span>/<span>10</span></div>
                 </div>
@@ -186,9 +178,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ----------------------------------------
-    // 1. 별점 호버 및 클릭 로직
-    // ----------------------------------------
+    // 1. 별점 로직
     const ratingWrap = document.querySelector('.rv-rating');
     const stars = document.querySelectorAll('.rv-star');
     const starText = document.querySelector('.rv-rating-text');
@@ -218,39 +208,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    ratingWrap.addEventListener('mouseleave', function() {
-        renderStars(currentRating);
-    });
-    
+    if(ratingWrap) {
+        ratingWrap.addEventListener('mouseleave', function() {
+            renderStars(currentRating);
+        });
+    }
     renderStars(5);
 
+	// 2. 사진 첨부 미리보기 및 숨김 파일 필터링 로직
+	        const photosInput = document.getElementById('photosInput');
+	        const photoGrid = document.getElementById('photoGrid');
+	        const addBtn = document.getElementById('photoAddBtn');
+	        const countSpan = document.getElementById('photoCountSpan');
+	        let selectedFiles = [];
 
-    // ----------------------------------------
-    // 2. + 버튼 사진 첨부 및 다중 미리보기 로직
-    // ----------------------------------------
-    const photosInput = document.getElementById('photosInput');
-    const photoGrid = document.getElementById('photoGrid');
-    const addBtn = document.getElementById('photoAddBtn');
-    const countSpan = document.getElementById('photoCountSpan');
-    let selectedFiles = [];
+	        if(photosInput) {
+	            photosInput.addEventListener('change', (e) => {
+	                const newFiles = Array.from(e.target.files);
+	                
+	                // 필터링: 이미지 타입이고, 이름이 '.'으로 시작하지 않는 파일만 통과
+	                const validFiles = newFiles.filter(file => {
+	                    const isImage = file.type && file.type.startsWith('image/');
+	                    const isSystemFile = file.name.startsWith('.'); 
+	                    return isImage && !isSystemFile;
+	                });
 
-    addBtn.addEventListener('click', () => photosInput.click());
+	                // 걸러진 파일이 있다면 사용자에게 알림
+	                if (newFiles.length !== validFiles.length) {
+	                    alert("이미지 파일만 첨부할 수 있습니다.\n(시스템 파일이나 이미지 형식이 아닌 파일은 제외되었습니다.)");
+	                }
 
-    photosInput.addEventListener('change', (e) => {
-        const newFiles = Array.from(e.target.files);
-        if(selectedFiles.length + newFiles.length > 10) {
-            alert("사진은 최대 10장까지 첨부할 수 있습니다.");
-            return;
-        }
-        selectedFiles = selectedFiles.concat(newFiles);
-        updatePhotoGrid();
-    });
+	                // 중복 방지: 이미 selectedFiles에 들어있는 파일은 빼고 새로 추가된 것만 담기
+	                const uniqueFiles = validFiles.filter(vf => 
+	                    !selectedFiles.some(sf => sf.name === vf.name && sf.size === vf.size)
+	                );
+
+	                if(selectedFiles.length + uniqueFiles.length > 10) {
+	                    alert("사진은 최대 10장까지 첨부할 수 있습니다.");
+	                    return;
+	                }
+	                
+	                selectedFiles = selectedFiles.concat(uniqueFiles);
+	                updatePhotoGrid();
+	            });
+	        }
 
     function updatePhotoGrid() {
+        if(!photoGrid) return;
+        
         const existingThumbs = photoGrid.querySelectorAll('.rv-thumb');
         existingThumbs.forEach(th => th.remove());
 
-        countSpan.textContent = selectedFiles.length;
+        if(countSpan) countSpan.textContent = selectedFiles.length;
         const dt = new DataTransfer();
 
         selectedFiles.forEach((file, index) => {
@@ -278,13 +287,10 @@ document.addEventListener('DOMContentLoaded', function() {
             photoGrid.insertBefore(thumb, addBtn);
         });
 
-        photosInput.files = dt.files;
+        if(photosInput) photosInput.files = dt.files;
     }
 
-
-    // ----------------------------------------
-    // 3. 텍스트 글자 수 세기 로직
-    // ----------------------------------------
+    // 3. 텍스트 글자 수 세기
     const ta = document.getElementById('rvCont');
     const counterNow = document.getElementById('rvContCount');
     if(ta && counterNow) {

@@ -1,8 +1,8 @@
-
 :root{
   --homeCardW: 380px; /* 인기/맞춤 카드 공통 폭 */
   --homeCardGap: 20px;
-  --homeCardImgH: 270px; /* 이미지 영역 높이 */
+  --homeCardImgH: 310px; /* ✅ 카드 이미지 영역 높이(세로 더 길게) */
+  --homeCardH: 420px;    /* ✅ 오버레이 카드 전체 높이(세로 더 길게) */
 }
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
 
@@ -315,18 +315,24 @@ a{ color:inherit; text-decoration:none; }
   left:50%;
   top:50%;
   transform:translate(-50%, -50%);
-  z-index:3;
+
+  z-index:1;  /* ✅ 6 → 1 (sheet가 위에서 덮도록) */
+
   text-align:center;
   width:min(980px, calc(100% - 48px));
   pointer-events:none;
 
-  /* intro motion (triple 느낌) */
   opacity:0;
   translate: 0 18px;
   animation: heroIntroUp .9s cubic-bezier(.2,.8,.2,1) both;
 }
 .hero-copy--center{ top:50%; }
-.hero-copy--top{ top: 28vh; } /* (구버전 클래스가 남아있어도 깨지지 않게 유지) */
+.hero-copy--top{ top: 28vh; }
+
+@keyframes heroIntroUp{
+  from{ opacity:0; translate: 0 18px; }
+  to{ opacity:1; translate: 0 0; }
+}
 
 .hero-title{
   font-family:var(--scriptFont);
@@ -336,6 +342,13 @@ a{ color:inherit; text-decoration:none; }
   text-shadow:0 8px 26px rgba(0,0,0,.35);
 }
 
+.hero-pill{ display:inline-block; }
+
+.hero-copy.is-hidden{
+  opacity:0;
+  transform: translate(-50%, -50%) translateY(-10px);
+  transition: opacity .22s ease, transform .22s ease;
+}
 
 /* ✅ hero 타이틀 래퍼(구조상 hero-pill이 남아있어도 동일하게 보이게) */
 .hero-pill{ display:inline-block; }
@@ -444,6 +457,7 @@ a{ color:inherit; text-decoration:none; }
   background: rgba(47, 111, 237, 0.08); padding: 4px 10px; border-radius: 8px;
 }
 
+
 /* ============================================================
    ✅ 4. Marquee & Slider (문법 에러 수정 + 화살표 버튼 유지)
 ============================================================ */
@@ -533,12 +547,156 @@ a{ color:inherit; text-decoration:none; }
 .seg-btn { padding: 10px 20px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; font-weight: 600; color: #64748b; }
 .seg-btn.active { background: #2f6fed; color: #fff; border-color: #2f6fed; }
 
-/* ✅ 공통 찜(하트) 버튼 */
-.wish-btn{position:absolute;top:15px;right:15px;z-index:999;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:35px;height:35px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.wish-btn.active{filter:drop-shadow(0 4px 10px rgba(0,0,0,.15));}
-@keyframes heroIntroUp{
-  from{ opacity:0; transform: translate(-50%, calc(-50% + 18px)); }
-  to{ opacity:1; transform: translate(-50%, -50%); }
+/* ============================================================
+   ✅ 5. (추가) 메인(index.jsp / index.js) 오버레이 카드 공통 스타일
+============================================================ */
+.post-card.post-card--overlay{
+  position: relative;
+  display: block;
+  height: var(--homeCardH);
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+}
+
+.post-card--overlay .card-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: cover;
+  z-index:1;
+}
+
+.post-card--overlay .card-grad{
+  position:absolute; inset:0;
+  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 60%);
+  z-index:2;
+  pointer-events:none;
+}
+
+.post-card--overlay .card-body{
+  position:absolute; left:0; right:0; bottom:0;
+  padding: 22px;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.post-card--overlay .card-title{
+  font-size:22px;
+  font-weight:800;
+  color:#fff;
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.post-card--overlay .card-sub{
+  font-size:14px;
+  color: rgba(255,255,255,.92);
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+
+.wish-btn{
+  position:absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  line-height:1;
+  font-size: 18px;
+  padding:0;
+}
+.wish-btn:active{ transform: scale(.96); }
+.wish-btn.active{ background: rgba(255,255,255,.98); }
+
+/* =========================================================
+   [수정] 햄버거 메뉴 버튼 -> 마이페이지 스타일 프로필 아바타로 변경
+   ========================================================= */
+
+/* 1. ✅ 기존 햄버거 잔재(검은 선, SVG, span, ::before) 완벽하게 숨기기 */
+.btn-menu *, 
+.header-menu-btn *,
+.hamburger-btn * { 
+  display: none !important; /* 내부의 모든 태그(선) 삭제 */
+}
+.btn-menu::before, 
+.header-menu-btn::before,
+.hamburger-btn::before {
+  display: none !important;
+  content: none !important; /* ::before로 만든 선 삭제 */
+}
+
+/* 2. 버튼 자체를 동그란 아바타 틀로 변경 + 내부 정렬 기준점 설정 */
+.btn-menu, 
+.header-menu-btn,
+.hamburger-btn {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 50% !important; 
+  background: linear-gradient(135deg, #e0f2fe, #dbeafe) !important; 
+  border: 1px solid rgba(47,111,237,.15) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+  display: inline-block !important; 
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  /* 글씨 등 잔여물 투명화 */
+  color: transparent !important;
+  font-size: 0 !important;
+  
+  /* 위치 교정 */
+  margin: 0 0 0 16px !important;
+  position: relative !important;
+  line-height: 0 !important; 
+  overflow: hidden !important; 
+  vertical-align: middle !important;
+  top: auto !important;
+  bottom: auto !important;
+  right: auto !important;
+  transform: none !important; 
+}
+
+/* 3. 마우스 올렸을 때(Hover) 액션 */
+.btn-menu:hover, 
+.header-menu-btn:hover,
+.hamburger-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 14px rgba(50, 100, 255, 0.15) !important;
+}
+
+/* 4. 사람 모양 아이콘을 동그라미 안에 완벽한 중앙 배치 */
+.btn-menu::after, 
+.header-menu-btn::after,
+.hamburger-btn::after {
+  content: "" !important;
+  display: block !important;
+  width: 28px !important; 
+  height: 28px !important;
+  
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2360a5fa'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important; 
 }
 
 

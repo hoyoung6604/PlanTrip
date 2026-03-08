@@ -9,7 +9,7 @@
   <div class="admin-sidenav__brand">
     <!-- 로고 클릭 시 사용자 메인(index.jsp)로 이동 -->
     <a class="admin-brand" href="${pageContext.request.contextPath}/" aria-label="메인으로">
-      <img class="admin-brand__logo" src="${pageContext.request.contextPath}/img/PlanTriplog.png" alt="PlanTrip" />
+      <img class="admin-brand__logo" src="${pageContext.request.contextPath}/img/PlanTrip_White.png" alt="PlanTrip" />
     </a>
   </div>
 
@@ -31,7 +31,6 @@
       </summary>
       <div class="admin-nav__sub">
         <a class="admin-nav__subitem ${_adminUri.endsWith('/admin/members') ? 'is-active' : ''}" href="${pageContext.request.contextPath}/admin/members">회원 관리</a>
-        <span class="admin-nav__subitem is-disabled" aria-disabled="true">블랙리스트 관리 <em class="admin-pill">준비중</em></span>
       </div>
     </details>
 

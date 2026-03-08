@@ -19,6 +19,8 @@
         <form class="form" action="/members/login" method="post">
           <div class="label">아이디</div>
           <input class="input" name="id" type="text" placeholder="아이디" required />
+          <!-- ✅ 필드 옆 에러(레이아웃 고정용) -->
+          <div class="field-error" data-auth-field-error="id"></div>
 
           <div class="label">비밀번호</div>
           <div class="input-row">
@@ -38,11 +40,14 @@
   </svg>
 </button>
           </div>
+          <!-- ✅ 필드 옆 에러(레이아웃 고정용) -->
+          <div class="field-error" data-auth-field-error="password"></div>
 
           <div style="text-align:right; margin-top:-6px;">
             <a class="underline small" href="/members/find-password" data-auth-switch="find">비밀번호를 잊으셨나요?</a>
           </div>
 
+          <!-- (예외 상황용) 공통 에러: 박스 없이 텍스트만 출력 -->
           <div class="form-error" data-auth-error style="display:none;"></div>
 
           <button class="primary-btn" type="submit">로그인</button>

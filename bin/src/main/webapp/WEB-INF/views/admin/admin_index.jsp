@@ -55,23 +55,24 @@
     <section class="admin-stats">
       <div class="admin-stat">
         <div class="admin-stat__label">미처리 문의</div>
-        <div class="admin-stat__value is-red">${pendingQnaCount}건</div>
+        <div class="admin-stat__value is-red"><c:out value="${pendingQnaCount}" default="0"/>건</div>
       </div>
       <div class="admin-stat">
         <div class="admin-stat__label">오늘 가입 회원</div>
-        <div class="admin-stat__value is-blue">0명</div>
+        <div class="admin-stat__value is-blue"><c:out value="${todayJoinCount}" default="0"/>명</div>
       </div>
       <div class="admin-stat">
-        <div class="admin-stat__label">활성 블랙리스트</div>
-        <div class="admin-stat__value is-gray">0명</div>
+        <div class="admin-stat__label">최근 공지 수</div>
+        <div class="admin-stat__value is-green"><c:out value="${noticeCount}" default="0"/>건</div>
       </div>
       <div class="admin-stat">
-        <div class="admin-stat__label">최근 공지 조회수</div>
-        <div class="admin-stat__value is-green">0회</div>
+        <div class="admin-stat__label">최근 들어온 질문</div>
+        <div class="admin-stat__value is-green"><c:out value="${faqCount}" default="0"/>건</div>
       </div>
     </section>
 
-    <section class="admin-card padded">
+    <!-- ✅ (요청) 최근 문의/FAQ 박스들이 위로 붙어 보여서 아래로 조금 내림 -->
+    <section class="admin-card padded" style="margin-top:26px;">
       <div class="admin-section-head">
         <h2 class="admin-h2">최근 들어온 문의</h2>
         <a class="admin-btn" href="${pageContext.request.contextPath}/admin/inquiries">전체 보기</a>
@@ -117,7 +118,7 @@
       </div>
     </section>
 
-    <section class="admin-card padded" style="margin-top:16px;">
+    <section class="admin-card padded" style="margin-top:22px;">
       <div class="admin-section-head">
         <h2 class="admin-h2">최근 들어온 FAQ</h2>
         <a class="admin-btn" href="${pageContext.request.contextPath}/admin/faqs">전체 보기</a>

@@ -90,3 +90,12 @@ body.maps-page::after{ background:none !important; }
   background: #0b1220;
   color: rgba(255,255,255,.92);
 }
+
+/* ✅ 지도 최소화/리사이즈 시 타일이 영역 밖으로 튀는 것 방지 */
+.map-area { 
+  overflow: hidden;
+}
+#map{
+  width:100%;
+  height:100%;
+}
