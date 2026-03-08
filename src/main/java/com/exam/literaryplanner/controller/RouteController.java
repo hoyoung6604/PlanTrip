@@ -142,7 +142,6 @@ public class RouteController {
                 .toList();
 
         plan.setPTitle(planName);
-        plan.setTpTitle(planName);
         plan.setPStart(start);
         plan.setPEnd(end);
         travelPlanRepository.save(plan);

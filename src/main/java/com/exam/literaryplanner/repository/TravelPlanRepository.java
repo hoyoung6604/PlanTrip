@@ -33,7 +33,6 @@ public interface TravelPlanRepository extends JpaRepository<TravelPlan, Integer>
               tp.p_title   AS pTitle,
               tp.p_start   AS pStart,
               tp.p_end     AS pEnd,
-              tp.tp_title  AS tpTitle,
               tp.p_regDate AS pRegDate
             FROM travelPlanT tp
             WHERE tp.p_idx = :pIdx

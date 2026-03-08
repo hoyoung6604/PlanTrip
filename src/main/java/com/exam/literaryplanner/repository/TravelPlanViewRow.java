@@ -9,6 +9,5 @@ public interface TravelPlanViewRow {
     String getpTitle();
     LocalDate getpStart();
     LocalDate getpEnd();
-    String getTpTitle();
     LocalDateTime getpRegDate();
 }

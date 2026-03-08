@@ -34,13 +34,10 @@ public class TravelPlan {
     @Column(name = "p_regDate", nullable = false, insertable = false, updatable = false)
     private LocalDateTime pRegDate;
 
-    @Column(name = "tp_title", nullable = false, length = 200)
-    private String tpTitle;
+   
 
     public TravelPlan() {}
 
-    public String getTpTitle() { return tpTitle; }
-    public void setTpTitle(String tpTitle) { this.tpTitle = tpTitle; }
 
     public Integer getPIdx() { return pIdx; }
     public void setPIdx(Integer pIdx) { this.pIdx = pIdx; }

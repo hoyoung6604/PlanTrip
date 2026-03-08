@@ -48,7 +48,6 @@ public class PlanServiceImpl implements PlanService {
         plan.setMIdx(mIdx);
         plan.setPTitle(title);
      // ✅ 트리거 대신 서비스단에서 title 동기화
-        plan.setTpTitle(plan.getPTitle());   // tp_title 비어있으면 p_title로 채움
         plan.setPStart(start);
         plan.setPEnd(end);
 
