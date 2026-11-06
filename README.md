@@ -62,7 +62,7 @@ src/main/resources/static/       CSS, JavaScript, 이미지
 | 이름 | GitHub | 역할 |
 |---|---|---|
 | 이은아 | [euna0428](https://github.com/euna0428) | 팀장(PM, 개발 중반부터), UI/UX 총괄, 풀스택 개발, 전체 기능 통합 |
-| [이름] | [GitHub] | [담당 기능] |
+| [이름] | [hoyoung6604](https://github.com/hoyoung6604) | DB담당자, 추천 여행지 목록, 찜 기능, My page(찜, 여행지 목록)연결, 풀스택 개발 |
 | [이름] | [GitHub] | [담당 기능] |
 | [이름] | [GitHub] | [담당 기능] |
 
